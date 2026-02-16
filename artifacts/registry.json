@@ -15,6 +15,11 @@
     "usage": "decide"
   },
   {
+    "filename": "prototype/index.html",
+    "description": "Clickable HTML prototype of all three end-user screens (Dashboard, Consumption Report, Readings History). Static sample data, working navigation, form flows with toast confirmations, FontAwesome icons with classic/duotone toggle. Serve via `python3 -m http.server 8080` from prototype/. Reference this when building UI to match the approved look, layout, and interaction patterns.",
+    "usage": "decide"
+  },
+  {
     "filename": "artifacts/00-project-initiation-guide.md",
     "description": "One-time bootstrap guide for setting up the project from scratch. Covers spec analysis, stack selection, project scaffolding, CLAUDE.md creation, linting setup, and CI pipeline. Only relevant if the project hasn't been initialized yet — not needed for ongoing development.",
     "usage": "decide"

@@ -254,6 +254,8 @@ visitor_total = sum(period_shares) + sum(manual_entries) + empty_house_share
 
 ## 10. Screens
 
+> **Clickable prototype:** `prototype/index.html` — open via local HTTP server (`python3 -m http.server 8080` from `prototype/`). Covers all three screens with sample data, working navigation, and form flows.
+
 The app is designed for occasional use (a few times per month) on mobile devices at the property. Most interactions should complete without navigating away from the main screen.
 
 ### S1: Main Screen (Dashboard + Actions)
