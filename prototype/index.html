@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electricity Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/219bb33c4b.js" crossorigin="anonymous"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .icon-style-toggle { font-size: 0; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+      <h1 class="text-lg font-bold text-gray-900">
+        <i class="fa-solid fa-house-chimney text-brand-600 mr-1"></i>
+        Electricity Tracker
+      </h1>
+      <nav class="flex items-center gap-3">
+        <a href="report.html" class="text-sm text-brand-600 font-medium hover:text-brand-700">
+          <i class="fa-solid fa-chart-pie mr-1"></i>Report
+        </a>
+        <a href="history.html" class="text-sm text-brand-600 font-medium hover:text-brand-700">
+          <i class="fa-solid fa-clock-rotate-left mr-1"></i>History
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-lg mx-auto px-4 py-5 space-y-5">
+
+    <!-- Toast notification (hidden by default) -->
+    <div id="toast" class="hidden fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-5 py-3 rounded-lg shadow-lg text-sm font-medium transition-opacity">
+      <i class="fa-solid fa-circle-check mr-1.5"></i><span id="toast-msg"></span>
+    </div>
+
+    <!-- House Status -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">House Status</h2>
+      </div>
+
+      <div class="px-4 py-4 space-y-4">
+        <!-- Who's here -->
+        <div>
+          <h3 class="text-xs font-medium text-gray-400 uppercase mb-2">Currently here</h3>
+          <div id="guests-list" class="space-y-2">
+            <div class="flex items-center justify-between py-2 px-3 bg-blue-50 rounded-lg">
+              <div>
+                <span class="font-medium text-gray-900">Tom &amp; Family</span>
+                <span class="text-xs text-gray-500 ml-2">since Feb 14</span>
+              </div>
+              <button onclick="showTab('checkout')" class="text-xs bg-white border border-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-medium hover:bg-gray-50 active:bg-gray-100">
+                <i class="fa-solid fa-right-from-bracket mr-1"></i>Check Out
+              </button>
+            </div>
+            <div class="flex items-center justify-between py-2 px-3 bg-blue-50 rounded-lg">
+              <div>
+                <span class="font-medium text-gray-900">Martin</span>
+                <span class="text-xs text-gray-500 ml-2">since Feb 15</span>
+              </div>
+              <button onclick="showTab('checkout')" class="text-xs bg-white border border-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-medium hover:bg-gray-50 active:bg-gray-100">
+                <i class="fa-solid fa-right-from-bracket mr-1"></i>Check Out
+              </button>
+            </div>
+          </div>
+          <div id="no-guests" class="hidden text-sm text-gray-400 italic">Nobody is at the house right now.</div>
+        </div>
+
+        <!-- Current readings -->
+        <div>
+          <h3 class="text-xs font-medium text-gray-400 uppercase mb-2">Latest meter readings</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-gray-50 rounded-lg p-3 text-center">
+              <div class="text-xs text-gray-500 mb-1"><i class="fa-solid fa-gauge-high mr-1"></i>Main meter</div>
+              <div class="text-xl font-bold text-gray-900">12,487</div>
+              <div class="text-xs text-gray-400">kWh &middot; Feb 15</div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-3 text-center">
+              <div class="text-xs text-gray-500 mb-1"><i class="fa-solid fa-gauge mr-1"></i>Upper floor</div>
+              <div class="text-xl font-bold text-gray-900">3,219</div>
+              <div class="text-xs text-gray-400">kWh &middot; Feb 15</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Action Area -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <!-- Tab bar -->
+      <div class="flex border-b border-gray-100">
+        <button id="tab-checkin" onclick="showTab('checkin')" class="flex-1 py-3 text-sm font-medium text-center border-b-2 transition-colors">
+          <i class="fa-solid fa-right-to-bracket mr-1"></i>Check In
+        </button>
+        <button id="tab-checkout" onclick="showTab('checkout')" class="flex-1 py-3 text-sm font-medium text-center border-b-2 transition-colors">
+          <i class="fa-solid fa-right-from-bracket mr-1"></i>Check Out
+        </button>
+        <button id="tab-manual" onclick="showTab('manual')" class="flex-1 py-3 text-sm font-medium text-center border-b-2 transition-colors">
+          <i class="fa-solid fa-bolt mr-1"></i>Log Entry
+        </button>
+      </div>
+
+      <!-- Check In Form -->
+      <div id="form-checkin" class="p-4 space-y-4 hidden">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Visitor</label>
+          <select class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+            <option>Select visitor...</option>
+            <option selected>Jana</option>
+            <option>Petr &amp; Lenka</option>
+            <option>+ New visitor</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Date &amp; time</label>
+          <input type="datetime-local" value="2026-02-16T14:30" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Main meter reading <span class="text-red-500">*</span></label>
+          <input type="number" value="12502" placeholder="kWh" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+          <p class="text-xs text-gray-400 mt-1">Last reading: 12,487 kWh (Feb 15)</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Upper floor reading <span class="text-gray-400">(optional)</span></label>
+          <input type="number" value="3225" placeholder="kWh" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+          <p class="text-xs text-gray-400 mt-1">Last reading: 3,219 kWh (Feb 15)</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Note <span class="text-gray-400">(optional)</span></label>
+          <input type="text" placeholder="e.g., Weekend visit" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+        </div>
+        <button onclick="submitForm('checkin')" class="w-full bg-brand-600 text-white py-3 rounded-lg font-medium text-sm hover:bg-brand-700 active:bg-brand-800 transition-colors">
+          <i class="fa-solid fa-right-to-bracket mr-1.5"></i>Check In
+        </button>
+      </div>
+
+      <!-- Check Out Form -->
+      <div id="form-checkout" class="p-4 space-y-4 hidden">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Visitor</label>
+          <select class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+            <option>Tom &amp; Family (since Feb 14)</option>
+            <option>Martin (since Feb 15)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Date &amp; time</label>
+          <input type="datetime-local" value="2026-02-16T10:00" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Main meter reading <span class="text-red-500">*</span></label>
+          <input type="number" value="12502" placeholder="kWh" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+          <p class="text-xs text-gray-400 mt-1">Last reading: 12,487 kWh (Feb 15)</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Upper floor reading <span class="text-gray-400">(optional)</span></label>
+          <input type="number" value="3228" placeholder="kWh" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+          <p class="text-xs text-gray-400 mt-1">Last reading: 3,219 kWh (Feb 15)</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Note <span class="text-gray-400">(optional)</span></label>
+          <input type="text" placeholder="e.g., Left early morning" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+        </div>
+        <button onclick="submitForm('checkout')" class="w-full bg-brand-600 text-white py-3 rounded-lg font-medium text-sm hover:bg-brand-700 active:bg-brand-800 transition-colors">
+          <i class="fa-solid fa-right-from-bracket mr-1.5"></i>Check Out
+        </button>
+      </div>
+
+      <!-- Manual Entry Form -->
+      <div id="form-manual" class="p-4 space-y-4 hidden">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Visitor</label>
+          <select class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+            <option>Select visitor...</option>
+            <option>Tom &amp; Family</option>
+            <option>Martin</option>
+            <option selected>Jana</option>
+            <option>Petr &amp; Lenka</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+          <input type="date" value="2026-02-16" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Consumption <span class="text-red-500">*</span></label>
+          <div class="relative">
+            <input type="number" value="15" placeholder="0" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm pr-12 focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">kWh</span>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Note <span class="text-red-500">*</span></label>
+          <input type="text" value="EV charging" placeholder="e.g., EV charging" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+        </div>
+        <button onclick="submitForm('manual')" class="w-full bg-brand-600 text-white py-3 rounded-lg font-medium text-sm hover:bg-brand-700 active:bg-brand-800 transition-colors">
+          <i class="fa-solid fa-bolt mr-1.5"></i>Log Consumption
+        </button>
+      </div>
+    </section>
+
+    <!-- Recent Activity -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Recent Activity</h2>
+        <a href="history.html" class="text-xs text-brand-600 font-medium hover:text-brand-700">View all <i class="fa-solid fa-arrow-right ml-0.5"></i></a>
+      </div>
+
+      <ul class="divide-y divide-gray-50">
+        <li class="px-4 py-3">
+          <div class="flex items-start justify-between">
+            <div>
+              <i class="fa-solid fa-right-to-bracket text-green-500 text-xs mr-1.5"></i>
+              <span class="text-sm font-medium text-gray-900">Martin</span>
+              <span class="text-sm text-gray-500"> checked in</span>
+            </div>
+            <span class="text-xs text-gray-400">Feb 15</span>
+          </div>
+          <div class="ml-5 text-xs text-gray-400 mt-0.5">Main: 12,487 &middot; Upper: 3,219</div>
+        </li>
+        <li class="px-4 py-3">
+          <div class="flex items-start justify-between">
+            <div>
+              <i class="fa-solid fa-right-to-bracket text-green-500 text-xs mr-1.5"></i>
+              <span class="text-sm font-medium text-gray-900">Tom &amp; Family</span>
+              <span class="text-sm text-gray-500"> checked in</span>
+            </div>
+            <span class="text-xs text-gray-400">Feb 14</span>
+          </div>
+          <div class="ml-5 text-xs text-gray-400 mt-0.5">Main: 12,450 &middot; Upper: 3,210</div>
+        </li>
+        <li class="px-4 py-3">
+          <div class="flex items-start justify-between">
+            <div>
+              <i class="fa-solid fa-right-from-bracket text-red-400 text-xs mr-1.5"></i>
+              <span class="text-sm font-medium text-gray-900">Jana</span>
+              <span class="text-sm text-gray-500"> checked out</span>
+            </div>
+            <span class="text-xs text-gray-400">Feb 12</span>
+          </div>
+          <div class="ml-5 text-xs text-gray-400 mt-0.5">Main: 12,430 &middot; Upper: 3,205</div>
+        </li>
+        <li class="px-4 py-3">
+          <div class="flex items-start justify-between">
+            <div>
+              <i class="fa-solid fa-bolt text-yellow-500 text-xs mr-1.5"></i>
+              <span class="text-sm font-medium text-gray-900">Jana</span>
+              <span class="text-sm text-gray-500"> logged 15 kWh</span>
+            </div>
+            <span class="text-xs text-gray-400">Feb 11</span>
+          </div>
+          <div class="ml-5 text-xs text-gray-400 mt-0.5">EV charging</div>
+        </li>
+        <li class="px-4 py-3">
+          <div class="flex items-start justify-between">
+            <div>
+              <i class="fa-solid fa-right-to-bracket text-green-500 text-xs mr-1.5"></i>
+              <span class="text-sm font-medium text-gray-900">Jana</span>
+              <span class="text-sm text-gray-500"> checked in</span>
+            </div>
+            <span class="text-xs text-gray-400">Feb 8</span>
+          </div>
+          <div class="ml-5 text-xs text-gray-400 mt-0.5">Main: 12,380 &middot; Upper: 3,190</div>
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- Icon Style Toggle -->
+  <div class="fixed bottom-4 right-4 z-50">
+    <button onclick="toggleIconStyle()" id="style-toggle" class="bg-white border border-gray-200 shadow-lg rounded-full px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+      <i class="fa-solid fa-palette mr-1"></i>
+      <span id="style-label">Classic</span>
+    </button>
+  </div>
+
+  <script>
+    // Tab management
+    function showTab(tab) {
+      const tabs = ['checkin', 'checkout', 'manual'];
+      tabs.forEach(t => {
+        document.getElementById('form-' + t).classList.toggle('hidden', t !== tab);
+        const btn = document.getElementById('tab-' + t);
+        if (t === tab) {
+          btn.classList.add('border-brand-600', 'text-brand-600');
+          btn.classList.remove('border-transparent', 'text-gray-500');
+        } else {
+          btn.classList.remove('border-brand-600', 'text-brand-600');
+          btn.classList.add('border-transparent', 'text-gray-500');
+        }
+      });
+    }
+
+    // Form submission
+    function submitForm(type) {
+      const messages = {
+        checkin: 'Jana checked in successfully',
+        checkout: 'Tom & Family checked out successfully',
+        manual: 'Consumption logged for Jana (15 kWh)'
+      };
+      showToast(messages[type]);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.textContent = msg;
+      toast.classList.remove('hidden');
+      toast.style.opacity = '1';
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.classList.add('hidden'), 300);
+      }, 2000);
+    }
+
+    // Icon style toggle (shared via localStorage)
+    function toggleIconStyle() {
+      const isDuotone = localStorage.getItem('icon-style') === 'duotone';
+      const newStyle = isDuotone ? 'classic' : 'duotone';
+      localStorage.setItem('icon-style', newStyle);
+      applyIconStyle();
+    }
+
+    function applyIconStyle() {
+      const isDuotone = localStorage.getItem('icon-style') === 'duotone';
+      document.querySelectorAll('i.fa-solid').forEach(icon => {
+        if (isDuotone) {
+          icon.classList.add('fa-duotone');
+        } else {
+          icon.classList.remove('fa-duotone');
+        }
+      });
+      const label = document.getElementById('style-label');
+      if (label) label.textContent = isDuotone ? 'Duotone' : 'Classic';
+    }
+
+    // Init
+    showTab('checkout');
+    applyIconStyle();
+  </script>
+
+</body>
+</html>

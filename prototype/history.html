@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Readings History — Electricity Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/219bb33c4b.js" crossorigin="anonymous"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-gray-400 hover:text-gray-600">
+          <i class="fa-solid fa-chevron-left"></i>
+        </a>
+        <h1 class="text-lg font-bold text-gray-900">
+          <i class="fa-solid fa-clock-rotate-left text-brand-600 mr-1"></i>
+          Readings History
+        </h1>
+      </div>
+      <a href="report.html" class="text-sm text-brand-600 font-medium hover:text-brand-700">
+        <i class="fa-solid fa-chart-pie mr-1"></i>Report
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-lg mx-auto px-4 py-5 space-y-4">
+
+    <!-- Filters -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-3 space-y-3">
+        <div class="flex gap-2">
+          <select id="visitor-filter" onchange="filterEntries()" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+            <option value="all" selected>All visitors</option>
+            <option value="tom">Tom &amp; Family</option>
+            <option value="jana">Jana</option>
+            <option value="martin">Martin</option>
+            <option value="petr">Petr &amp; Lenka</option>
+          </select>
+          <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+            <option>2026</option>
+            <option>2025</option>
+            <option>All time</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="space-y-1">
+
+      <!-- Month header -->
+      <div class="px-1 py-2">
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wide">February 2026</h3>
+      </div>
+
+      <!-- Entry: Martin check-in -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-visitor="martin">
+        <button onclick="toggleDetail(this)" class="w-full px-4 py-3 text-left">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start gap-3">
+              <span class="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-600 flex-shrink-0">
+                <i class="fa-solid fa-right-to-bracket text-xs"></i>
+              </span>
+              <div>
+                <div class="text-sm font-medium text-gray-900">Martin <span class="font-normal text-gray-500">checked in</span></div>
+                <div class="text-xs text-gray-400 mt-0.5">Feb 15, 2026 &middot; 16:00</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform detail-arrow"></i>
+          </div>
+        </button>
+        <div class="hidden px-4 pb-3 pt-0 ml-10 border-t border-gray-50">
+          <div class="grid grid-cols-2 gap-3 mt-3">
+            <div class="text-xs"><span class="text-gray-400">Main:</span> <span class="font-medium text-gray-700">12,487 kWh</span></div>
+            <div class="text-xs"><span class="text-gray-400">Upper:</span> <span class="font-medium text-gray-700">3,219 kWh</span></div>
+          </div>
+          <div class="text-xs text-gray-400 mt-2">Recorded by: Tom</div>
+        </div>
+      </div>
+
+      <!-- Entry: Tom check-in -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-visitor="tom">
+        <button onclick="toggleDetail(this)" class="w-full px-4 py-3 text-left">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start gap-3">
+              <span class="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-600 flex-shrink-0">
+                <i class="fa-solid fa-right-to-bracket text-xs"></i>
+              </span>
+              <div>
+                <div class="text-sm font-medium text-gray-900">Tom &amp; Family <span class="font-normal text-gray-500">checked in</span></div>
+                <div class="text-xs text-gray-400 mt-0.5">Feb 14, 2026 &middot; 18:30</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform detail-arrow"></i>
+          </div>
+        </button>
+        <div class="hidden px-4 pb-3 pt-0 ml-10 border-t border-gray-50">
+          <div class="grid grid-cols-2 gap-3 mt-3">
+            <div class="text-xs"><span class="text-gray-400">Main:</span> <span class="font-medium text-gray-700">12,450 kWh</span></div>
+            <div class="text-xs"><span class="text-gray-400">Upper:</span> <span class="font-medium text-gray-700">3,210 kWh</span></div>
+          </div>
+          <div class="text-xs text-gray-400 mt-2">Recorded by: Tom</div>
+        </div>
+      </div>
+
+      <!-- Entry: Jana check-out -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-visitor="jana">
+        <button onclick="toggleDetail(this)" class="w-full px-4 py-3 text-left">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start gap-3">
+              <span class="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-red-100 text-red-500 flex-shrink-0">
+                <i class="fa-solid fa-right-from-bracket text-xs"></i>
+              </span>
+              <div>
+                <div class="text-sm font-medium text-gray-900">Jana <span class="font-normal text-gray-500">checked out</span></div>
+                <div class="text-xs text-gray-400 mt-0.5">Feb 12, 2026 &middot; 10:00</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform detail-arrow"></i>
+          </div>
+        </button>
+        <div class="hidden px-4 pb-3 pt-0 ml-10 border-t border-gray-50">
+          <div class="grid grid-cols-2 gap-3 mt-3">
+            <div class="text-xs"><span class="text-gray-400">Main:</span> <span class="font-medium text-gray-700">12,430 kWh</span></div>
+            <div class="text-xs"><span class="text-gray-400">Upper:</span> <span class="font-medium text-gray-700">3,205 kWh</span></div>
+          </div>
+          <div class="text-xs text-gray-400 mt-2">Stay: Feb 8 – Feb 12 (4 days) &middot; Recorded by: Jana</div>
+        </div>
+      </div>
+
+      <!-- Entry: Jana manual -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-visitor="jana">
+        <button onclick="toggleDetail(this)" class="w-full px-4 py-3 text-left">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start gap-3">
+              <span class="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-100 text-yellow-600 flex-shrink-0">
+                <i class="fa-solid fa-bolt text-xs"></i>
+              </span>
+              <div>
+                <div class="text-sm font-medium text-gray-900">Jana <span class="font-normal text-gray-500">logged 15 kWh</span></div>
+                <div class="text-xs text-gray-400 mt-0.5">Feb 11, 2026</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform detail-arrow"></i>
+          </div>
+        </button>
+        <div class="hidden px-4 pb-3 pt-0 ml-10 border-t border-gray-50">
+          <div class="mt-3">
+            <div class="text-xs"><span class="text-gray-400">Amount:</span> <span class="font-medium text-gray-700">15 kWh</span></div>
+            <div class="text-xs mt-1"><span class="text-gray-400">Note:</span> <span class="font-medium text-gray-700">EV charging</span></div>
+          </div>
+          <div class="text-xs text-gray-400 mt-2">Recorded by: Jana</div>
+        </div>
+      </div>
+
+      <!-- Entry: Jana check-in -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-visitor="jana">
+        <button onclick="toggleDetail(this)" class="w-full px-4 py-3 text-left">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start gap-3">
+              <span class="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-600 flex-shrink-0">
+                <i class="fa-solid fa-right-to-bracket text-xs"></i>
+              </span>
+              <div>
+                <div class="text-sm font-medium text-gray-900">Jana <span class="font-normal text-gray-500">checked in</span></div>
+                <div class="text-xs text-gray-400 mt-0.5">Feb 8, 2026 &middot; 14:00</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform detail-arrow"></i>
+          </div>
+        </button>
+        <div class="hidden px-4 pb-3 pt-0 ml-10 border-t border-gray-50">
+          <div class="grid grid-cols-2 gap-3 mt-3">
+            <div class="text-xs"><span class="text-gray-400">Main:</span> <span class="font-medium text-gray-700">12,380 kWh</span></div>
+            <div class="text-xs"><span class="text-gray-400">Upper:</span> <span class="font-medium text-gray-700">3,190 kWh</span></div>
+          </div>
+          <div class="text-xs text-gray-400 mt-2">Recorded by: Jana</div>
+        </div>
+      </div>
+
+      <!-- Month header -->
+      <div class="px-1 py-2 mt-2">
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wide">January 2026</h3>
+      </div>
+
+      <!-- Entry: Petr check-out -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-visitor="petr">
+        <button onclick="toggleDetail(this)" class="w-full px-4 py-3 text-left">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start gap-3">
+              <span class="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-red-100 text-red-500 flex-shrink-0">
+                <i class="fa-solid fa-right-from-bracket text-xs"></i>
+              </span>
+              <div>
+                <div class="text-sm font-medium text-gray-900">Petr &amp; Lenka <span class="font-normal text-gray-500">checked out</span></div>
+                <div class="text-xs text-gray-400 mt-0.5">Jan 26, 2026 &middot; 11:00</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform detail-arrow"></i>
+          </div>
+        </button>
+        <div class="hidden px-4 pb-3 pt-0 ml-10 border-t border-gray-50">
+          <div class="grid grid-cols-2 gap-3 mt-3">
+            <div class="text-xs"><span class="text-gray-400">Main:</span> <span class="font-medium text-gray-700">12,340 kWh</span></div>
+            <div class="text-xs"><span class="text-gray-400">Upper:</span> <span class="font-medium text-gray-700">3,178 kWh</span></div>
+          </div>
+          <div class="text-xs text-gray-400 mt-2">Stay: Jan 19 – Jan 26 (7 days) &middot; Recorded by: Petr</div>
+        </div>
+      </div>
+
+      <!-- Entry: Petr check-in -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-visitor="petr">
+        <button onclick="toggleDetail(this)" class="w-full px-4 py-3 text-left">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start gap-3">
+              <span class="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-600 flex-shrink-0">
+                <i class="fa-solid fa-right-to-bracket text-xs"></i>
+              </span>
+              <div>
+                <div class="text-sm font-medium text-gray-900">Petr &amp; Lenka <span class="font-normal text-gray-500">checked in</span></div>
+                <div class="text-xs text-gray-400 mt-0.5">Jan 19, 2026 &middot; 17:00</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform detail-arrow"></i>
+          </div>
+        </button>
+        <div class="hidden px-4 pb-3 pt-0 ml-10 border-t border-gray-50">
+          <div class="grid grid-cols-2 gap-3 mt-3">
+            <div class="text-xs"><span class="text-gray-400">Main:</span> <span class="font-medium text-gray-700">12,267 kWh</span></div>
+            <div class="text-xs"><span class="text-gray-400">Upper:</span> <span class="font-medium text-gray-700">3,155 kWh</span></div>
+          </div>
+          <div class="text-xs text-gray-400 mt-2">Recorded by: Petr</div>
+        </div>
+      </div>
+
+      <!-- Entry: Tom check-out -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-visitor="tom">
+        <button onclick="toggleDetail(this)" class="w-full px-4 py-3 text-left">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start gap-3">
+              <span class="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-red-100 text-red-500 flex-shrink-0">
+                <i class="fa-solid fa-right-from-bracket text-xs"></i>
+              </span>
+              <div>
+                <div class="text-sm font-medium text-gray-900">Tom &amp; Family <span class="font-normal text-gray-500">checked out</span></div>
+                <div class="text-xs text-gray-400 mt-0.5">Jan 12, 2026 &middot; 09:00</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform detail-arrow"></i>
+          </div>
+        </button>
+        <div class="hidden px-4 pb-3 pt-0 ml-10 border-t border-gray-50">
+          <div class="grid grid-cols-2 gap-3 mt-3">
+            <div class="text-xs"><span class="text-gray-400">Main:</span> <span class="font-medium text-gray-700">12,198 kWh</span></div>
+            <div class="text-xs"><span class="text-gray-400">Upper:</span> <span class="font-medium text-gray-700">3,132 kWh</span></div>
+          </div>
+          <div class="text-xs text-gray-400 mt-2">Stay: Jan 5 – Jan 12 (7 days) &middot; Recorded by: Tom</div>
+        </div>
+      </div>
+
+      <!-- Entry: Tom check-in -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-visitor="tom">
+        <button onclick="toggleDetail(this)" class="w-full px-4 py-3 text-left">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start gap-3">
+              <span class="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-600 flex-shrink-0">
+                <i class="fa-solid fa-right-to-bracket text-xs"></i>
+              </span>
+              <div>
+                <div class="text-sm font-medium text-gray-900">Tom &amp; Family <span class="font-normal text-gray-500">checked in</span></div>
+                <div class="text-xs text-gray-400 mt-0.5">Jan 5, 2026 &middot; 15:00</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform detail-arrow"></i>
+          </div>
+        </button>
+        <div class="hidden px-4 pb-3 pt-0 ml-10 border-t border-gray-50">
+          <div class="grid grid-cols-2 gap-3 mt-3">
+            <div class="text-xs"><span class="text-gray-400">Main:</span> <span class="font-medium text-gray-700">12,100 kWh</span></div>
+            <div class="text-xs"><span class="text-gray-400">Upper:</span> <span class="font-medium text-gray-700">3,100 kWh</span></div>
+          </div>
+          <div class="text-xs text-gray-400 mt-2">Recorded by: Tom</div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Icon Style Toggle -->
+  <div class="fixed bottom-4 right-4 z-50">
+    <button onclick="toggleIconStyle()" id="style-toggle" class="bg-white border border-gray-200 shadow-lg rounded-full px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+      <i class="fa-solid fa-palette mr-1"></i>
+      <span id="style-label">Classic</span>
+    </button>
+  </div>
+
+  <script>
+    function toggleDetail(btn) {
+      const detail = btn.nextElementSibling;
+      const arrow = btn.querySelector('.detail-arrow');
+      detail.classList.toggle('hidden');
+      arrow.classList.toggle('rotate-180');
+    }
+
+    function filterEntries() {
+      const val = document.getElementById('visitor-filter').value;
+      document.querySelectorAll('[data-visitor]').forEach(el => {
+        if (val === 'all' || el.dataset.visitor === val) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+    }
+
+    function toggleIconStyle() {
+      const isDuotone = localStorage.getItem('icon-style') === 'duotone';
+      localStorage.setItem('icon-style', isDuotone ? 'classic' : 'duotone');
+      applyIconStyle();
+    }
+
+    function applyIconStyle() {
+      const isDuotone = localStorage.getItem('icon-style') === 'duotone';
+      document.querySelectorAll('i.fa-solid').forEach(icon => {
+        if (isDuotone) {
+          icon.classList.add('fa-duotone');
+        } else {
+          icon.classList.remove('fa-duotone');
+        }
+      });
+      const label = document.getElementById('style-label');
+      if (label) label.textContent = isDuotone ? 'Duotone' : 'Classic';
+    }
+
+    applyIconStyle();
+  </script>
+
+</body>
+</html>

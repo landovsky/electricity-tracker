@@ -1,27 +1,37 @@
 [
   {
-    "filename": "artifacts/specification/00-spec-philosophy-how-to-keep-it-up-to-date.md",
-    "description": "Spec philosophy, maintenance, and how to keep the behavioral specification up to date",
-    "usage": "decide"
-  },
-  {
-    "filename": "artifacts/00-project-initiation-guide.md",
-    "description": "Bootstrap sequence for new projects: role, specification reading, stack selection, project scaffolding, CLAUDE.md setup, code hygiene, and CI/CD",
-    "usage": "decide"
-  },
-  {
     "filename": "artifacts/01-system-builder-instructions.md",
-    "description": "Ongoing development guidelines: workflow, completeness standard, testing philosophy, commit discipline, multi-agent coordination, and principles",
+    "description": "How to work in this repo day-to-day. Covers the build cycle (plan → branch → implement → test → merge), completeness rules (no placeholders, no stub code), testing philosophy (test orchestration, not just leaves), commit discipline, and multi-agent coordination (task scoping, handoff reports, review-before-merge). Read this before writing any code.",
+    "usage": "always"
+  },
+  {
+    "filename": "artifacts/02-technical-requirements.md",
+    "description": "Canonical stack and architecture decisions. Defines Rails 8 + SQLite + Tailwind + Stimulus, key gems (active_interaction, discard, audited, view_component), auth approach (magic links), testing tools (RSpec, Capybara), and deployment model (single-server, no external deps). Consult when adding dependencies, choosing patterns, or setting up new features.",
     "usage": "always"
   },
   {
     "filename": "artifacts/specification/electricity-tracker-spec.md",
-    "description": "System specification for the Family House Electricity Tracker: visitor check-in/out, meter readings, kWh consumption splitting, roles, and calculation rules",
-    "usage": "always"
+    "description": "The product spec — what the system does. Domain model, use cases (check-in/out, manual entries, reports), allocation algorithm (equal-split with empty-house pooling), constraints, edge cases, screen designs, and roles/permissions. Read when implementing any feature, writing validations, or making UI decisions.",
+    "usage": "decide"
   },
   {
-    "filename": "artifacts/self-built-tooling.md",
-    "description": "Guidelines for building development automation tools: Rule of Three, naming conventions, budgets, and documentation standards",
+    "filename": "artifacts/00-project-initiation-guide.md",
+    "description": "One-time bootstrap guide for setting up the project from scratch. Covers spec analysis, stack selection, project scaffolding, CLAUDE.md creation, linting setup, and CI pipeline. Only relevant if the project hasn't been initialized yet — not needed for ongoing development.",
+    "usage": "decide"
+  },
+  {
+    "filename": "artifacts/specification/00-spec-philosophy-how-to-keep-it-up-to-date.md",
+    "description": "Rules for maintaining the specification itself. Defines principles (behavior over implementation, mirror not roadmap, one canonical definition) and the update workflow (spec changes ship with code changes, periodic audits via re-generation). Read when editing the spec or resolving [UNCLEAR] markers.",
+    "usage": "decide"
+  },
+  {
+    "filename": "artifacts/03-tooling-for-efficiency.md",
+    "description": "Policy for building developer automation (scripts, slash commands, git hooks, generators). Defines the Rule of Three (build only after 3 occurrences), naming convention (_agen suffix), budget limits (1 tool per 5 features, max 15 min build time), and documentation requirements. Read when considering building a new tool or checking tool-suggestions.md.",
+    "usage": "decide"
+  },
+  {
+    "filename": "artifacts/team-structure.md",
+    "description": "Defines the three team roles (Lead, Developer, QA) and their expected behaviors. Lead: scope guardian, quality gatekeeper, context broadcaster. Developer: transparent about state, integration-aware, explicit handoffs. QA: exploratory testing, evidence-driven (failing tests as bug reports), regression-conscious. Read when coordinating multi-agent work or unclear on handoff expectations.",
     "usage": "decide"
   }
 ]

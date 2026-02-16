@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consumption Report — Electricity Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/219bb33c4b.js" crossorigin="anonymous"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-gray-400 hover:text-gray-600">
+          <i class="fa-solid fa-chevron-left"></i>
+        </a>
+        <h1 class="text-lg font-bold text-gray-900">
+          <i class="fa-solid fa-chart-pie text-brand-600 mr-1"></i>
+          Consumption Report
+        </h1>
+      </div>
+      <a href="history.html" class="text-sm text-brand-600 font-medium hover:text-brand-700">
+        <i class="fa-solid fa-clock-rotate-left mr-1"></i>History
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-lg mx-auto px-4 py-5 space-y-5">
+
+    <!-- Date Range Selector -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-3 space-y-3">
+        <div class="flex gap-2">
+          <button onclick="setPeriod(this)" class="px-3 py-1.5 text-xs font-medium rounded-full bg-brand-600 text-white">This year</button>
+          <button onclick="setPeriod(this)" class="px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">Last year</button>
+          <button onclick="setPeriod(this)" class="px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">Custom</button>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-gray-500">
+          <i class="fa-solid fa-calendar-days text-gray-400 text-xs"></i>
+          <span>Jan 1, 2026</span>
+          <span>—</span>
+          <span>Feb 16, 2026</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Meter Summary -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Period totals</h2>
+      </div>
+      <div class="grid grid-cols-2 divide-x divide-gray-100">
+        <div class="p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1"><i class="fa-solid fa-gauge-high mr-1"></i>Main meter delta</div>
+          <div class="text-2xl font-bold text-gray-900">487</div>
+          <div class="text-xs text-gray-400">kWh</div>
+        </div>
+        <div class="p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1"><i class="fa-solid fa-gauge mr-1"></i>Upper floor delta</div>
+          <div class="text-2xl font-bold text-gray-900">119</div>
+          <div class="text-xs text-gray-400">kWh</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Per-Visitor Breakdown -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Per-visitor breakdown</h2>
+      </div>
+
+      <!-- Table header -->
+      <div class="grid grid-cols-12 gap-1 px-4 py-2 border-b border-gray-100 text-xs text-gray-400 font-medium">
+        <div class="col-span-3">Visitor</div>
+        <div class="col-span-2 text-right">Shared</div>
+        <div class="col-span-2 text-right">Manual</div>
+        <div class="col-span-3 text-right">Empty&nbsp;house</div>
+        <div class="col-span-2 text-right font-semibold">Total</div>
+      </div>
+
+      <!-- Rows -->
+      <div class="divide-y divide-gray-50">
+        <div class="grid grid-cols-12 gap-1 px-4 py-3 text-sm items-center">
+          <div class="col-span-3 font-medium text-gray-900">Tom &amp; Family</div>
+          <div class="col-span-2 text-right text-gray-600">142</div>
+          <div class="col-span-2 text-right text-gray-600">0</div>
+          <div class="col-span-3 text-right text-gray-600">24</div>
+          <div class="col-span-2 text-right font-bold text-gray-900">166</div>
+        </div>
+        <div class="grid grid-cols-12 gap-1 px-4 py-3 text-sm items-center">
+          <div class="col-span-3 font-medium text-gray-900">Jana</div>
+          <div class="col-span-2 text-right text-gray-600">98</div>
+          <div class="col-span-2 text-right text-gray-600">15</div>
+          <div class="col-span-3 text-right text-gray-600">24</div>
+          <div class="col-span-2 text-right font-bold text-gray-900">137</div>
+        </div>
+        <div class="grid grid-cols-12 gap-1 px-4 py-3 text-sm items-center">
+          <div class="col-span-3 font-medium text-gray-900">Martin</div>
+          <div class="col-span-2 text-right text-gray-600">63</div>
+          <div class="col-span-2 text-right text-gray-600">0</div>
+          <div class="col-span-3 text-right text-gray-600">24</div>
+          <div class="col-span-2 text-right font-bold text-gray-900">87</div>
+        </div>
+        <div class="grid grid-cols-12 gap-1 px-4 py-3 text-sm items-center">
+          <div class="col-span-3 font-medium text-gray-900 truncate">Petr &amp; Lenka</div>
+          <div class="col-span-2 text-right text-gray-600">73</div>
+          <div class="col-span-2 text-right text-gray-600">0</div>
+          <div class="col-span-3 text-right text-gray-600">24</div>
+          <div class="col-span-2 text-right font-bold text-gray-900">97</div>
+        </div>
+      </div>
+
+      <!-- Totals row -->
+      <div class="grid grid-cols-12 gap-1 px-4 py-3 bg-gray-50 border-t border-gray-200 text-sm font-semibold">
+        <div class="col-span-3 text-gray-700">Total</div>
+        <div class="col-span-2 text-right text-gray-700">376</div>
+        <div class="col-span-2 text-right text-gray-700">15</div>
+        <div class="col-span-3 text-right text-gray-700">96</div>
+        <div class="col-span-2 text-right text-gray-900">487</div>
+      </div>
+
+      <!-- Sanity check -->
+      <div class="px-4 py-2 bg-green-50 border-t border-green-100">
+        <p class="text-xs text-green-700 flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-check"></i>
+          Total (487 kWh) matches main meter delta. All consumption accounted for.
+        </p>
+      </div>
+    </section>
+
+    <!-- Per-visitor visual bars -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Per-visitor summary</h2>
+      </div>
+      <div class="px-4 py-3 space-y-3">
+        <div class="space-y-2">
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="font-medium text-gray-900">Tom &amp; Family</span>
+              <span class="text-gray-600">166 kWh <span class="text-gray-400">(34%)</span></span>
+            </div>
+            <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full bg-blue-500 rounded-full" style="width: 34%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="font-medium text-gray-900">Jana</span>
+              <span class="text-gray-600">137 kWh <span class="text-gray-400">(28%)</span></span>
+            </div>
+            <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full bg-emerald-500 rounded-full" style="width: 28%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="font-medium text-gray-900">Petr &amp; Lenka</span>
+              <span class="text-gray-600">97 kWh <span class="text-gray-400">(20%)</span></span>
+            </div>
+            <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full bg-amber-500 rounded-full" style="width: 20%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="font-medium text-gray-900">Martin</span>
+              <span class="text-gray-600">87 kWh <span class="text-gray-400">(18%)</span></span>
+            </div>
+            <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full bg-purple-500 rounded-full" style="width: 18%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Icon Style Toggle -->
+  <div class="fixed bottom-4 right-4 z-50">
+    <button onclick="toggleIconStyle()" id="style-toggle" class="bg-white border border-gray-200 shadow-lg rounded-full px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+      <i class="fa-solid fa-palette mr-1"></i>
+      <span id="style-label">Classic</span>
+    </button>
+  </div>
+
+  <script>
+    function setPeriod(btn) {
+      btn.parentElement.querySelectorAll('button').forEach(b => {
+        b.classList.remove('bg-brand-600', 'text-white');
+        b.classList.add('bg-gray-100', 'text-gray-600');
+      });
+      btn.classList.remove('bg-gray-100', 'text-gray-600');
+      btn.classList.add('bg-brand-600', 'text-white');
+    }
+
+    function toggleIconStyle() {
+      const isDuotone = localStorage.getItem('icon-style') === 'duotone';
+      localStorage.setItem('icon-style', isDuotone ? 'classic' : 'duotone');
+      applyIconStyle();
+    }
+
+    function applyIconStyle() {
+      const isDuotone = localStorage.getItem('icon-style') === 'duotone';
+      document.querySelectorAll('i.fa-solid').forEach(icon => {
+        if (isDuotone) {
+          icon.classList.add('fa-duotone');
+        } else {
+          icon.classList.remove('fa-duotone');
+        }
+      });
+      const label = document.getElementById('style-label');
+      if (label) label.textContent = isDuotone ? 'Duotone' : 'Classic';
+    }
+
+    applyIconStyle();
+  </script>
+
+</body>
+</html>
