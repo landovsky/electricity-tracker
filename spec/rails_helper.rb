@@ -37,15 +37,8 @@ rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
 RSpec.configure do |config|
-  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_paths = [
-    Rails.root.join('spec/fixtures')
-  ]
-
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, remove the following line or assign false
-  # instead of true.
-  config.use_transactional_fixtures = true
+  # We're using FactoryBot, not fixtures
+  config.use_transactional_fixtures = false
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
@@ -80,15 +73,21 @@ RSpec.configure do |config|
 
   # Database Cleaner configuration
   config.before(:suite) do
-    # Allow cleaning test database
-    DatabaseCleaner.allow_remote_database_url = true
-    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
   end
 
-  config.around(:each) do |example|
-    DatabaseCleaner.cleaning do
-      example.run
-    end
+  config.before(:each) do
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+
+  # Audited gem compatibility with Rails 8
+  config.before(:suite) do
+    # Suppress Audited deprecation warnings in test environment
+    Audited.store[:audited_user] = nil if defined?(Audited)
   end
 end
