@@ -22,6 +22,21 @@ gem "jbuilder"
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
+# Business logic service objects
+gem "active_interaction", "~> 5.3"
+
+# Soft deletes
+gem "discard", "~> 1.3"
+
+# Audit trail
+gem "audited", "~> 5.7"
+
+# Normalize empty strings to nil
+gem "nilify_blanks", "~> 1.4"
+
+# View components
+gem "view_component", "~> 3.22"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
@@ -54,9 +69,25 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Testing framework
+  gem "rspec-rails", "~> 7.1"
+  gem "factory_bot_rails", "~> 6.4"
+  gem "ffaker", "~> 2.23"
+  gem "shoulda-matchers", "~> 6.4"
+  gem "capybara", "~> 3.40"
+  gem "selenium-webdriver", "~> 4.28"
+  gem "database_cleaner-active_record", "~> 2.2"
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Better console debugging
+  gem "pry-rails", "~> 0.3"
+
+  # Magic link email preview
+  gem "letter_opener", "~> 1.10"
+  gem "letter_opener_web", "~> 3.0"
 end
