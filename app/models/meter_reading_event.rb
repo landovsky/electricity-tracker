@@ -1,0 +1,2 @@
+class MeterReadingEvent < ApplicationRecord
+end

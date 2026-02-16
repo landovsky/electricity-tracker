@@ -1,0 +1,2 @@
+class ManualConsumptionEntry < ApplicationRecord
+end
