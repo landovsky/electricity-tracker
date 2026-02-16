@@ -38,5 +38,12 @@ module Workspace
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # ViewComponent configuration
+    config.generators do |g|
+      g.test_framework :rspec
+      g.component_specs true
+      g.view_component_path "app/components"
+    end
   end
 end
