@@ -18,7 +18,7 @@ class DashboardController < ApplicationController
                                .joins(:stays)
                                .where(stays: { check_out_event_id: nil })
                                .where(stays: { property_id: @property.id })
-                               .includes(stays: [:check_in_event])
+                               .includes(stays: [ :check_in_event ])
                                .distinct
                                .order(:name)
 
