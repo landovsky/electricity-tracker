@@ -28,6 +28,10 @@ Rails.application.configure do
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
 
+  # Disable host authorization entirely in test environment (Rails 8+)
+  # This allows requests from any host, including www.example.com used by RSpec
+  config.host_authorization = { exclude: ->(_request) { true } }
+
   # Store uploaded files on the local file system in a temporary directory.
   config.active_storage.service = :test
 
