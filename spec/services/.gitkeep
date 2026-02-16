@@ -1,0 +1,25 @@
+# Service specs go here
+#
+# Example spec structure:
+#
+# require "rails_helper"
+#
+# RSpec.describe MyService, type: :service do
+#   describe ".run" do
+#     context "with valid inputs" do
+#       it "performs the operation successfully" do
+#         outcome = described_class.run(param: value)
+#         expect(outcome).to be_valid
+#         expect(outcome.result).to eq(expected_value)
+#       end
+#     end
+#
+#     context "with invalid inputs" do
+#       it "returns validation errors" do
+#         outcome = described_class.run(param: nil)
+#         expect(outcome).to be_invalid
+#         expect(outcome.errors[:param]).to be_present
+#       end
+#     end
+#   end
+# end
