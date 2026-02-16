@@ -5,9 +5,19 @@
     "usage": "decide"
   },
   {
-    "filename": "artifacts/system-builder-instructions.md",
-    "description": "Instructions for building a system from scratch: bootstrap sequence, development workflow, testing philosophy, commit discipline, and multi-agent coordination",
+    "filename": "artifacts/00-project-initiation-guide.md",
+    "description": "Bootstrap sequence for new projects: role, specification reading, stack selection, project scaffolding, CLAUDE.md setup, code hygiene, and CI/CD",
     "usage": "decide"
+  },
+  {
+    "filename": "artifacts/01-system-builder-instructions.md",
+    "description": "Ongoing development guidelines: workflow, completeness standard, testing philosophy, commit discipline, multi-agent coordination, and principles",
+    "usage": "always"
+  },
+  {
+    "filename": "artifacts/specification/electricity-tracker-spec.md",
+    "description": "System specification for the Family House Electricity Tracker: visitor check-in/out, meter readings, kWh consumption splitting, roles, and calculation rules",
+    "usage": "always"
   },
   {
     "filename": "artifacts/self-built-tooling.md",
