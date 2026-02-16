@@ -2,7 +2,26 @@
 inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
 # Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+AllCops:
+  NewCops: enable
+  Exclude:
+    - 'db/schema.rb'
+    - 'db/migrate/*'
+    - 'bin/*'
+    - 'vendor/**/*'
+    - 'node_modules/**/*'
+
+# Allow longer lines in specs for readability
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - 'spec/**/*'
+    - 'config/**/*'
+
+# Prefer explicit return in service objects for clarity
+Style/RedundantReturn:
+  Enabled: false
+
+# Allow empty when blocks in case statements (used in allocation algorithm)
+Lint/EmptyWhen:
+  Enabled: false
