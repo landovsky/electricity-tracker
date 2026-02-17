@@ -11,6 +11,24 @@ export default class extends Controller {
     // Set initial active tab based on default
     const defaultTab = this.defaultTabValue || "checkin"
     this.switchToTab(defaultTab)
+
+    this.handleCheckoutVisitor = this.checkOutVisitor.bind(this)
+    window.addEventListener("checkout-visitor", this.handleCheckoutVisitor)
+  }
+
+  disconnect() {
+    window.removeEventListener("checkout-visitor", this.handleCheckoutVisitor)
+  }
+
+  checkOutVisitor(event) {
+    const stayId = event.detail.stayId
+    this.switchToTab("checkout")
+
+    const select = this.element.querySelector('[name="stay_id"]')
+    if (select) {
+      select.value = stayId
+      select.dispatchEvent(new Event("change", { bubbles: true }))
+    }
   }
 
   switchTab(event) {

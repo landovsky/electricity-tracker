@@ -9,7 +9,8 @@
             <% stay = visitor.stays.find { |s| s.open? } %>
             <%= render Dashboard::VisitorCardComponent.new(
               visitor: visitor,
-              checked_in_at: stay&.check_in_event&.recorded_at
+              checked_in_at: stay&.check_in_event&.recorded_at,
+              stay_id: stay&.id
             ) %>
           <% end %>
         </div>

@@ -2,19 +2,22 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "./application"
+import { application } from "controllers/application"
 
-import ActionFormsController from "./action_forms_controller"
+import ActionFormsController from "controllers/action_forms_controller"
 application.register("action-forms", ActionFormsController)
 
-import CheckoutFormController from "./checkout_form_controller"
+import CheckoutFormController from "controllers/checkout_form_controller"
 application.register("checkout-form", CheckoutFormController)
 
-import ExpandableCardController from "./expandable_card_controller"
+import ExpandableCardController from "controllers/expandable_card_controller"
 application.register("expandable-card", ExpandableCardController)
 
-import HelloController from "./hello_controller"
+import HelloController from "controllers/hello_controller"
 application.register("hello", HelloController)
 
-import ToastController from "./toast_controller"
+import ToastController from "controllers/toast_controller"
 application.register("toast", ToastController)
+
+import VisitorCardController from "controllers/visitor_card_controller"
+application.register("visitor-card", VisitorCardController)
