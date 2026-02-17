@@ -21,6 +21,8 @@
     <%# FontAwesome icons (kit from prototype) %>
     <script src="https://kit.fontawesome.com/219bb33c4b.js" crossorigin="anonymous"></script>
 
+    <%# Tailwind CSS (built from app/assets/tailwind/application.css) %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
