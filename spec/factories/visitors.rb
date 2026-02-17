@@ -11,5 +11,9 @@ FactoryBot.define do
     trait :archived do
       status { "archived" }
     end
+
+    trait :discarded do
+      deleted_at { Time.current }
+    end
   end
 end

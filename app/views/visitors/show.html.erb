@@ -1,0 +1,29 @@
+<h1><%= @visitor.name %></h1>
+
+<p>Status: <%= @visitor.status %></p>
+<p>Note: <%= @visitor.note %></p>
+
+<h2>Stays</h2>
+<% if @stays.any? %>
+  <ul>
+    <% @stays.each do |stay| %>
+      <li>Stay from <%= stay.created_at %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No stays found.</p>
+<% end %>
+
+<h2>Manual Consumption Entries</h2>
+<% if @manual_entries.any? %>
+  <ul>
+    <% @manual_entries.each do |entry| %>
+      <li><%= entry.date %>: <%= entry.kwh %> kWh</li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No manual entries found.</p>
+<% end %>
+
+<%= link_to "Edit", edit_visitor_path(@visitor) %>
+<%= link_to "Back to Visitors", visitors_path %>

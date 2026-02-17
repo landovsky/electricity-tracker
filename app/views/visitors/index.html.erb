@@ -1,0 +1,13 @@
+<h1>Visitors</h1>
+
+<% if @visitors.any? %>
+  <ul>
+    <% @visitors.each do |visitor| %>
+      <li><%= visitor.name %> - <%= visitor.status %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No visitors found.</p>
+<% end %>
+
+<%= link_to "New Visitor", new_visitor_path %>

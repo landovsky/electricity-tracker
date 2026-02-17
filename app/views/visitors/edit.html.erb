@@ -1,0 +1,36 @@
+<h1>Edit Visitor</h1>
+
+<%= form_with model: @visitor do |form| %>
+  <% if @visitor.errors.any? %>
+    <div>
+      <h2><%= pluralize(@visitor.errors.count, "error") %> prohibited this visitor from being saved:</h2>
+      <ul>
+        <% @visitor.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.label :status %>
+    <%= form.select :status, Visitor.statuses.keys, {}, {} %>
+  </div>
+
+  <div>
+    <%= form.label :note %>
+    <%= form.text_area :note %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
+
+<%= link_to "Show", visitor_path(@visitor) %>
+<%= link_to "Back to Visitors", visitors_path %>
