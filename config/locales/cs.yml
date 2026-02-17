@@ -101,18 +101,51 @@ cs:
     new:
       title: "Přihlášení — Měřič spotřeby"
       heading: "Měřič spotřeby"
-      subtitle: "Přihlaste se pomocí odkazu"
+      subtitle: "Registrace e-mailem, nebo SMS?"
+      method_email: "E-mailem"
+      method_sms: "SMS zprávou"
       email_label: "E-mailová adresa"
       email_placeholder: "vas@email.cz"
-      submit: "Odeslat přihlašovací odkaz"
-      help_text: "Na e-mail vám pošleme odkaz pro přihlášení — heslo nepotřebujete."
-    create:
-      notice: "Pokud je e-mail registrován, poslali jsme vám přihlašovací odkaz. Zkontrolujte svou schránku."
+      phone_label: "Telefonní číslo"
+      phone_placeholder: "+420 777 123 456"
+      submit_email: "Odeslat přihlašovací odkaz"
+      submit_sms: "Odeslat ověřovací kód"
+      help_text_email: "Na e-mail vám pošleme odkaz pro přihlášení — heslo nepotřebujete."
+      help_text_sms: "Na telefon vám pošleme 6místný ověřovací kód."
+    email_sent:
+      title: "Odkaz odeslán — Měřič spotřeby"
+      heading: "Odkaz odeslán!"
+      instruction: "Zkontrolujte svou e-mailovou schránku a klikněte na odkaz pro přihlášení."
+      expiry: "Platnost odkazu vyprší za 15 minut."
+      back: "Zpět na přihlášení"
+    sms:
+      otp_message: "Váš ověřovací kód pro Měřič spotřeby: %{code}"
+      invalid_phone: "Neplatné telefonní číslo. Zadejte české číslo ve formátu +420..."
+      invalid_code: "Neplatný nebo expirovaný kód. Zkuste to prosím znovu."
+      session_expired: "Relace vypršela. Začněte prosím znovu."
+    otp:
+      title: "Ověřovací kód — Měřič spotřeby"
+      heading: "Zadejte ověřovací kód"
+      instruction: "Poslali jsme vám SMS s 6místným kódem."
+      code_label: "Ověřovací kód"
+      submit: "Ověřit"
+      back: "Zpět na přihlášení"
     verify:
       success: "Přihlášení proběhlo úspěšně."
       failure: "Neplatný nebo expirovaný odkaz. Vyžádejte si prosím nový."
     destroy:
       notice: "Odhlášení proběhlo úspěšně."
+
+  # Onboarding (first-time user name input)
+  onboarding:
+    title: "Jak se jmenujete? — Měřič spotřeby"
+    heading: "Jak se jmenujete?"
+    instruction: "Řekněte nám, jak vás máme oslovovat."
+    name_label: "Jméno"
+    name_placeholder: "Jan Novák"
+    submit: "Pokračovat"
+    success: "Vítejte v Měřiči spotřeby!"
+    name_required: "Jméno je povinné."
 
   # Authentication (application controller)
   auth:

@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   before_action :require_authentication
+  before_action :require_onboarding
 
   helper_method :current_user, :logged_in?
 
@@ -29,6 +30,13 @@ class ApplicationController < ActionController::Base
     return if logged_in?
 
     redirect_to login_path, alert: t("auth.login_required")
+  end
+
+  def require_onboarding
+    return unless logged_in?
+    return if current_user.onboarded?
+
+    redirect_to onboarding_path
   end
 
   def auth_disabled?

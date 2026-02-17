@@ -1,4 +1,4 @@
-<h2><%= t("mailer.login_link.greeting", name: @user.name) %></h2>
+<h2><%= t("mailer.login_link.greeting", name: @user.name.presence || @user.email) %></h2>
 
 <p><%= t("mailer.login_link.instruction_html") %></p>
 

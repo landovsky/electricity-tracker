@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_16_203648) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_17_205743) do
   create_table "audits", force: :cascade do |t|
     t.string "action"
     t.integer "associated_id"
@@ -117,10 +117,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_203648) do
     t.datetime "deleted_at"
     t.string "email"
     t.string "name"
+    t.string "phone_number"
     t.string "role"
+    t.string "sms_otp_code"
+    t.datetime "sms_otp_sent_at"
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["phone_number"], name: "index_users_on_phone_number", unique: true, where: "phone_number IS NOT NULL"
   end
 
   create_table "visitors", force: :cascade do |t|

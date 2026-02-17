@@ -16,6 +16,9 @@ application.register("expandable-card", ExpandableCardController)
 import HelloController from "controllers/hello_controller"
 application.register("hello", HelloController)
 
+import LoginMethodController from "controllers/login_method_controller"
+application.register("login-method", LoginMethodController)
+
 import ToastController from "controllers/toast_controller"
 application.register("toast", ToastController)
 

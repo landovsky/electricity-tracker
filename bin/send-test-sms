@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Sends a test SMS to the designated test number via SmsManager V1 HTTP API.
+# Usage: bin/send-test-sms
+#
+# Requires SMS_MANAGER_API_KEY env var to be set.
+
+require "net/http"
+require "uri"
+
+TEST_NUMBER = "420722643643"
+API_URL = "https://http-api.smsmanager.cz/Send"
+
+api_key = ENV["SMS_MANAGER_API_KEY"]
+unless api_key
+  abort "ERROR: SMS_MANAGER_API_KEY env var is not set."
+end
+
+message = "Test SMS z Měřiče spotřeby — #{Time.now.strftime('%H:%M:%S')}"
+
+puts "Sending test SMS to +#{TEST_NUMBER} (V1 HTTP API)..."
+puts "Message: #{message}"
+puts
+
+uri = URI(API_URL)
+uri.query = URI.encode_www_form(
+  apikey: api_key,
+  message: message,
+  number: TEST_NUMBER,
+  type: "utf"
+)
+
+http = Net::HTTP.new(uri.host, uri.port)
+http.use_ssl = true
+http.open_timeout = 10
+http.read_timeout = 10
+
+response = http.request(Net::HTTP::Get.new(uri))
+body = response.body.strip
+
+puts "HTTP #{response.code}"
+puts "Response: #{body}"
+
+parts = body.split("|")
+if parts[0] == "OK"
+  puts "\nSMS sent successfully! Message ID: #{parts[1]}"
+else
+  puts "\nSMS failed. Error: #{body}"
+  exit 1
+end

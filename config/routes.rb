@@ -13,17 +13,35 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # =============================================================================
-  # AUTHENTICATION (Magic Link)
+  # AUTHENTICATION (Magic Link + SMS OTP)
   # =============================================================================
-  # Magic link authentication flow:
-  # 1. User requests magic link (GET /login, POST /login)
-  # 2. User clicks link from email (GET /auth/:token)
-  # 3. User logs out (DELETE /logout)
+  # Email magic link flow:
+  # 1. User selects email on login screen (GET /login)
+  # 2. Email with magic link sent (POST /login)
+  # 3. Info page shown (GET /login/email_sent)
+  # 4. User clicks link from email (GET /auth/:token)
+  #
+  # SMS OTP flow:
+  # 1. User selects SMS on login screen (GET /login)
+  # 2. OTP code sent via SMS (POST /login/sms)
+  # 3. OTP form shown (GET /login/verify_otp)
+  # 4. User enters code (POST /login/verify_otp)
+  #
+  # Onboarding (first-time users):
+  # 1. After first login, user sets their name (GET/PATCH /onboarding)
 
   get "login", to: "sessions#new", as: :login
   post "login", to: "sessions#create"
+  get "login/email_sent", to: "sessions#email_sent", as: :email_sent
+  post "login/sms", to: "sessions#create_sms", as: :login_sms
+  get "login/verify_otp", to: "sessions#otp_form", as: :otp_form
+  post "login/verify_otp", to: "sessions#verify_otp", as: :verify_otp
   get "auth/:token", to: "sessions#verify", as: :auth_verify
   delete "logout", to: "sessions#destroy", as: :logout
+
+  # Onboarding (name input for new self-registered users)
+  get "onboarding", to: "onboarding#show", as: :onboarding
+  patch "onboarding", to: "onboarding#update"
 
   # =============================================================================
   # MAIN APPLICATION

@@ -11,5 +11,18 @@ FactoryBot.define do
     trait :member do
       role { "member" }
     end
+
+    trait :with_phone do
+      sequence(:phone_number) { |n| "+420777%06d" % n }
+    end
+
+    trait :phone_only do
+      email { nil }
+      sequence(:phone_number) { |n| "+420777%06d" % n }
+    end
+
+    trait :not_onboarded do
+      name { nil }
+    end
   end
 end

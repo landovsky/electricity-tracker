@@ -37,12 +37,26 @@ Rails.application.configure do
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false
 
-  # Set localhost to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  # Set host for links generated in mailer templates.
+  config.action_mailer.default_url_options = if ENV["APP_HOST"]
+    { host: URI.parse(ENV["APP_HOST"]).host, protocol: URI.parse(ENV["APP_HOST"]).scheme }
+  else
+    { host: "localhost", port: 3000 }
+  end
 
-  # Use letter_opener to preview emails in development
+  # Use letter_opener by default; switch to :smtp to send real emails
   config.action_mailer.delivery_method = :letter_opener
   config.action_mailer.perform_deliveries = true
+
+  # Gmail SMTP (uncomment delivery_method line above → :smtp to use)
+  config.action_mailer.smtp_settings = {
+    address: "smtp.gmail.com",
+    port: 587,
+    user_name: "tomas.landovsky@gmail.com",
+    password: ENV["GMAIL_APP_PASSWORD"],
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
