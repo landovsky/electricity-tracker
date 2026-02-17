@@ -1,0 +1,10 @@
+<section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+  <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 <%= header_action ? 'flex items-center justify-between' : '' %>">
+    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= title %></h2>
+    <%= header_action&.html_safe %>
+  </div>
+
+  <div class="px-4 py-4 space-y-4">
+    <%= content %>
+  </div>
+</section>

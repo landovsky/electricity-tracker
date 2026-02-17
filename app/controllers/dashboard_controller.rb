@@ -48,6 +48,9 @@ class DashboardController < ApplicationController
 
     # Visitors available for check-out (visitors with open stays)
     @visitors_for_checkout = @current_visitors
+
+    # Meters for the property (for form fields)
+    @meters = @property.meters.kept.order(:meter_type)
   end
 
   private

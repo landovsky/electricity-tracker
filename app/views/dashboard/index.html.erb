@@ -1,144 +1,24 @@
-<div class="max-w-4xl mx-auto p-6">
-  <h1 class="text-3xl font-bold mb-8">Electricity Tracker Dashboard</h1>
-
-  <%# TODO: Replace with ViewComponents for production UI %>
-  <%# Reference: prototype/index.html for final design %>
-
+<div class="max-w-lg mx-auto px-4 py-5 space-y-5">
   <% if @property.nil? %>
     <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
       <p class="text-yellow-800">No property configured. Please create a property first.</p>
     </div>
   <% else %>
-    <!-- House Status -->
-    <section class="mb-8">
-      <h2 class="text-xl font-semibold mb-4">House Status</h2>
+    <%= render Dashboard::HouseStatusComponent.new(
+      current_visitors: @current_visitors,
+      last_meter_readings: @last_meter_readings
+    ) %>
 
-      <!-- Current Visitors -->
-      <div class="mb-6">
-        <h3 class="text-sm font-medium text-gray-600 mb-2">Currently Here</h3>
-        <% if @current_visitors.any? %>
-          <ul class="space-y-2">
-            <% @current_visitors.each do |visitor| %>
-              <% stay = visitor.stays.find { |s| s.open? } %>
-              <li class="bg-blue-50 p-3 rounded">
-                <strong><%= visitor.name %></strong>
-                <% if stay&.check_in_event %>
-                  <span class="text-sm text-gray-600">
-                    - since <%= stay.check_in_event.recorded_at.strftime("%b %d, %Y") %>
-                  </span>
-                <% end %>
-              </li>
-            <% end %>
-          </ul>
-        <% else %>
-          <p class="text-gray-500 italic">Nobody is at the house right now.</p>
-        <% end %>
-      </div>
+    <%= render Dashboard::ActionFormsComponent.new(
+      visitors_for_checkin: @visitors_for_checkin,
+      visitors_for_checkout: @visitors_for_checkout,
+      meters: @meters,
+      last_readings: @last_meter_readings
+    ) %>
 
-      <!-- Last Meter Readings -->
-      <div class="mb-6">
-        <h3 class="text-sm font-medium text-gray-600 mb-2">Latest Meter Readings</h3>
-        <% if @last_meter_readings.any? %>
-          <div class="grid grid-cols-2 gap-4">
-            <% if @last_meter_readings["main"] %>
-              <div class="bg-gray-50 p-4 rounded">
-                <div class="text-sm text-gray-500"><%= @last_meter_readings["main"][:label] %></div>
-                <div class="text-2xl font-bold"><%= number_with_delimiter(@last_meter_readings["main"][:value], delimiter: ",") %> kWh</div>
-                <div class="text-xs text-gray-400"><%= @last_meter_readings["main"][:date].strftime("%b %d, %Y") %></div>
-              </div>
-            <% end %>
-            <% if @last_meter_readings["secondary"] %>
-              <div class="bg-gray-50 p-4 rounded">
-                <div class="text-sm text-gray-500"><%= @last_meter_readings["secondary"][:label] %></div>
-                <div class="text-2xl font-bold"><%= number_with_delimiter(@last_meter_readings["secondary"][:value], delimiter: ",") %> kWh</div>
-                <div class="text-xs text-gray-400"><%= @last_meter_readings["secondary"][:date].strftime("%b %d, %Y") %></div>
-              </div>
-            <% end %>
-          </div>
-        <% else %>
-          <p class="text-gray-500 italic">No meter readings recorded yet.</p>
-        <% end %>
-      </div>
-    </section>
-
-    <!-- Action Forms Section -->
-    <%# TODO: Add inline forms for check-in, check-out, and manual consumption entry %>
-    <%# TODO: Use Stimulus controllers for form interactions %>
-    <section class="mb-8 bg-gray-50 p-6 rounded-lg">
-      <h2 class="text-xl font-semibold mb-4">Actions</h2>
-      <p class="text-gray-600">
-        Check-in, check-out, and manual consumption entry forms will be implemented here.
-      </p>
-      <p class="text-sm text-gray-500 mt-2">
-        Available visitors for check-in: <%= @visitors_for_checkin.pluck(:name).join(", ").presence || "None" %>
-      </p>
-      <p class="text-sm text-gray-500">
-        Available visitors for check-out: <%= @visitors_for_checkout.pluck(:name).join(", ").presence || "None" %>
-      </p>
-    </section>
-
-    <!-- Recent Activity -->
-    <section class="mb-8">
-      <h2 class="text-xl font-semibold mb-4">Recent Activity</h2>
-
-      <!-- Recent Events (Check-ins/Check-outs) -->
-      <div class="mb-6">
-        <h3 class="text-sm font-medium text-gray-600 mb-2">Recent Check-ins/Check-outs</h3>
-        <% if @recent_events.any? %>
-          <ul class="space-y-2">
-            <% @recent_events.each do |event| %>
-              <li class="bg-white border border-gray-200 p-3 rounded">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <span class="font-medium">
-                      <%= event.event_type.titleize %>
-                    </span>
-                    <% stay = event.stay_as_check_in || event.stay_as_check_out %>
-                    <% if stay %>
-                      <span class="text-gray-600">- <%= stay.visitor.name %></span>
-                    <% end %>
-                    <div class="text-sm text-gray-500 mt-1">
-                      <% if event.meter_readings.any? %>
-                        Main: <%= number_with_delimiter(event.meter_readings.find { |r| r.meter.meter_type == "main" }&.value_kwh || 0, delimiter: ",") %> kWh
-                      <% end %>
-                    </div>
-                  </div>
-                  <div class="text-xs text-gray-400">
-                    <%= event.recorded_at.strftime("%b %d, %Y") %>
-                  </div>
-                </div>
-              </li>
-            <% end %>
-          </ul>
-        <% else %>
-          <p class="text-gray-500 italic">No recent events.</p>
-        <% end %>
-      </div>
-
-      <!-- Recent Manual Entries -->
-      <div class="mb-6">
-        <h3 class="text-sm font-medium text-gray-600 mb-2">Recent Manual Entries</h3>
-        <% if @recent_manual_entries.any? %>
-          <ul class="space-y-2">
-            <% @recent_manual_entries.each do |entry| %>
-              <li class="bg-white border border-gray-200 p-3 rounded">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <span class="font-medium"><%= entry.visitor.name %></span>
-                    <span class="text-gray-600">- <%= entry.kwh %> kWh</span>
-                    <div class="text-sm text-gray-500 mt-1"><%= entry.note %></div>
-                  </div>
-                  <div class="text-xs text-gray-400">
-                    <%= entry.date.strftime("%b %d, %Y") %>
-                  </div>
-                </div>
-              </li>
-            <% end %>
-          </ul>
-        <% else %>
-          <p class="text-gray-500 italic">No recent manual entries.</p>
-        <% end %>
-      </div>
-    </section>
+    <%= render Dashboard::RecentActivityComponent.new(
+      recent_events: @recent_events,
+      recent_manual_entries: @recent_manual_entries
+    ) %>
   <% end %>
 </div>

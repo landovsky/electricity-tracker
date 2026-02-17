@@ -1,0 +1,6 @@
+<div class="text-sm text-gray-400 italic">
+  <% if icon_class.present? %>
+    <%= render Shared::IconComponent.new(icon_class: icon_class, color: "text-gray-400 mr-1") %>
+  <% end %>
+  <%= message %>
+</div>

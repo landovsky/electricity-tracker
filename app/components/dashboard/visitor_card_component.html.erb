@@ -1,0 +1,10 @@
+<div class="flex items-center justify-between py-2 px-3 bg-blue-50 rounded-lg">
+  <div>
+    <span class="font-medium text-gray-900"><%= visitor.name %></span>
+    <span class="text-xs text-gray-500 ml-2"><%= formatted_checkin_date %></span>
+  </div>
+  <button type="button" class="text-xs bg-white border border-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-medium hover:bg-gray-50 active:bg-gray-100">
+    <%= render Shared::IconComponent.new(icon_class: "fa-right-from-bracket", color: "mr-1") %>
+    Check Out
+  </button>
+</div>
