@@ -1,0 +1,88 @@
+<h1>Readings History</h1>
+
+<div>
+  <%= form_with url: readings_history_path, method: :get do |form| %>
+    <div>
+      <%= form.label :visitor_id, "Filter by Visitor:" %>
+      <%= form.select :visitor_id, options_from_collection_for_select(@visitors, :id, :name, params[:visitor_id]), { include_blank: "All Visitors" } %>
+    </div>
+
+    <div>
+      <%= form.label :start_date, "From:" %>
+      <%= form.date_field :start_date, value: params[:start_date] %>
+    </div>
+
+    <div>
+      <%= form.label :end_date, "To:" %>
+      <%= form.date_field :end_date, value: params[:end_date] %>
+    </div>
+
+    <div>
+      <%= form.submit "Filter" %>
+    </div>
+  <% end %>
+</div>
+
+<% if @meter_reading_events.any? || @manual_consumption_entries.any? %>
+  <h2>Meter Reading Events</h2>
+  <% if @meter_reading_events.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Visitor</th>
+          <th>Meter Readings</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @meter_reading_events.each do |event| %>
+          <tr>
+            <td><%= event.recorded_at.strftime("%Y-%m-%d %H:%M") %></td>
+            <td><%= event.event_type.titleize %></td>
+            <td><%= event.visitor.name %></td>
+            <td>
+              <% event.meter_readings.each do |reading| %>
+                <%= reading.meter.label %>: <%= number_with_precision(reading.value_kwh, precision: 2) %> kWh<br>
+              <% end %>
+            </td>
+            <td><%= event.note %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No meter reading events found.</p>
+  <% end %>
+
+  <h2>Manual Consumption Entries</h2>
+  <% if @manual_consumption_entries.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Visitor</th>
+          <th>kWh</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @manual_consumption_entries.each do |entry| %>
+          <tr>
+            <td><%= entry.date.strftime("%Y-%m-%d") %></td>
+            <td><%= entry.visitor.name %></td>
+            <td><%= number_with_precision(entry.kwh, precision: 2) %></td>
+            <td><%= entry.note %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No manual consumption entries found.</p>
+  <% end %>
+<% else %>
+  <p>No readings history found for the selected filters.</p>
+<% end %>
+
+<%= link_to "Back to Dashboard", root_path %>

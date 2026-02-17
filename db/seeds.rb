@@ -183,7 +183,7 @@ create_sample_stay(
 puts "\n⚡ Creating sample manual consumption entries..."
 
 # Helper method to create manual entries if they don't exist
-def create_manual_entry(visitor:, property:, user:, days_ago:, kwh:, reason:)
+def create_manual_entry(visitor:, property:, user:, days_ago:, kwh:, note:)
   # Check if entry already exists for this visitor on this date
   date = days_ago.days.ago.to_date
   existing_entry = visitor.manual_consumption_entries.find_by(date: date)
@@ -195,11 +195,11 @@ def create_manual_entry(visitor:, property:, user:, days_ago:, kwh:, reason:)
     recorded_by_user: user,
     date: date,
     kwh: kwh,
-    reason: reason
+    note: note
   )
 
   if result.valid?
-    puts "  ✓ Manual entry for #{visitor.name} (#{days_ago} days ago): #{kwh} kWh - #{reason}"
+    puts "  ✓ Manual entry for #{visitor.name} (#{days_ago} days ago): #{kwh} kWh - #{note}"
   else
     puts "  ✗ Failed to create manual entry: #{result.errors.full_messages.join(', ')}"
   end
@@ -212,7 +212,7 @@ create_manual_entry(
   user: admin,
   days_ago: 25,
   kwh: 75.0,
-  reason: "EV charging (Tesla Model 3)"
+  note: "EV charging (Tesla Model 3)"
 )
 
 # Bob used power tools in the workshop
@@ -222,7 +222,7 @@ create_manual_entry(
   user: member,
   days_ago: 15,
   kwh: 25.0,
-  reason: "Workshop tools (circular saw, drill)"
+  note: "Workshop tools (circular saw, drill)"
 )
 
 # Charlie ran a space heater
@@ -232,7 +232,7 @@ create_manual_entry(
   user: admin,
   days_ago: 7,
   kwh: 30.0,
-  reason: "Space heater in guest room"
+  note: "Space heater in guest room"
 )
 
 # =============================================================================

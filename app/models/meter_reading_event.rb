@@ -22,6 +22,15 @@ class MeterReadingEvent < ApplicationRecord
   scope :recent, -> { order(recorded_at: :desc) }
   scope :chronological, -> { order(recorded_at: :asc) }
 
+  # Helper methods
+  def visitor
+    stay&.visitor
+  end
+
+  def stay
+    stay_as_check_in || stay_as_check_out
+  end
+
   private
 
   # C6: Event timestamps must be chronologically consistent with prior events
