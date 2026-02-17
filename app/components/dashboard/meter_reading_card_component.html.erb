@@ -1,0 +1,8 @@
+<div class="bg-gray-50 rounded-lg p-3 text-center">
+  <div class="text-xs text-gray-500 mb-1">
+    <%= render Shared::IconComponent.new(icon_class: icon_class, color: "mr-1") %>
+    <%= label %>
+  </div>
+  <div class="text-xl font-bold text-gray-900"><%= formatted_value %></div>
+  <div class="text-xs text-gray-400">kWh &middot; <%= formatted_date %></div>
+</div>
