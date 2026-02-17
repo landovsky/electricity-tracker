@@ -90,4 +90,7 @@ group :development do
   # Magic link email preview
   gem "letter_opener", "~> 1.10"
   gem "letter_opener_web", "~> 3.0"
+
+  # Live reload on file changes (CSS, ERB, etc.)
+  gem "hotwire-livereload"
 end
