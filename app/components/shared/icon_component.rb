@@ -8,7 +8,7 @@ class Shared::IconComponent < ApplicationComponent
   end
 
   def css_classes
-    classes = ["fa-#{@style}", @icon_class]
+    classes = [ "fa-#{@style}", @icon_class ]
     classes << @color if @color.present?
     classes.join(" ")
   end

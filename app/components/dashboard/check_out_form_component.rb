@@ -35,7 +35,7 @@ class Dashboard::CheckOutFormComponent < ApplicationComponent
     current_visitors.map do |visitor|
       stay = visitor.stays.find { |s| s.open? }
       checkin_date = stay&.check_in_event&.recorded_at&.strftime("%b %d") || "unknown"
-      ["#{visitor.name} (since #{checkin_date})", stay&.id]
+      [ "#{visitor.name} (since #{checkin_date})", stay&.id ]
     end
   end
 end
