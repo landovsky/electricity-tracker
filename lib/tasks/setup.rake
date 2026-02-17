@@ -29,6 +29,8 @@ namespace :app do
       puts "  Created admin user: #{u.email}"
     end
 
+    Visitor.update_all(status: "active")
+
     %w[Tomas Petr].each do |name|
       visitor = Visitor.find_or_initialize_by(name: name)
       if visitor.new_record?
