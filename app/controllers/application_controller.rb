@@ -13,7 +13,11 @@ class ApplicationController < ActionController::Base
   private
 
   def current_user
-    @current_user ||= User.kept.find_by(id: session[:user_id]) if session[:user_id]
+    @current_user ||= if session[:user_id]
+      User.kept.find_by(id: session[:user_id])
+    elsif auth_disabled?
+      User.kept.first
+    end
   end
 
   def logged_in?
@@ -21,8 +25,13 @@ class ApplicationController < ActionController::Base
   end
 
   def require_authentication
+    return if auth_disabled?
     return if logged_in?
 
     redirect_to login_path, alert: "Please log in to continue."
+  end
+
+  def auth_disabled?
+    ENV["DISABLE_AUTH"] == "true"
   end
 end
