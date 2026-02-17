@@ -10,7 +10,6 @@
 # Delegates business logic to CalculateConsumption service.
 # Accepts either 'year' param OR 'start_date'/'end_date' params.
 class ConsumptionReportsController < ApplicationController
-  before_action :require_authentication
   before_action :set_property
   before_action :set_date_range
 
@@ -81,19 +80,4 @@ class ConsumptionReportsController < ApplicationController
     errors.full_messages.join(". ")
   end
 
-  # Stub authentication method
-  # TODO: Implement proper authentication with magic link flow
-  def require_authentication
-    # For now, create or find a default user for testing
-    # In production, this should check session and redirect to login if not authenticated
-    @current_user ||= User.kept.first || User.create!(
-      email: "test@example.com",
-      name: "Test User",
-      role: :member
-    )
-  end
-
-  def current_user
-    @current_user
-  end
 end

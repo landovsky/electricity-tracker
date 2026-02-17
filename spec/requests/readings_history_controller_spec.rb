@@ -160,19 +160,16 @@ RSpec.describe ReadingsHistoryController, type: :request do
     end
   end
 
-  describe "authentication requirement" do
-    it "creates a default user for testing if none exists" do
-      User.destroy_all
-      expect {
-        get readings_history_path
-      }.to change(User, :count).by(1)
+  context "when not authenticated" do
+    before do
+      # Undo the auto-sign-in from authentication_helpers.rb
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_call_original
+      allow_any_instance_of(ApplicationController).to receive(:logged_in?).and_call_original
     end
 
-    it "uses existing user if one exists" do
-      existing_user = create(:user)
-      expect {
-        get readings_history_path
-      }.not_to change(User, :count)
+    it "redirects to login" do
+      get readings_history_path
+      expect(response).to redirect_to(login_path)
     end
   end
 end

@@ -1,11 +1,4 @@
 class DashboardController < ApplicationController
-  # Disable host authorization in test environment
-  # This is needed because test.rb config changes aren't being picked up consistently
-  skip_before_action :verify_authenticity_token if Rails.env.test?
-
-  # TODO: Enable authentication once auth system is implemented
-  # before_action :require_authentication
-
   def index
     # Single property for now (future: multi-property support)
     @property = Property.kept.first

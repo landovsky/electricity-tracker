@@ -13,7 +13,6 @@
 # - Members: can view and create visitors
 # - Admins: can edit and archive visitors
 class VisitorsController < ApplicationController
-  before_action :require_authentication
   before_action :set_visitor, only: %i[show edit update archive]
   before_action :require_admin, only: %i[edit update archive]
 
@@ -97,19 +96,4 @@ class VisitorsController < ApplicationController
     end
   end
 
-  # Stub authentication method
-  # TODO: Implement proper authentication with magic link flow
-  def require_authentication
-    # For now, create or find a default user for testing
-    # In production, this should check session and redirect to login if not authenticated
-    @current_user ||= User.kept.first || User.create!(
-      email: "test@example.com",
-      name: "Test User",
-      role: :member
-    )
-  end
-
-  def current_user
-    @current_user
-  end
 end

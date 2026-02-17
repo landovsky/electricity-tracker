@@ -8,8 +8,6 @@
 # Routes:
 # - POST /manual_consumption_entries - Create a new manual consumption entry
 class ManualConsumptionEntriesController < ApplicationController
-  before_action :require_authentication
-
   # POST /manual_consumption_entries
   #
   # Creates a manual consumption entry via CreateManualConsumptionEntry service.
@@ -74,27 +72,6 @@ class ManualConsumptionEntriesController < ApplicationController
   end
 
   private
-
-  # Stub for authentication
-  # TODO: Implement real authentication when sessions controller is complete
-  def require_authentication
-    # For now, this is a no-op stub
-    # When real authentication is implemented, this should:
-    # - Check if user is logged in (session[:user_id] present)
-    # - Redirect to login_path with flash[:error] if not authenticated
-  end
-
-  # Stub for current_user
-  # TODO: Implement real current_user when sessions controller is complete
-  def current_user
-    # For now, return the first user or create one for testing
-    # This is a temporary stub until authentication is implemented
-    @current_user ||= User.first || User.create!(
-      email: "system@example.com",
-      name: "System User",
-      role: "member"
-    )
-  end
 
   def find_visitor
     Visitor.find(params[:visitor_id])

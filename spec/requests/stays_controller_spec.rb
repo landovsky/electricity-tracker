@@ -383,25 +383,16 @@ RSpec.describe StaysController, type: :request do
     end
   end
 
-  describe "authentication requirement" do
-    it "creates a default user for testing if none exists" do
-      User.destroy_all
-      expect {
-        post stays_path, params: {
-          visitor_id: visitor.id,
-          main_meter_reading: 1000.0
-        }
-      }.to change(User, :count).by(1)
+  context "when not authenticated" do
+    before do
+      # Undo the auto-sign-in from authentication_helpers.rb
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_call_original
+      allow_any_instance_of(ApplicationController).to receive(:logged_in?).and_call_original
     end
 
-    it "uses existing user if one exists" do
-      existing_user = create(:user)
-      expect {
-        post stays_path, params: {
-          visitor_id: visitor.id,
-          main_meter_reading: 1000.0
-        }
-      }.not_to change(User, :count)
+    it "redirects to login" do
+      post stays_path, params: { visitor_id: visitor.id, main_meter_reading: 1000.0 }
+      expect(response).to redirect_to(login_path)
     end
   end
 end

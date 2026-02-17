@@ -15,8 +15,6 @@
 # On success: redirects to root with success flash
 # On failure: re-renders form with errors (for now, redirects with error flash)
 class StaysController < ApplicationController
-  before_action :require_authentication
-
   # POST /stays
   # Check-in action - creates a new stay with meter readings
   def create
@@ -142,19 +140,4 @@ class StaysController < ApplicationController
     @recent_events = property.events.kept.order(recorded_at: :desc).limit(10).includes(:visitor, :stay, :meter_reading)
   end
 
-  # Stub authentication method
-  # TODO: Implement proper authentication with magic link flow
-  def require_authentication
-    # For now, create or find a default user for testing
-    # In production, this should check session and redirect to login if not authenticated
-    @current_user ||= User.kept.first || User.create!(
-      email: "test@example.com",
-      name: "Test User",
-      role: :member
-    )
-  end
-
-  def current_user
-    @current_user
-  end
 end
