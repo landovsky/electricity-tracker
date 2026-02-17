@@ -1,0 +1,7 @@
+<% if url.present? %>
+  <%= link_to label, url, class: css_classes, data: { turbo_method: method } %>
+<% else %>
+  <button type="button" class="<%= css_classes %>">
+    <%= label %>
+  </button>
+<% end %>
