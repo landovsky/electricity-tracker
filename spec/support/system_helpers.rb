@@ -53,7 +53,11 @@ module SystemHelpers
   # @param recorded_at [Time, nil] Optional timestamp (defaults to current time)
   def perform_check_out(visitor:, main_reading:, secondary_reading: nil, note: nil, recorded_at: nil)
     within("#check-out-form") do
-      select visitor.name, from: "visitor_id"
+      # The check-out form uses stay_id, not visitor_id
+      # Find the option that contains the visitor's name
+      select_option = page.find('select#stay_id option', text: /#{Regexp.escape(visitor.name)}/)
+      select select_option.text, from: "stay_id"
+
       fill_in "recorded_at", with: (recorded_at || Time.current).strftime("%Y-%m-%dT%H:%M")
       fill_in "main_meter_reading", with: main_reading
 
@@ -71,16 +75,18 @@ module SystemHelpers
 
   # Create a manual consumption entry through the UI
   #
+  # @param visitor [Visitor, nil] The visitor (uses first available if not specified)
   # @param amount_kwh [Float] Consumption amount in kWh
   # @param date [Date, String] Date for the entry
-  # @param description [String, nil] Optional description
-  def create_manual_entry(amount_kwh:, date:, description: nil)
+  # @param note [String, nil] Optional note/description
+  def create_manual_entry(amount_kwh:, date:, note: nil, visitor: nil)
     within("#manual-entry-form") do
-      fill_in "amount_kwh", with: amount_kwh
+      select visitor.name, from: "visitor_id" if visitor.present?
+      fill_in "kwh", with: amount_kwh
       fill_in "date", with: date.is_a?(Date) ? date.strftime("%Y-%m-%d") : date
-      fill_in "description", with: description if description.present?
+      fill_in "note", with: note if note.present?
 
-      click_button "Add Entry"
+      click_button "Log Consumption"
     end
 
     wait_for_turbo
@@ -105,7 +111,7 @@ module SystemHelpers
   #
   # @param visitor [Visitor] The visitor to check for
   def expect_visitor_present(visitor)
-    within("#current-visitors") do
+    within("#house-status") do
       expect(page).to have_content(visitor.name)
     end
   end
@@ -114,7 +120,7 @@ module SystemHelpers
   #
   # @param visitor [Visitor] The visitor to check for
   def expect_visitor_absent(visitor)
-    within("#current-visitors") do
+    within("#house-status") do
       expect(page).to have_no_content(visitor.name)
     end
   end
@@ -219,7 +225,12 @@ module SystemHelpers
   # @param status [String] Expected stay status ('open' or 'closed')
   # @return [Stay, nil] The found stay or nil
   def verify_stay_exists(visitor:, status: 'open')
-    stay = Stay.kept.find_by(visitor: visitor, status: status)
+    # Use scopes instead of status column (status is computed)
+    stay = if status == 'open'
+             Stay.kept.open.find_by(visitor: visitor)
+           else
+             Stay.kept.closed.find_by(visitor: visitor)
+           end
     expect(stay).to be_present, "Expected #{status} stay for #{visitor.name} but found none"
     stay
   end
@@ -232,14 +243,15 @@ module SystemHelpers
   def verify_meter_readings(event:, main_value:, secondary_value: nil)
     expect(event).to be_present
 
-    main_meter = event.property.meters.find_by(meter_type: 'main')
-    main_reading = event.meter_readings.find_by(meter: main_meter)
+    # Get all meter readings for the event
+    main_reading = event.meter_readings.joins(:meter).find_by(meters: { meter_type: 'main' })
+    expect(main_reading).to be_present, "Expected main meter reading but found none"
     expect(main_reading.value_kwh).to eq(main_value),
       "Expected main meter reading #{main_value} but got #{main_reading.value_kwh}"
 
     if secondary_value.present?
-      secondary_meter = event.property.meters.find_by(meter_type: 'secondary')
-      secondary_reading = event.meter_readings.find_by(meter: secondary_meter)
+      secondary_reading = event.meter_readings.joins(:meter).find_by(meters: { meter_type: 'secondary' })
+      expect(secondary_reading).to be_present, "Expected secondary meter reading but found none"
       expect(secondary_reading.value_kwh).to eq(secondary_value),
         "Expected secondary meter reading #{secondary_value} but got #{secondary_reading.value_kwh}"
     end
@@ -250,11 +262,11 @@ module SystemHelpers
   # @param from [Date] Start date
   # @param to [Date] End date
   def visit_consumption_report(from:, to:)
-    visit consumption_reports_path(from: from.strftime("%Y-%m-%d"), to: to.strftime("%Y-%m-%d"))
+    visit consumption_reports_path(start_date: from.strftime("%Y-%m-%d"), end_date: to.strftime("%Y-%m-%d"))
   end
 
   # Visit the readings history page
   def visit_readings_history
-    visit readings_history_index_path
+    visit readings_history_path
   end
 end
