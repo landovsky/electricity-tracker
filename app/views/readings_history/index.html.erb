@@ -1,88 +1,166 @@
-<h1>Readings History</h1>
-
-<div>
-  <%= form_with url: readings_history_path, method: :get do |form| %>
-    <div>
-      <%= form.label :visitor_id, "Filter by Visitor:" %>
-      <%= form.select :visitor_id, options_from_collection_for_select(@visitors, :id, :name, params[:visitor_id]), { include_blank: "All Visitors" } %>
+<!-- Header -->
+<header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+  <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <%= link_to root_path, class: "text-gray-400 hover:text-gray-600" do %>
+        <i class="fa-solid fa-chevron-left"></i>
+      <% end %>
+      <h1 class="text-lg font-bold text-gray-900">
+        <i class="fa-solid fa-clock-rotate-left text-blue-600 mr-1"></i>
+        Readings History
+      </h1>
     </div>
+    <%= link_to consumption_reports_path, class: "text-sm text-blue-600 font-medium hover:text-blue-700" do %>
+      <i class="fa-solid fa-chart-pie mr-1"></i>Report
+    <% end %>
+  </div>
+</header>
 
-    <div>
-      <%= form.label :start_date, "From:" %>
-      <%= form.date_field :start_date, value: params[:start_date] %>
-    </div>
+<main class="max-w-lg mx-auto px-4 py-5 space-y-4">
 
-    <div>
-      <%= form.label :end_date, "To:" %>
-      <%= form.date_field :end_date, value: params[:end_date] %>
-    </div>
+  <!-- Filters -->
+  <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <%= form_with url: readings_history_path, method: :get, class: "px-4 py-3 space-y-3" do |form| %>
+      <div class="flex gap-2">
+        <%= form.select :visitor_id,
+            options_from_collection_for_select(@visitors, :id, :name, params[:visitor_id]),
+            { include_blank: "All visitors" },
+            class: "flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        <%= form.select :year,
+            options_for_select([
+              ["2026", "2026"],
+              ["2025", "2025"],
+              ["All time", ""]
+            ], params[:year]),
+            {},
+            class: "border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
+      <%= form.submit "Filter", class: "hidden" %>
+    <% end %>
+  </section>
 
-    <div>
-      <%= form.submit "Filter" %>
-    </div>
-  <% end %>
-</div>
+  <%
+    # Merge and sort events
+    all_events = []
 
-<% if @meter_reading_events.any? || @manual_consumption_entries.any? %>
-  <h2>Meter Reading Events</h2>
-  <% if @meter_reading_events.any? %>
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Type</th>
-          <th>Visitor</th>
-          <th>Meter Readings</th>
-          <th>Note</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @meter_reading_events.each do |event| %>
-          <tr>
-            <td><%= event.recorded_at.strftime("%Y-%m-%d %H:%M") %></td>
-            <td><%= event.event_type.titleize %></td>
-            <td><%= event.visitor.name %></td>
-            <td>
-              <% event.meter_readings.each do |reading| %>
-                <%= reading.meter.label %>: <%= number_with_precision(reading.value_kwh, precision: 2) %> kWh<br>
-              <% end %>
-            </td>
-            <td><%= event.note %></td>
-          </tr>
+    @meter_reading_events.each do |event|
+      all_events << {
+        type: event.event_type,
+        timestamp: event.recorded_at,
+        date: event.recorded_at.to_date,
+        visitor: event.visitor,
+        event: event
+      }
+    end
+
+    @manual_consumption_entries.each do |entry|
+      all_events << {
+        type: 'manual',
+        timestamp: entry.date.to_time,
+        date: entry.date,
+        visitor: entry.visitor,
+        entry: entry
+      }
+    end
+
+    all_events.sort_by! { |e| e[:timestamp] }.reverse!
+
+    # Group by month
+    events_by_month = all_events.group_by { |e| e[:date].strftime("%B %Y") }
+  %>
+
+  <% if all_events.any? %>
+    <!-- Timeline -->
+    <section class="space-y-1">
+      <% events_by_month.each do |month_label, events| %>
+        <!-- Month header -->
+        <div class="px-1 py-2">
+          <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wide"><%= month_label %></h3>
+        </div>
+
+        <% events.each do |event_data| %>
+          <% if event_data[:type] == 'manual' %>
+            <% entry = event_data[:entry] %>
+            <!-- Manual Entry -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-controller="expandable-card">
+              <button type="button" data-action="click->expandable-card#toggle" class="w-full px-4 py-3 text-left">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start gap-3">
+                    <span class="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-100 text-yellow-600 flex-shrink-0">
+                      <i class="fa-solid fa-bolt text-xs"></i>
+                    </span>
+                    <div>
+                      <div class="text-sm font-medium text-gray-900">
+                        <%= entry.visitor.name %> <span class="font-normal text-gray-500">logged <%= number_with_precision(entry.kwh, precision: 0) %> kWh</span>
+                      </div>
+                      <div class="text-xs text-gray-400 mt-0.5"><%= entry.date.strftime("%b %d, %Y") %></div>
+                    </div>
+                  </div>
+                  <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform" data-expandable-card-target="arrow"></i>
+                </div>
+              </button>
+              <div class="hidden px-4 pb-3 pt-0 ml-10 border-t border-gray-50" data-expandable-card-target="detail">
+                <div class="mt-3">
+                  <div class="text-xs"><span class="text-gray-400">Amount:</span> <span class="font-medium text-gray-700"><%= number_with_precision(entry.kwh, precision: 2) %> kWh</span></div>
+                  <% if entry.note.present? %>
+                    <div class="text-xs mt-1"><span class="text-gray-400">Note:</span> <span class="font-medium text-gray-700"><%= entry.note %></span></div>
+                  <% end %>
+                </div>
+                <div class="text-xs text-gray-400 mt-2">Recorded by: <%= entry.recorded_by_user&.name || 'Unknown' %></div>
+              </div>
+            </div>
+          <% else %>
+            <% event = event_data[:event] %>
+            <%
+              is_check_in = event.event_type == 'check_in'
+              badge_class = is_check_in ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-500'
+              icon = is_check_in ? 'fa-right-to-bracket' : 'fa-right-from-bracket'
+              action_text = is_check_in ? 'checked in' : 'checked out'
+            %>
+            <!-- Meter Reading Event -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-controller="expandable-card">
+              <button type="button" data-action="click->expandable-card#toggle" class="w-full px-4 py-3 text-left">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start gap-3">
+                    <span class="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full <%= badge_class %> flex-shrink-0">
+                      <i class="fa-solid <%= icon %> text-xs"></i>
+                    </span>
+                    <div>
+                      <div class="text-sm font-medium text-gray-900">
+                        <%= event.visitor&.name || 'Unknown' %> <span class="font-normal text-gray-500"><%= action_text %></span>
+                      </div>
+                      <div class="text-xs text-gray-400 mt-0.5"><%= event.recorded_at.strftime("%b %d, %Y") %> &middot; <%= event.recorded_at.strftime("%H:%M") %></div>
+                    </div>
+                  </div>
+                  <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform" data-expandable-card-target="arrow"></i>
+                </div>
+              </button>
+              <div class="hidden px-4 pb-3 pt-0 ml-10 border-t border-gray-50" data-expandable-card-target="detail">
+                <div class="grid grid-cols-2 gap-3 mt-3">
+                  <% event.meter_readings.each do |reading| %>
+                    <div class="text-xs">
+                      <span class="text-gray-400"><%= reading.meter.label %>:</span>
+                      <span class="font-medium text-gray-700"><%= number_with_precision(reading.value_kwh, precision: 0).gsub(',', ' ') %> kWh</span>
+                    </div>
+                  <% end %>
+                </div>
+                <% if event.note.present? %>
+                  <div class="text-xs text-gray-500 mt-2"><%= event.note %></div>
+                <% end %>
+                <div class="text-xs text-gray-400 mt-2">Recorded by: <%= event.recorded_by_user&.name || 'Unknown' %></div>
+              </div>
+            </div>
+          <% end %>
         <% end %>
-      </tbody>
-    </table>
+      <% end %>
+    </section>
   <% else %>
-    <p>No meter reading events found.</p>
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-6 text-center text-gray-500">
+        <i class="fa-solid fa-inbox text-3xl text-gray-300 mb-2"></i>
+        <p>No readings history found for the selected filters.</p>
+      </div>
+    </section>
   <% end %>
 
-  <h2>Manual Consumption Entries</h2>
-  <% if @manual_consumption_entries.any? %>
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Visitor</th>
-          <th>kWh</th>
-          <th>Note</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @manual_consumption_entries.each do |entry| %>
-          <tr>
-            <td><%= entry.date.strftime("%Y-%m-%d") %></td>
-            <td><%= entry.visitor.name %></td>
-            <td><%= number_with_precision(entry.kwh, precision: 2) %></td>
-            <td><%= entry.note %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  <% else %>
-    <p>No manual consumption entries found.</p>
-  <% end %>
-<% else %>
-  <p>No readings history found for the selected filters.</p>
-<% end %>
-
-<%= link_to "Back to Dashboard", root_path %>
+</main>

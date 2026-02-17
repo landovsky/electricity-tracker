@@ -1,42 +1,156 @@
-<h1>Consumption Report</h1>
-
-<p>
-  Date Range: <%= @start_date.strftime("%B %d, %Y") %> - <%= @end_date.strftime("%B %d, %Y") %>
-</p>
-
-<% if @report[:visitors].any? %>
-  <h2>Visitor Consumption Breakdown</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Visitor</th>
-        <th>Total kWh</th>
-        <th>Period Shares</th>
-        <th>Manual Entries</th>
-        <th>Empty House Share</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @report[:visitors].each do |visitor_data| %>
-        <tr>
-          <td><%= visitor_data[:visitor].name %></td>
-          <td><%= number_with_precision(visitor_data[:total_kwh], precision: 2) %></td>
-          <td><%= number_with_precision(visitor_data[:period_shares], precision: 2) %></td>
-          <td><%= number_with_precision(visitor_data[:manual_entries], precision: 2) %></td>
-          <td><%= number_with_precision(visitor_data[:empty_house_share], precision: 2) %></td>
-        </tr>
+<!-- Header -->
+<header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+  <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <%= link_to root_path, class: "text-gray-400 hover:text-gray-600" do %>
+        <i class="fa-solid fa-chevron-left"></i>
       <% end %>
-    </tbody>
-  </table>
+      <h1 class="text-lg font-bold text-gray-900">
+        <i class="fa-solid fa-chart-pie text-blue-600 mr-1"></i>
+        Consumption Report
+      </h1>
+    </div>
+    <%= link_to readings_history_path, class: "text-sm text-blue-600 font-medium hover:text-blue-700" do %>
+      <i class="fa-solid fa-clock-rotate-left mr-1"></i>History
+    <% end %>
+  </div>
+</header>
 
-  <p>
-    <strong>Total Consumption:</strong> <%= number_with_precision(@report[:total_consumption_kwh], precision: 2) %> kWh
-  </p>
-  <p>
-    <strong>Total Meter Delta:</strong> <%= number_with_precision(@report[:total_meter_delta_kwh], precision: 2) %> kWh
-  </p>
-<% else %>
-  <p>No consumption data found for the selected period.</p>
-<% end %>
+<main class="max-w-lg mx-auto px-4 py-5 space-y-5">
 
-<%= link_to "Back to Dashboard", root_path %>
+  <!-- Date Range Selector -->
+  <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-4 py-3 space-y-3">
+      <div class="flex gap-2">
+        <%= link_to consumption_reports_path(year: Date.today.year),
+            class: "px-3 py-1.5 text-xs font-medium rounded-full #{'bg-blue-600 text-white' if params[:year].to_i == Date.today.year || params[:year].blank?} #{'bg-gray-100 text-gray-600 hover:bg-gray-200' unless params[:year].to_i == Date.today.year && params[:year].present?}" do %>
+          This year
+        <% end %>
+        <%= link_to consumption_reports_path(year: Date.today.year - 1),
+            class: "px-3 py-1.5 text-xs font-medium rounded-full #{'bg-blue-600 text-white' if params[:year].to_i == Date.today.year - 1} #{'bg-gray-100 text-gray-600 hover:bg-gray-200' unless params[:year].to_i == Date.today.year - 1}" do %>
+          Last year
+        <% end %>
+      </div>
+      <div class="flex items-center gap-2 text-sm text-gray-500">
+        <i class="fa-solid fa-calendar-days text-gray-400 text-xs"></i>
+        <span><%= @start_date.strftime("%b %d, %Y") %></span>
+        <span>—</span>
+        <span><%= @end_date.strftime("%b %d, %Y") %></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Meter Summary -->
+  <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Period totals</h2>
+    </div>
+    <div class="grid grid-cols-2 divide-x divide-gray-100">
+      <div class="p-4 text-center">
+        <div class="text-xs text-gray-500 mb-1"><i class="fa-solid fa-gauge-high mr-1"></i>Main meter delta</div>
+        <div class="text-2xl font-bold text-gray-900"><%= number_with_precision(@report[:total_meter_delta_kwh], precision: 0) %></div>
+        <div class="text-xs text-gray-400">kWh</div>
+      </div>
+      <div class="p-4 text-center">
+        <div class="text-xs text-gray-500 mb-1"><i class="fa-solid fa-gauge mr-1"></i>Total consumption</div>
+        <div class="text-2xl font-bold text-gray-900"><%= number_with_precision(@report[:total_consumption_kwh], precision: 0) %></div>
+        <div class="text-xs text-gray-400">kWh</div>
+      </div>
+    </div>
+  </section>
+
+  <% if @report[:visitors].any? %>
+    <!-- Per-Visitor Breakdown -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Per-visitor breakdown</h2>
+      </div>
+
+      <!-- Table header -->
+      <div class="grid grid-cols-12 gap-1 px-4 py-2 border-b border-gray-100 text-xs text-gray-400 font-medium">
+        <div class="col-span-3">Visitor</div>
+        <div class="col-span-2 text-right">Shared</div>
+        <div class="col-span-2 text-right">Manual</div>
+        <div class="col-span-3 text-right">Empty&nbsp;house</div>
+        <div class="col-span-2 text-right font-semibold">Total</div>
+      </div>
+
+      <!-- Rows -->
+      <div class="divide-y divide-gray-50">
+        <% @report[:visitors].each do |visitor_data| %>
+          <div class="grid grid-cols-12 gap-1 px-4 py-3 text-sm items-center">
+            <div class="col-span-3 font-medium text-gray-900 truncate"><%= visitor_data[:visitor].name %></div>
+            <div class="col-span-2 text-right text-gray-600"><%= number_with_precision(visitor_data[:period_shares].to_f, precision: 0) %></div>
+            <div class="col-span-2 text-right text-gray-600"><%= number_with_precision(visitor_data[:manual_entries].to_f, precision: 0) %></div>
+            <div class="col-span-3 text-right text-gray-600"><%= number_with_precision(visitor_data[:empty_house_share].to_f, precision: 0) %></div>
+            <div class="col-span-2 text-right font-bold text-gray-900"><%= number_with_precision(visitor_data[:total_kwh].to_f, precision: 0) %></div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Totals row -->
+      <%
+        total_shared = @report[:visitors].sum { |v| v[:period_shares].to_f }
+        total_manual = @report[:visitors].sum { |v| v[:manual_entries].to_f }
+        total_empty_house = @report[:visitors].sum { |v| v[:empty_house_share].to_f }
+      %>
+      <div class="grid grid-cols-12 gap-1 px-4 py-3 bg-gray-50 border-t border-gray-200 text-sm font-semibold">
+        <div class="col-span-3 text-gray-700">Total</div>
+        <div class="col-span-2 text-right text-gray-700"><%= number_with_precision(total_shared, precision: 0) %></div>
+        <div class="col-span-2 text-right text-gray-700"><%= number_with_precision(total_manual, precision: 0) %></div>
+        <div class="col-span-3 text-right text-gray-700"><%= number_with_precision(total_empty_house, precision: 0) %></div>
+        <div class="col-span-2 text-right text-gray-900"><%= number_with_precision(@report[:total_consumption_kwh], precision: 0) %></div>
+      </div>
+
+      <!-- Sanity check -->
+      <%
+        total_matches = (@report[:total_consumption_kwh] - @report[:total_meter_delta_kwh]).abs < 0.01
+        banner_class = total_matches ? "bg-green-50 border-green-100 text-green-700" : "bg-yellow-50 border-yellow-100 text-yellow-700"
+        icon_class = total_matches ? "fa-circle-check" : "fa-triangle-exclamation"
+      %>
+      <div class="px-4 py-2 <%= banner_class %> border-t">
+        <p class="text-xs flex items-center gap-1.5">
+          <i class="fa-solid <%= icon_class %>"></i>
+          <% if total_matches %>
+            Total (<%= number_with_precision(@report[:total_consumption_kwh], precision: 0) %> kWh) matches main meter delta. All consumption accounted for.
+          <% else %>
+            Total (<%= number_with_precision(@report[:total_consumption_kwh], precision: 0) %> kWh) does not match main meter delta (<%= number_with_precision(@report[:total_meter_delta_kwh], precision: 0) %> kWh). Please review.
+          <% end %>
+        </p>
+      </div>
+    </section>
+
+    <!-- Per-visitor visual bars -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Per-visitor summary</h2>
+      </div>
+      <div class="px-4 py-3 space-y-3">
+        <%
+          colors = ['blue-500', 'emerald-500', 'amber-500', 'purple-500', 'pink-500', 'indigo-500']
+          @report[:visitors].each_with_index do |visitor_data, index|
+            percentage = @report[:total_consumption_kwh] > 0 ? (visitor_data[:total_kwh].to_f / @report[:total_consumption_kwh] * 100).round : 0
+            color = colors[index % colors.length]
+        %>
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="font-medium text-gray-900"><%= visitor_data[:visitor].name %></span>
+              <span class="text-gray-600"><%= number_with_precision(visitor_data[:total_kwh].to_f, precision: 0) %> kWh <span class="text-gray-400">(<%= percentage %>%)</span></span>
+            </div>
+            <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full bg-<%= color %> rounded-full" style="width: <%= percentage %>%"></div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  <% else %>
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-6 text-center text-gray-500">
+        <i class="fa-solid fa-inbox text-3xl text-gray-300 mb-2"></i>
+        <p>No consumption data found for the selected period.</p>
+      </div>
+    </section>
+  <% end %>
+
+</main>
