@@ -29,20 +29,6 @@ namespace :app do
       puts "  Created admin user: #{u.email}"
     end
 
-    Visitor.update_all(status: "active")
-
-    %w[Tomas Petr].each do |name|
-      visitor = Visitor.find_or_initialize_by(name: name)
-      if visitor.new_record?
-        visitor.status = :active
-        visitor.save!
-        puts "  Created visitor: #{visitor.name}"
-      elsif visitor.status.nil?
-        visitor.update_column(:status, "active")
-        puts "  Fixed visitor status: #{visitor.name}"
-      end
-    end
-
     puts "Setup complete. Property: #{property.name}, Meters: #{Meter.count}, Users: #{User.count}, Visitors: #{Visitor.count}"
   end
 end
