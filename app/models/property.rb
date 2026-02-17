@@ -9,4 +9,13 @@ class Property < ApplicationRecord
 
   # Validations
   validates :name, presence: true
+
+  # Visitors with open stays at this property
+  def current_visitors
+    Visitor.kept
+           .joins(:stays)
+           .where(stays: { check_out_event_id: nil, property_id: id })
+           .distinct
+           .order(:name)
+  end
 end
