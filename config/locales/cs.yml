@@ -85,6 +85,11 @@ cs:
   layout:
     title: "Měřič spotřeby"
     log_out: "Odhlásit"
+    nav:
+      dashboard: "Přehled"
+      reports: "Spotřeba"
+      history: "Historie"
+      visitors: "Návštěvníci"
 
   # Authentication
   sessions:

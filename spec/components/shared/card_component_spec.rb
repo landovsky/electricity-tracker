@@ -12,10 +12,10 @@ RSpec.describe Shared::CardComponent, type: :component do
   end
 
   it "renders header action when provided" do
-    header_action = '<a href="/history" class="text-brand-600">View all</a>'
+    header_action = '<a href="/readings_history" class="text-brand-600">View all</a>'
     render_inline(described_class.new(title: "Recent Activity", header_action: header_action)) { "Content" }
 
-    expect(page).to have_link("View all", href: "/history")
+    expect(page).to have_link("View all", href: "/readings_history")
     expect(page).to have_css(".flex.items-center.justify-between")
   end
 

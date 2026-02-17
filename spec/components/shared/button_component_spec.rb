@@ -25,9 +25,9 @@ RSpec.describe Shared::ButtonComponent, type: :component do
   end
 
   it "renders as link when url is provided" do
-    render_inline(described_class.new(label: "View All", url: "/history"))
+    render_inline(described_class.new(label: "View All", url: "/readings_history"))
 
-    expect(page).to have_link("View All", href: "/history")
+    expect(page).to have_link("View All", href: "/readings_history")
   end
 
   it "applies correct method to link" do
