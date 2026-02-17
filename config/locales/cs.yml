@@ -71,6 +71,11 @@ cs:
       manual_consumption_entry: "Ruční záznam spotřeby"
       user: "Uživatel"
       property: "Nemovitost"
+    enums:
+      visitor:
+        status:
+          active: "Aktivní"
+          archived: "Archivovaný"
 
   errors:
     messages:

@@ -1,36 +1,14 @@
-<h1><%= t("visitors.edit.title") %></h1>
+<div class="max-w-lg mx-auto px-4 py-5 space-y-5">
+  <div class="flex items-center gap-3">
+    <%= link_to visitor_path(@visitor), class: "text-gray-400 hover:text-gray-600 transition-colors" do %>
+      <i class="fa-solid fa-arrow-left"></i>
+    <% end %>
+    <h1 class="text-lg font-bold text-gray-900"><%= t("visitors.edit.title") %></h1>
+  </div>
 
-<%= form_with model: @visitor do |form| %>
-  <% if @visitor.errors.any? %>
-    <div>
-      <h2><%= t("errors.messages.not_saved", count: @visitor.errors.count, resource: Visitor.model_name.human) %></h2>
-      <ul>
-        <% @visitor.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+  <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-4 py-4">
+      <%= render "form", visitor: @visitor %>
     </div>
-  <% end %>
-
-  <div>
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
-
-  <div>
-    <%= form.label :status %>
-    <%= form.select :status, Visitor.statuses.keys, {}, {} %>
-  </div>
-
-  <div>
-    <%= form.label :note %>
-    <%= form.text_area :note %>
-  </div>
-
-  <div>
-    <%= form.submit %>
-  </div>
-<% end %>
-
-<%= link_to t("visitors.edit.show"), visitor_path(@visitor) %>
-<%= link_to t("visitors.edit.back"), visitors_path %>
+  </section>
+</div>

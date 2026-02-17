@@ -1,29 +1,73 @@
-<h1><%= @visitor.name %></h1>
-
-<p><%= t("visitors.show.status") %> <%= @visitor.status %></p>
-<p><%= t("visitors.show.note") %> <%= @visitor.note %></p>
-
-<h2><%= t("visitors.show.stays") %></h2>
-<% if @stays.any? %>
-  <ul>
-    <% @stays.each do |stay| %>
-      <li><%= t("visitors.show.stay_from", date: stay.created_at) %></li>
+<div class="max-w-lg mx-auto px-4 py-5 space-y-5">
+  <%# Header with back link %>
+  <div class="flex items-center gap-3">
+    <%= link_to visitors_path, class: "text-gray-400 hover:text-gray-600 transition-colors" do %>
+      <i class="fa-solid fa-arrow-left"></i>
     <% end %>
-  </ul>
-<% else %>
-  <p><%= t("visitors.show.no_stays") %></p>
-<% end %>
-
-<h2><%= t("visitors.show.manual_entries") %></h2>
-<% if @manual_entries.any? %>
-  <ul>
-    <% @manual_entries.each do |entry| %>
-      <li><%= t("visitors.show.entry_format", date: entry.date, kwh: entry.kwh) %></li>
+    <h1 class="text-lg font-bold text-gray-900"><%= @visitor.name %></h1>
+    <% if @visitor.active? %>
+      <span class="text-xs font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded-full"><%= I18n.t("activerecord.enums.visitor.status.active", default: "Aktivní") %></span>
+    <% else %>
+      <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full"><%= I18n.t("activerecord.enums.visitor.status.archived", default: "Archivovaný") %></span>
     <% end %>
-  </ul>
-<% else %>
-  <p><%= t("visitors.show.no_entries") %></p>
-<% end %>
+  </div>
 
-<%= link_to t("visitors.show.edit"), edit_visitor_path(@visitor) %>
-<%= link_to t("visitors.show.back"), visitors_path %>
+  <%# Visitor info card %>
+  <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("visitors.show.note") %></h2>
+      <%= link_to edit_visitor_path(@visitor), class: "text-sm text-brand-600 font-medium hover:text-brand-700" do %>
+        <i class="fa-solid fa-pen-to-square mr-1"></i><%= t("visitors.show.edit") %>
+      <% end %>
+    </div>
+    <div class="px-4 py-4">
+      <% if @visitor.note.present? %>
+        <p class="text-sm text-gray-700"><%= @visitor.note %></p>
+      <% else %>
+        <p class="text-sm text-gray-400 italic">—</p>
+      <% end %>
+    </div>
+  </section>
+
+  <%# Stays history %>
+  <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("visitors.show.stays") %></h2>
+    </div>
+    <div class="px-4 py-4">
+      <% if @stays.any? %>
+        <ul class="space-y-2">
+          <% @stays.each do |stay| %>
+            <li class="flex items-center gap-2 text-sm text-gray-700">
+              <i class="fa-solid fa-calendar-day text-gray-400 text-xs"></i>
+              <%= t("visitors.show.stay_from", date: I18n.l(stay.created_at, format: :short)) %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-sm text-gray-400 italic"><%= t("visitors.show.no_stays") %></p>
+      <% end %>
+    </div>
+  </section>
+
+  <%# Manual entries %>
+  <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("visitors.show.manual_entries") %></h2>
+    </div>
+    <div class="px-4 py-4">
+      <% if @manual_entries.any? %>
+        <ul class="space-y-2">
+          <% @manual_entries.each do |entry| %>
+            <li class="flex items-center gap-2 text-sm text-gray-700">
+              <i class="fa-solid fa-bolt text-yellow-500 text-xs"></i>
+              <%= t("visitors.show.entry_format", date: I18n.l(entry.date), kwh: entry.kwh) %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-sm text-gray-400 italic"><%= t("visitors.show.no_entries") %></p>
+      <% end %>
+    </div>
+  </section>
+</div>
