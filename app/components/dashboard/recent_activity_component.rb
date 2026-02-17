@@ -43,8 +43,8 @@ class Dashboard::RecentActivityComponent < ApplicationComponent
     main = readings.find { |r| r.meter.meter_type == "main" }
     secondary = readings.find { |r| r.meter.meter_type == "secondary" }
 
-    parts << I18n.t("dashboard.recent_activity.main_reading", value: helpers.number_with_delimiter(main.value_kwh, delimiter: " ")) if main
-    parts << "#{secondary.meter.label}: #{helpers.number_with_delimiter(secondary.value_kwh, delimiter: ',')}" if secondary
+    parts << I18n.t("dashboard.recent_activity.main_reading", value: helpers.number_with_delimiter(main.value_kwh)) if main
+    parts << "#{secondary.meter.label}: #{helpers.number_with_delimiter(secondary.value_kwh)}" if secondary
 
     parts.join(" &middot; ").html_safe
   end

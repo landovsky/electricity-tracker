@@ -3,7 +3,8 @@
 <%# Update recent activity %>
 <%= turbo_stream.replace "recent-activity" do %>
   <%= render Dashboard::RecentActivityComponent.new(
-    recent_events: @recent_events
+    recent_events: @recent_events,
+    recent_manual_entries: @recent_manual_entries
   ) %>
 <% end %>
 

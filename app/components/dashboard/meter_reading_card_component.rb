@@ -11,7 +11,7 @@ class Dashboard::MeterReadingCardComponent < ApplicationComponent
   attr_reader :label, :value, :date, :icon_class
 
   def formatted_value
-    helpers.number_with_delimiter(value, delimiter: ",")
+    helpers.number_with_delimiter(value)
   end
 
   def formatted_date

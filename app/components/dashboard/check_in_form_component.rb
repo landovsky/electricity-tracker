@@ -29,7 +29,7 @@ class Dashboard::CheckInFormComponent < ApplicationComponent
     return "" unless reading
 
     I18n.t("dashboard.check_in_form.last_reading",
-           value: helpers.number_with_delimiter(reading[:value], delimiter: " "),
+           value: helpers.number_with_delimiter(reading[:value]),
            date: I18n.l(reading[:date].to_date, format: :short))
   end
 end

@@ -113,16 +113,24 @@ class ManualConsumptionEntriesController < ApplicationController
     @visitors_for_checkout = @current_visitors
     @all_visitors = Visitor.kept.order(:name)
     @last_meter_readings = property.meters.map do |meter|
-      reading = meter.meter_readings.kept.order(recorded_at: :desc).first
+      reading = meter.meter_readings.kept.joins(:meter_reading_event).order("meter_reading_events.recorded_at DESC").first
       next unless reading
 
       [ meter.meter_type, {
         label: meter.label,
-        value: reading.value,
-        date: reading.recorded_at
+        value: reading.value_kwh,
+        date: reading.meter_reading_event.recorded_at
       } ]
     end.compact.to_h
     @meters = property.meters.kept.order(meter_type: :asc)
-    @recent_events = property.events.kept.order(recorded_at: :desc).limit(10).includes(:visitor, :stay, :meter_reading)
+    @recent_events = MeterReadingEvent.kept
+                                      .includes(:meter_readings, :stay_as_check_in, :stay_as_check_out)
+                                      .recent
+                                      .limit(10)
+    @recent_manual_entries = ManualConsumptionEntry.kept
+                                                    .where(property_id: property.id)
+                                                    .includes(:visitor)
+                                                    .recent
+                                                    .limit(5)
   end
 end

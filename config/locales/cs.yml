@@ -125,7 +125,7 @@ cs:
     house_status:
       title: "Elektřina Suchá"
       currently_here: "Kdo tu právě je?"
-      nobody_here: "V chatě momentálně nikdo není."
+      nobody_here: "Momentálně tu nikdo není, nebo se nezapsal."
       latest_readings: "Poslední odečty měřičů"
       no_readings: "Zatím nebyly zaznamenány žádné odečty."
     actions:
@@ -232,7 +232,7 @@ cs:
     visitor: "Návštěvník"
     shared: "Sdílená"
     manual: "Ruční"
-    empty_house: "Prázdná chata"
+    empty_house: "Prázdná chalupa"
     total: "Celkem"
     total_matches: "Celkem (%{total} kWh) odpovídá změně hlavního měřiče. Veškerá spotřeba je přiřazena."
     total_mismatch: "Celkem (%{total} kWh) neodpovídá změně hlavního měřiče (%{delta} kWh). Prosím zkontrolujte."
