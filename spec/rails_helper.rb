@@ -91,4 +91,46 @@ RSpec.configure do |config|
     # Suppress Audited deprecation warnings in test environment
     Audited.store[:audited_user] = nil if defined?(Audited)
   end
+
+  # System test configuration
+  config.before(:each, type: :system) do
+    # Try to use headless Chrome if available, fall back to rack_test
+    begin
+      if ENV["CAPYBARA_DRIVER"] == "rack_test"
+        driven_by :rack_test
+      elsif ENV["HEADLESS"] == "false"
+        driven_by :selenium_chrome
+      else
+        driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400]
+      end
+    rescue => e
+      # Fall back to rack_test if Selenium fails (e.g., Chrome not available)
+      warn "⚠️  Selenium not available (#{e.message}), falling back to rack_test"
+      driven_by :rack_test
+    end
+  end
+
+  # Include SystemHelpers for system tests
+  config.include SystemHelpers, type: :system
+end
+
+# Configure Capybara for system tests
+Capybara.register_driver :headless_chrome do |app|
+  options = Selenium::WebDriver::Chrome::Options.new
+  options.add_argument('--headless=new')  # Use new headless mode
+  options.add_argument('--no-sandbox')
+  options.add_argument('--disable-dev-shm-usage')
+  options.add_argument('--disable-gpu')
+  options.add_argument('--disable-software-rasterizer')
+  options.add_argument('--window-size=1400,1400')
+
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+end
+
+Capybara.configure do |config|
+  config.default_max_wait_time = 5
+  config.server = :puma, { Silent: true }
+  config.app_host = 'http://localhost'
+  config.server_host = 'localhost'
+  config.server_port = 3001 + ENV['TEST_ENV_NUMBER'].to_i
 end
