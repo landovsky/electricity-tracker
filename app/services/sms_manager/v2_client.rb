@@ -30,7 +30,7 @@ module SmsManager
       request = Net::HTTP::Post.new(uri.path)
       request["x-api-key"] = @api_key
       request["Content-Type"] = "application/json"
-      request.body = { body: body, to: [{ phone_number: phone_number }] }.to_json
+      request.body = { body: body, to: [ { phone_number: phone_number } ] }.to_json
 
       response = http.request(request)
       parse_response(response)
