@@ -1,0 +1,40 @@
+<section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+  <!-- Tab bar (non-functional - interactivity is workspace-37) -->
+  <div class="flex border-b border-gray-100">
+    <button type="button" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-brand-600 text-brand-600">
+      <%= render Shared::IconComponent.new(icon_class: "fa-right-to-bracket", color: "mr-1") %>
+      Check In
+    </button>
+    <button type="button" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500">
+      <%= render Shared::IconComponent.new(icon_class: "fa-right-from-bracket", color: "mr-1") %>
+      Check Out
+    </button>
+    <button type="button" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500">
+      <%= render Shared::IconComponent.new(icon_class: "fa-bolt", color: "mr-1") %>
+      Log Entry
+    </button>
+  </div>
+
+  <!-- Check In Form (visible by default) -->
+  <div class="p-4">
+    <%= render Dashboard::CheckInFormComponent.new(
+      visitors: visitors_for_checkin,
+      last_readings: last_readings,
+      meters: meters
+    ) %>
+  </div>
+
+  <!-- Check Out Form (hidden - will be shown via Stimulus in workspace-37) -->
+  <div class="p-4 hidden">
+    <%= render Dashboard::CheckOutFormComponent.new(
+      current_visitors: visitors_for_checkout,
+      last_readings: last_readings,
+      meters: meters
+    ) %>
+  </div>
+
+  <!-- Manual Entry Form (hidden - will be shown via Stimulus in workspace-37) -->
+  <div class="p-4 hidden">
+    <%= render Dashboard::ManualEntryFormComponent.new(visitors: all_visitors) %>
+  </div>
+</section>
