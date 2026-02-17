@@ -1,0 +1,42 @@
+<h1>Consumption Report</h1>
+
+<p>
+  Date Range: <%= @start_date.strftime("%B %d, %Y") %> - <%= @end_date.strftime("%B %d, %Y") %>
+</p>
+
+<% if @report[:visitors].any? %>
+  <h2>Visitor Consumption Breakdown</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Visitor</th>
+        <th>Total kWh</th>
+        <th>Period Shares</th>
+        <th>Manual Entries</th>
+        <th>Empty House Share</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @report[:visitors].each do |visitor_data| %>
+        <tr>
+          <td><%= visitor_data[:visitor].name %></td>
+          <td><%= number_with_precision(visitor_data[:total_kwh], precision: 2) %></td>
+          <td><%= number_with_precision(visitor_data[:period_shares], precision: 2) %></td>
+          <td><%= number_with_precision(visitor_data[:manual_entries], precision: 2) %></td>
+          <td><%= number_with_precision(visitor_data[:empty_house_share], precision: 2) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <p>
+    <strong>Total Consumption:</strong> <%= number_with_precision(@report[:total_consumption_kwh], precision: 2) %> kWh
+  </p>
+  <p>
+    <strong>Total Meter Delta:</strong> <%= number_with_precision(@report[:total_meter_delta_kwh], precision: 2) %> kWh
+  </p>
+<% else %>
+  <p>No consumption data found for the selected period.</p>
+<% end %>
+
+<%= link_to "Back to Dashboard", root_path %>
