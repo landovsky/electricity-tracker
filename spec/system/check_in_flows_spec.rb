@@ -112,7 +112,7 @@ RSpec.describe "Visitor Check-In Flows", type: :system do
         select visitor1.name, from: "visitor_id"
         fill_in "main_meter_reading", with: 1000.0
         # Leave secondary_meter_reading blank
-        click_button "Check In"
+        click_button I18n.t("dashboard.check_in_form.submit")
       end
 
       # Verify UI State - flash message after redirect
@@ -283,7 +283,7 @@ RSpec.describe "Visitor Check-In Flows", type: :system do
           select visitor1.name, from: "visitor_id"
           fill_in "secondary_meter_reading", with: 500.0
           # Leave main_meter_reading blank
-          click_button "Check In"
+          click_button I18n.t("dashboard.check_in_form.submit")
         end
 
         # Verify UI State - should show error
@@ -340,7 +340,7 @@ RSpec.describe "Visitor Check-In Flows", type: :system do
         select visitor1.name, from: "visitor_id"
         fill_in "secondary_meter_reading", with: 500.0
         # Leave main_meter_reading blank
-        click_button "Check In"
+        click_button I18n.t("dashboard.check_in_form.submit")
       end
 
       # Verify UI State - should show error
@@ -375,7 +375,7 @@ RSpec.describe "Visitor Check-In Flows", type: :system do
         select visitor1.name, from: "visitor_id"
         fill_in "main_meter_reading", with: 1000.0
         # Leave secondary_meter_reading blank
-        click_button "Check In"
+        click_button I18n.t("dashboard.check_in_form.submit")
       end
 
       # Verify UI State
@@ -459,7 +459,7 @@ RSpec.describe "Visitor Check-In Flows", type: :system do
         fill_in "main_meter_reading", with: 1000.0
         fill_in "secondary_meter_reading", with: 500.0
         # Leave note blank
-        click_button "Check In"
+        click_button I18n.t("dashboard.check_in_form.submit")
       end
 
       # Verify UI State

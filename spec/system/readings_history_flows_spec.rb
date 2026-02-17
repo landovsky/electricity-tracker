@@ -76,8 +76,8 @@ RSpec.describe "Readings History Flows", type: :system do
     # Verify meter reading events are displayed
     expect(page).to have_content("Alice")
     expect(page).to have_content("Bob")
-    expect(page).to have_content("Check In")
-    expect(page).to have_content("Check Out")
+    expect(page).to have_content(I18n.t("history.checked_in"))
+    expect(page).to have_content(I18n.t("history.checked_out"))
 
     # Verify meter readings are shown with correct labels and values
     expect(page).to have_content("Main meter: 1000.00 kWh")
@@ -268,8 +268,8 @@ RSpec.describe "Readings History Flows", type: :system do
     visit_readings_history
 
     # UI State: Verify both check-in and check-out events are displayed
-    expect(page).to have_content("Check In")
-    expect(page).to have_content("Check Out")
+    expect(page).to have_content(I18n.t("history.checked_in"))
+    expect(page).to have_content(I18n.t("history.checked_out"))
 
     # Verify check-in readings
     expect(page).to have_content("Main meter: 1000.00 kWh")

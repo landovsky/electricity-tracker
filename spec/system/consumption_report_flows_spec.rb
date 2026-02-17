@@ -27,7 +27,7 @@ RSpec.describe "Consumption Report Flows", type: :system do
         visit_consumption_report(from: Date.new(2026, 1, 1), to: Date.new(2026, 1, 10))
 
         # UI State Verification
-        expect(page).to have_content("Consumption Report")
+        expect(page).to have_content(I18n.t("reports.title"))
         expect(page).to have_content("January 01, 2026 - January 10, 2026")
         expect(page).to have_content("Alice")
         expect(page).to have_content("200.00") # Total consumption
@@ -79,7 +79,7 @@ RSpec.describe "Consumption Report Flows", type: :system do
         visit_consumption_report(from: Date.new(2026, 1, 1), to: Date.new(2026, 1, 15))
 
         # UI State Verification
-        expect(page).to have_content("Consumption Report")
+        expect(page).to have_content(I18n.t("reports.title"))
         expect(page).to have_content("Alice")
         expect(page).to have_content("Bob")
 

@@ -256,7 +256,7 @@ RSpec.describe "Check-out Flows", type: :system do
           # main_meter_reading intentionally left blank
           fill_in "secondary_meter_reading", with: 525.0
 
-          click_button "Check Out"
+          click_button I18n.t("dashboard.check_out_form.submit")
         end
 
         wait_for_turbo
@@ -564,7 +564,7 @@ RSpec.describe "Check-out Flows", type: :system do
       # Alice has no open stay, so she should not appear in the check-out form dropdown
       within("#check-out-form") do
         # The form should show empty state since no one is checked in
-        expect(page).to have_content("No visitors to check out")
+        expect(page).to have_content(I18n.t("dashboard.check_out_form.no_visitors"))
       end
     end
 
@@ -646,7 +646,7 @@ RSpec.describe "Check-out Flows", type: :system do
 
       # Check-out form should show empty state
       within("#check-out-form") do
-        expect(page).to have_content("No visitors to check out")
+        expect(page).to have_content(I18n.t("dashboard.check_out_form.no_visitors"))
       end
     end
   end

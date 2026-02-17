@@ -21,7 +21,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
   before do
     visit root_path
     # Switch to manual entry tab
-    click_button "Log Entry"
+    click_button I18n.t("dashboard.actions.log_entry")
   end
 
   describe "happy path scenarios" do
@@ -162,7 +162,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
 
       # When creating a manual entry during empty period
       visit root_path
-      click_button "Log Entry"
+      click_button I18n.t("dashboard.actions.log_entry")
 
       create_manual_entry(
         visitor: alice,
@@ -200,7 +200,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
 
       # When creating a manual entry during active stay period
       visit root_path
-      click_button "Log Entry"
+      click_button I18n.t("dashboard.actions.log_entry")
 
       create_manual_entry(
         visitor: alice,
@@ -233,7 +233,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
       )
 
       visit root_path
-      click_button "Log Entry"
+      click_button I18n.t("dashboard.actions.log_entry")
 
       # Second entry on same day, different visitor
       within("#manual-entry-form") do
@@ -270,7 +270,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
 
       # When creating a manual entry for the same day
       visit root_path
-      click_button "Log Entry"
+      click_button I18n.t("dashboard.actions.log_entry")
 
       create_manual_entry(
         visitor: alice,
@@ -301,7 +301,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
 
       # When creating a manual entry for the check-out day
       visit root_path
-      click_button "Log Entry"
+      click_button I18n.t("dashboard.actions.log_entry")
 
       create_manual_entry(
         visitor: alice,

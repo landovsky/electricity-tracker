@@ -72,7 +72,7 @@ RSpec.describe MeterReadingEvent, type: :model do
       event = MeterReadingEvent.new(recorded_at: 3.days.ago, event_type: "check_in")
       event.meter_readings.build(meter: meter, value_kwh: 50)
       expect(event).not_to be_valid
-      expect(event.errors[:recorded_at]).to include(match(/must be after or equal to the previous event/))
+      expect(event.errors[:recorded_at]).to include(match(/musí být po předchozí události/))
     end
   end
 
@@ -92,7 +92,7 @@ RSpec.describe MeterReadingEvent, type: :model do
       event.meter_readings.create!(meter: secondary_meter, value_kwh: 50)
       event.reload
       expect(event).not_to be_valid
-      expect(event.errors[:base]).to include("Main meter reading is required")
+      expect(event.errors[:base]).to include(I18n.t("activerecord.errors.models.meter_reading_event.attributes.base.main_meter_required"))
     end
 
     it "is valid when both main and secondary meter readings are present" do

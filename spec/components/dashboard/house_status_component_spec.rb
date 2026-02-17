@@ -20,8 +20,8 @@ RSpec.describe Dashboard::HouseStatusComponent, type: :component do
       last_meter_readings: last_meter_readings
     ))
 
-    expect(page).to have_css("h2", text: "House Status")
-    expect(page).to have_text("Currently here")
+    expect(page).to have_css("h2", text: I18n.t("dashboard.house_status.title"))
+    expect(page).to have_text(I18n.t("dashboard.house_status.currently_here"))
     expect(page).to have_text("Alice")
   end
 
@@ -31,7 +31,7 @@ RSpec.describe Dashboard::HouseStatusComponent, type: :component do
       last_meter_readings: last_meter_readings
     ))
 
-    expect(page).to have_text("Nobody is at the house right now.")
+    expect(page).to have_text(I18n.t("dashboard.house_status.nobody_here"))
   end
 
   it "renders meter readings" do

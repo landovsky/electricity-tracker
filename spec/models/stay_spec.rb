@@ -135,7 +135,7 @@ RSpec.describe Stay, type: :model do
       it "prevents creating another open stay" do
         stay = Stay.new(visitor: visitor, property: property, check_in_event: check_in2)
         expect(stay).not_to be_valid
-        expect(stay.errors[:base]).to include("Visitor already has an open stay")
+        expect(stay.errors[:base]).to include(I18n.t("activerecord.errors.models.stay.attributes.base.visitor_open_stay"))
       end
 
       it "allows the existing open stay to be updated" do

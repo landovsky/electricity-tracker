@@ -20,7 +20,7 @@ RSpec.describe "Dashboard", type: :system do
 
     # Verify page loaded successfully
     expect(page.status_code).to eq(200)
-    expect(page).to have_content("House Status")
+    expect(page).to have_content(I18n.t("dashboard.house_status.title"))
   end
 
   scenario "displays check-in and check-out forms" do

@@ -30,8 +30,14 @@ namespace :app do
     end
 
     %w[Tomas Petr].each do |name|
-      Visitor.find_or_create_by!(name: name) do |v|
-        puts "  Created visitor: #{v.name}"
+      visitor = Visitor.find_or_initialize_by(name: name)
+      if visitor.new_record?
+        visitor.status = :active
+        visitor.save!
+        puts "  Created visitor: #{visitor.name}"
+      elsif visitor.status.nil?
+        visitor.update_column(:status, "active")
+        puts "  Fixed visitor status: #{visitor.name}"
       end
     end
 

@@ -12,6 +12,8 @@ cs:
         less_than: "musí být menší než %{count}"
         too_short: "je příliš krátké (minimum je %{count} znaků)"
         too_long: "je příliš dlouhé (maximum je %{count} znaků)"
+        record_invalid: "Ověření selhalo: %{errors}"
+        inclusion: "není v seznamu povolených hodnot"
       models:
         stay:
           attributes:
@@ -121,14 +123,14 @@ cs:
   dashboard:
     no_property: "Nemovitost není nastavena. Nejprve prosím vytvořte nemovitost."
     house_status:
-      title: "Stav chaty"
-      currently_here: "Právě zde"
+      title: "Elektřina Suchá"
+      currently_here: "Kdo tu právě je?"
       nobody_here: "V chatě momentálně nikdo není."
       latest_readings: "Poslední odečty měřičů"
       no_readings: "Zatím nebyly zaznamenány žádné odečty."
     actions:
-      check_in: "Příchod"
-      check_out: "Odchod"
+      check_in: "Příjezd"
+      check_out: "Odjezd"
       log_entry: "Ruční záznam"
     check_in_form:
       visitor: "Návštěvník"
@@ -138,7 +140,7 @@ cs:
       optional: "(nepovinné)"
       note: "Poznámka"
       note_placeholder: "např. víkendový pobyt"
-      submit: "Příchod"
+      submit: "Zaznamenat příjezd"
       last_reading: "Poslední odečet: %{value} kWh (%{date})"
     check_out_form:
       visitor: "Návštěvník"
@@ -147,7 +149,7 @@ cs:
       optional: "(nepovinné)"
       note: "Poznámka"
       note_placeholder: "např. odjezd brzy ráno"
-      submit: "Odchod"
+      submit: "Zaznamenat odjezd"
       no_visitors: "Žádní návštěvníci k odhlášení."
       since: "od %{date}"
       last_reading: "Poslední odečet: %{value} kWh (%{date})"
@@ -169,14 +171,14 @@ cs:
       unknown: "Neznámý"
       main_reading: "Hlavní: %{value}"
     visitor_card:
-      check_out: "Odchod"
+      check_out: "Odjezd"
       recently: "nedávno"
       since: "od %{date}"
 
   # Stays controller
   stays:
     check_in_success: "%{name} — příchod zaznamenán."
-    check_out_success: "%{name} — odchod zaznamenán."
+    check_out_success: "%{name} — odjezd zaznamenán."
     not_found: "Pobyt nebyl nalezen."
 
   # Manual consumption entries controller
@@ -245,8 +247,8 @@ cs:
     all_time: "Celé období"
     filter: "Filtrovat"
     logged: "zaznamenal/a %{kwh} kWh"
-    checked_in: "příchod"
-    checked_out: "odchod"
+    checked_in: "příjezd"
+    checked_out: "odjezd"
     amount: "Množství:"
     note: "Poznámka:"
     recorded_by: "Zaznamenal/a: %{name}"

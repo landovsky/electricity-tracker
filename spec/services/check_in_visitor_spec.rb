@@ -217,7 +217,7 @@ RSpec.describe CheckInVisitor, type: :service do
       outcome = described_class.run(params)
 
       expect(outcome).not_to be_valid
-      expect(outcome.errors[:base].first).to include("must be greater than or equal to the previous reading")
+      expect(outcome.errors[:base].first).to include("musí být větší nebo roven předchozímu odečtu")
     end
 
     it "fails when secondary meter reading decreases" do
@@ -229,7 +229,7 @@ RSpec.describe CheckInVisitor, type: :service do
       outcome = described_class.run(params)
 
       expect(outcome).not_to be_valid
-      expect(outcome.errors[:base].first).to include("must be greater than or equal to the previous reading")
+      expect(outcome.errors[:base].first).to include("musí být větší nebo roven předchozímu odečtu")
     end
 
     it "succeeds when readings are equal (no consumption)" do
@@ -272,7 +272,7 @@ RSpec.describe CheckInVisitor, type: :service do
       outcome = described_class.run(valid_params)
 
       expect(outcome).not_to be_valid
-      expect(outcome.errors[:visitor].first).to include("already has an open stay")
+      expect(outcome.errors[:visitor].first).to include("má otevřený pobyt")
     end
 
     it "allows check-in after previous stay is closed" do
@@ -326,7 +326,7 @@ RSpec.describe CheckInVisitor, type: :service do
       outcome = described_class.run(params)
 
       expect(outcome).not_to be_valid
-      expect(outcome.errors[:recorded_at].first).to include("must be after or equal to the previous event")
+      expect(outcome.errors[:recorded_at].first).to include("musí být po předchozí události")
     end
 
     it "succeeds when recorded_at is after the previous event" do
