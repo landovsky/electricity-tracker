@@ -28,22 +28,24 @@ class Dashboard::CheckOutFormComponent < ApplicationComponent
   def last_reading_hint(reading)
     return "" unless reading
 
-    "Last reading: #{helpers.number_with_delimiter(reading[:value], delimiter: ',')} kWh (#{reading[:date].strftime('%b %d')})"
+    I18n.t("dashboard.check_out_form.last_reading",
+           value: helpers.number_with_delimiter(reading[:value], delimiter: " "),
+           date: I18n.l(reading[:date].to_date, format: :short))
   end
 
   def visitor_options
     current_visitors.map do |visitor|
       stay = visitor.stays.find { |s| s.open? }
-      checkin_date = stay&.check_in_event&.recorded_at&.strftime("%b %d") || "unknown"
-      [ "#{visitor.name} (since #{checkin_date})", stay&.id ]
+      checkin_date = stay&.check_in_event&.recorded_at ? I18n.l(stay.check_in_event.recorded_at.to_date, format: :short) : "?"
+      [ "#{visitor.name} (#{I18n.t('dashboard.check_out_form.since', date: checkin_date)})", stay&.id ]
     end
   end
 
   def visitor_options_with_data
     current_visitors.map do |visitor|
       stay = visitor.stays.find { |s| s.open? }
-      checkin_date = stay&.check_in_event&.recorded_at&.strftime("%b %d") || "unknown"
-      label = "#{visitor.name} (since #{checkin_date})"
+      checkin_date = stay&.check_in_event&.recorded_at ? I18n.l(stay.check_in_event.recorded_at.to_date, format: :short) : "?"
+      label = "#{visitor.name} (#{I18n.t('dashboard.check_out_form.since', date: checkin_date)})"
       [ label, stay&.id, { "data-stay-id": stay&.id } ]
     end
   end

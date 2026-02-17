@@ -49,11 +49,11 @@ class ManualConsumptionEntriesController < ApplicationController
           end
         else
           format.html do
-            flash[:success] = "Manual consumption entry recorded: #{entry.kwh} kWh for #{entry.visitor.name}"
+            flash[:success] = t("manual_entries.success", kwh: entry.kwh, name: entry.visitor.name)
             redirect_to root_path
           end
           format.turbo_stream do
-            flash.now[:notice] = "Manual consumption entry recorded: #{entry.kwh} kWh for #{entry.visitor.name}"
+            flash.now[:notice] = t("manual_entries.success", kwh: entry.kwh, name: entry.visitor.name)
             load_dashboard_data
           end
         end

@@ -24,7 +24,7 @@ class SessionsController < ApplicationController
     end
 
     # Always show same message to prevent user enumeration
-    redirect_to login_path, notice: "If that email is registered, we sent you a login link. Check your inbox."
+    redirect_to login_path, notice: t("sessions.create.notice")
   end
 
   def verify
@@ -32,14 +32,14 @@ class SessionsController < ApplicationController
 
     if outcome.valid? && outcome.result
       session[:user_id] = outcome.result.id
-      redirect_to root_path, notice: "Logged in successfully."
+      redirect_to root_path, notice: t("sessions.verify.success")
     else
-      redirect_to login_path, alert: "Invalid or expired link. Please request a new one."
+      redirect_to login_path, alert: t("sessions.verify.failure")
     end
   end
 
   def destroy
     reset_session
-    redirect_to login_path, notice: "Logged out successfully."
+    redirect_to login_path, notice: t("sessions.destroy.notice")
   end
 end

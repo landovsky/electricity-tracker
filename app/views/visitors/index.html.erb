@@ -1,4 +1,4 @@
-<h1>Visitors</h1>
+<h1><%= t("visitors.index.title") %></h1>
 
 <% if @visitors.any? %>
   <ul>
@@ -7,7 +7,7 @@
     <% end %>
   </ul>
 <% else %>
-  <p>No visitors found.</p>
+  <p><%= t("visitors.index.no_visitors") %></p>
 <% end %>
 
-<%= link_to "New Visitor", new_visitor_path %>
+<%= link_to t("visitors.index.new_visitor"), new_visitor_path %>

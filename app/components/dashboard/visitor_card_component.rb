@@ -9,8 +9,8 @@ class Dashboard::VisitorCardComponent < ApplicationComponent
   attr_reader :visitor, :checked_in_at
 
   def formatted_checkin_date
-    return "recently" unless checked_in_at
+    return I18n.t("dashboard.visitor_card.recently") unless checked_in_at
 
-    "since #{checked_in_at.strftime('%b %d')}"
+    I18n.t("dashboard.visitor_card.since", date: I18n.l(checked_in_at.to_date, format: :short))
   end
 end

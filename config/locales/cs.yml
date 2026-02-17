@@ -1,0 +1,291 @@
+cs:
+  # Rails defaults
+  activerecord:
+    errors:
+      messages:
+        blank: "musí být vyplněno"
+        taken: "je již použito"
+        invalid: "je neplatné"
+        not_a_number: "není číslo"
+        greater_than: "musí být větší než %{count}"
+        greater_than_or_equal_to: "musí být větší nebo rovno %{count}"
+        less_than: "musí být menší než %{count}"
+        too_short: "je příliš krátké (minimum je %{count} znaků)"
+        too_long: "je příliš dlouhé (maximum je %{count} znaků)"
+      models:
+        stay:
+          attributes:
+            base:
+              visitor_open_stay: "Návštěvník již má otevřený pobyt"
+              checkout_gte_checkin: "Odchozí odečet pro %{meter_label} (%{checkout_value} kWh) musí být >= příchozí odečet (%{checkin_value} kWh)"
+        meter_reading:
+          attributes:
+            value_kwh:
+              not_monotonic: "musí být větší nebo roven předchozímu odečtu (%{value} kWh)"
+        meter_reading_event:
+          attributes:
+            recorded_at:
+              not_chronological: "musí být po předchozí události (%{timestamp})"
+            base:
+              main_meter_required: "Odečet hlavního měřiče je povinný"
+        manual_consumption_entry:
+          attributes:
+            kwh:
+              exceeds_period: "Upozornění: Ruční záznam kWh (%{kwh}) překračuje nepřiřazenou spotřebu za období"
+    attributes:
+      visitor:
+        name: "Jméno"
+        status: "Stav"
+        note: "Poznámka"
+      stay:
+        visitor: "Návštěvník"
+        property: "Nemovitost"
+      meter:
+        label: "Název"
+        meter_type: "Typ měřiče"
+        unit: "Jednotka"
+      meter_reading:
+        value_kwh: "Hodnota kWh"
+      meter_reading_event:
+        recorded_at: "Datum záznamu"
+        event_type: "Typ události"
+      manual_consumption_entry:
+        date: "Datum"
+        kwh: "kWh"
+        note: "Poznámka"
+      user:
+        name: "Jméno"
+        email: "E-mail"
+        role: "Role"
+      property:
+        name: "Název"
+        address: "Adresa"
+    models:
+      visitor: "Návštěvník"
+      stay: "Pobyt"
+      meter: "Měřič"
+      meter_reading: "Odečet měřiče"
+      meter_reading_event: "Událost odečtu"
+      manual_consumption_entry: "Ruční záznam spotřeby"
+      user: "Uživatel"
+      property: "Nemovitost"
+
+  errors:
+    messages:
+      not_saved:
+        one: "Jedna chyba bránila uložení záznamu %{resource}:"
+        other: "%{count} chyb(y) bránilo uložení záznamu %{resource}:"
+
+  # App name
+  app_name: "Měřič spotřeby"
+
+  # Layout & navigation
+  layout:
+    title: "Měřič spotřeby"
+    log_out: "Odhlásit"
+
+  # Authentication
+  sessions:
+    new:
+      title: "Přihlášení — Měřič spotřeby"
+      heading: "Měřič spotřeby"
+      subtitle: "Přihlaste se pomocí odkazu"
+      email_label: "E-mailová adresa"
+      email_placeholder: "vas@email.cz"
+      submit: "Odeslat přihlašovací odkaz"
+      help_text: "Na e-mail vám pošleme odkaz pro přihlášení — heslo nepotřebujete."
+    create:
+      notice: "Pokud je e-mail registrován, poslali jsme vám přihlašovací odkaz. Zkontrolujte svou schránku."
+    verify:
+      success: "Přihlášení proběhlo úspěšně."
+      failure: "Neplatný nebo expirovaný odkaz. Vyžádejte si prosím nový."
+    destroy:
+      notice: "Odhlášení proběhlo úspěšně."
+
+  # Authentication (application controller)
+  auth:
+    login_required: "Pro pokračování se prosím přihlaste."
+
+  # Magic link mailer
+  mailer:
+    login_link:
+      subject: "Váš přihlašovací odkaz — Měřič spotřeby"
+      greeting: "Ahoj, %{name}!"
+      instruction_html: "Klikněte na odkaz níže pro přihlášení do Měřiče spotřeby:"
+      instruction_text: "Pro přihlášení do Měřiče spotřeby navštivte:"
+      sign_in: "Přihlásit se"
+      expiry: "Platnost odkazu vyprší za 15 minut."
+      ignore: "Pokud jste si toto nevyžádali, můžete tento e-mail klidně ignorovat."
+
+  # Dashboard
+  dashboard:
+    no_property: "Nemovitost není nastavena. Nejprve prosím vytvořte nemovitost."
+    house_status:
+      title: "Stav chaty"
+      currently_here: "Právě zde"
+      nobody_here: "V chatě momentálně nikdo není."
+      latest_readings: "Poslední odečty měřičů"
+      no_readings: "Zatím nebyly zaznamenány žádné odečty."
+    actions:
+      check_in: "Příchod"
+      check_out: "Odchod"
+      log_entry: "Ruční záznam"
+    check_in_form:
+      visitor: "Návštěvník"
+      select_visitor: "Vyberte návštěvníka..."
+      date_time: "Datum a čas"
+      main_meter: "Odečet hlavního měřiče"
+      optional: "(nepovinné)"
+      note: "Poznámka"
+      note_placeholder: "např. víkendový pobyt"
+      submit: "Příchod"
+      last_reading: "Poslední odečet: %{value} kWh (%{date})"
+    check_out_form:
+      visitor: "Návštěvník"
+      date_time: "Datum a čas"
+      main_meter: "Odečet hlavního měřiče"
+      optional: "(nepovinné)"
+      note: "Poznámka"
+      note_placeholder: "např. odjezd brzy ráno"
+      submit: "Odchod"
+      no_visitors: "Žádní návštěvníci k odhlášení."
+      since: "od %{date}"
+      last_reading: "Poslední odečet: %{value} kWh (%{date})"
+    manual_entry_form:
+      visitor: "Návštěvník"
+      select_visitor: "Vyberte návštěvníka..."
+      date: "Datum"
+      consumption: "Spotřeba"
+      note: "Poznámka"
+      note_placeholder: "např. nabíjení auta"
+      submit: "Zaznamenat spotřebu"
+    recent_activity:
+      title: "Poslední aktivita"
+      view_all: "Zobrazit vše"
+      no_activity: "Žádná nedávná aktivita."
+      checked_in: "se přihlásil/a"
+      checked_out: "se odhlásil/a"
+      logged_kwh: "zaznamenal/a %{kwh} kWh"
+      unknown: "Neznámý"
+      main_reading: "Hlavní: %{value}"
+    visitor_card:
+      check_out: "Odchod"
+      recently: "nedávno"
+      since: "od %{date}"
+
+  # Stays controller
+  stays:
+    check_in_success: "%{name} — příchod zaznamenán."
+    check_out_success: "%{name} — odchod zaznamenán."
+    not_found: "Pobyt nebyl nalezen."
+
+  # Manual consumption entries controller
+  manual_entries:
+    success: "Ruční záznam spotřeby: %{kwh} kWh pro %{name}"
+
+  # Visitors
+  visitors:
+    index:
+      title: "Návštěvníci"
+      no_visitors: "Nebyli nalezeni žádní návštěvníci."
+      new_visitor: "Nový návštěvník"
+    new:
+      title: "Nový návštěvník"
+      back: "Zpět na návštěvníky"
+    edit:
+      title: "Upravit návštěvníka"
+      show: "Zobrazit"
+      back: "Zpět na návštěvníky"
+    show:
+      status: "Stav:"
+      note: "Poznámka:"
+      stays: "Pobyty"
+      stay_from: "Pobyt od %{date}"
+      no_stays: "Žádné pobyty."
+      manual_entries: "Ruční záznamy spotřeby"
+      entry_format: "%{date}: %{kwh} kWh"
+      no_entries: "Žádné ruční záznamy."
+      edit: "Upravit"
+      back: "Zpět na návštěvníky"
+    create:
+      success: "Návštěvník %{name} byl úspěšně vytvořen."
+    update:
+      success: "Návštěvník %{name} byl úspěšně upraven."
+    archive:
+      success: "Návštěvník %{name} byl úspěšně archivován."
+      failure: "Archivace návštěvníka se nezdařila."
+    not_found: "Návštěvník nebyl nalezen."
+    admin_required: "Tuto akci může provést pouze administrátor."
+
+  # Consumption reports
+  reports:
+    title: "Přehled spotřeby"
+    history: "Historie"
+    this_year: "Tento rok"
+    last_year: "Loňský rok"
+    period_totals: "Celkem za období"
+    main_meter_delta: "Změna hlavního měřiče"
+    total_consumption: "Celková spotřeba"
+    per_visitor_breakdown: "Rozpad dle návštěvníků"
+    visitor: "Návštěvník"
+    shared: "Sdílená"
+    manual: "Ruční"
+    empty_house: "Prázdná chata"
+    total: "Celkem"
+    total_matches: "Celkem (%{total} kWh) odpovídá změně hlavního měřiče. Veškerá spotřeba je přiřazena."
+    total_mismatch: "Celkem (%{total} kWh) neodpovídá změně hlavního měřiče (%{delta} kWh). Prosím zkontrolujte."
+    per_visitor_summary: "Shrnutí dle návštěvníků"
+    no_data: "Pro vybrané období nebyla nalezena žádná data o spotřebě."
+
+  # Readings history
+  history:
+    title: "Historie odečtů"
+    report: "Přehled"
+    all_visitors: "Všichni návštěvníci"
+    all_time: "Celé období"
+    filter: "Filtrovat"
+    logged: "zaznamenal/a %{kwh} kWh"
+    checked_in: "příchod"
+    checked_out: "odchod"
+    amount: "Množství:"
+    note: "Poznámka:"
+    recorded_by: "Zaznamenal/a: %{name}"
+    unknown: "Neznámý"
+    no_history: "Pro vybrané filtry nebyla nalezena žádná historie odečtů."
+
+  # Common
+  no_property: "Nebyla nalezena žádná nemovitost. Nejprve prosím vytvořte nemovitost."
+  invalid_date: "Neplatný formát data: %{error}"
+
+  # Date/time formats
+  date:
+    formats:
+      default: "%d.%m.%Y"
+      short: "%d. %b"
+      long: "%d. %B %Y"
+    month_names: [~, "leden", "únor", "březen", "duben", "květen", "červen", "červenec", "srpen", "září", "říjen", "listopad", "prosinec"]
+    abbr_month_names: [~, "led", "úno", "bře", "dub", "kvě", "čvn", "čvc", "srp", "zář", "říj", "lis", "pro"]
+    day_names: ["neděle", "pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota"]
+    abbr_day_names: ["ne", "po", "út", "st", "čt", "pá", "so"]
+  time:
+    formats:
+      default: "%d.%m.%Y %H:%M"
+      short: "%d. %b %H:%M"
+      long: "%d. %B %Y %H:%M"
+
+  number:
+    format:
+      separator: ","
+      delimiter: " "
+      precision: 2
+
+  helpers:
+    submit:
+      visitor:
+        create: "Vytvořit návštěvníka"
+        update: "Uložit návštěvníka"
+    label:
+      visitor:
+        name: "Jméno"
+        status: "Stav"
+        note: "Poznámka"

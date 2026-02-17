@@ -28,6 +28,8 @@ class Dashboard::CheckInFormComponent < ApplicationComponent
   def last_reading_hint(reading)
     return "" unless reading
 
-    "Last reading: #{helpers.number_with_delimiter(reading[:value], delimiter: ',')} kWh (#{reading[:date].strftime('%b %d')})"
+    I18n.t("dashboard.check_in_form.last_reading",
+           value: helpers.number_with_delimiter(reading[:value], delimiter: " "),
+           date: I18n.l(reading[:date].to_date, format: :short))
   end
 end

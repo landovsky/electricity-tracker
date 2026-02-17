@@ -28,6 +28,6 @@ class ManualConsumptionEntry < ApplicationRecord
   def consumption_warning
     return nil unless exceeds_period_consumption?
 
-    "Warning: Manual entry kWh (#{kwh}) exceeds unattributed consumption for the period"
+    I18n.t("activerecord.errors.models.manual_consumption_entry.attributes.kwh.exceeds_period", kwh: kwh)
   end
 end

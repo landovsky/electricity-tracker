@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
     return if auth_disabled?
     return if logged_in?
 
-    redirect_to login_path, alert: "Please log in to continue."
+    redirect_to login_path, alert: t("auth.login_required")
   end
 
   def auth_disabled?

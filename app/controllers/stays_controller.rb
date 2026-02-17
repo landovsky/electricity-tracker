@@ -22,9 +22,9 @@ class StaysController < ApplicationController
 
     respond_to do |format|
       if outcome.valid?
-        format.html { redirect_to root_path, notice: "#{outcome.result.visitor.name} checked in successfully." }
+        format.html { redirect_to root_path, notice: t("stays.check_in_success", name: outcome.result.visitor.name) }
         format.turbo_stream do
-          flash.now[:notice] = "#{outcome.result.visitor.name} checked in successfully."
+          flash.now[:notice] = t("stays.check_in_success", name: outcome.result.visitor.name)
           load_dashboard_data
         end
       else
@@ -45,9 +45,9 @@ class StaysController < ApplicationController
 
     respond_to do |format|
       if outcome.valid?
-        format.html { redirect_to root_path, notice: "#{stay.visitor.name} checked out successfully." }
+        format.html { redirect_to root_path, notice: t("stays.check_out_success", name: stay.visitor.name) }
         format.turbo_stream do
-          flash.now[:notice] = "#{stay.visitor.name} checked out successfully."
+          flash.now[:notice] = t("stays.check_out_success", name: stay.visitor.name)
           load_dashboard_data
         end
       else
@@ -59,7 +59,7 @@ class StaysController < ApplicationController
       end
     end
   rescue ActiveRecord::RecordNotFound
-    redirect_to root_path, alert: "Stay not found."
+    redirect_to root_path, alert: t("stays.not_found")
   end
 
   private

@@ -46,7 +46,7 @@ class VisitorsController < ApplicationController
     @visitor = Visitor.new(visitor_params)
 
     if @visitor.save
-      redirect_to visitors_path, notice: "Visitor #{@visitor.name} was successfully created."
+      redirect_to visitors_path, notice: t("visitors.create.success", name: @visitor.name)
     else
       render :new, status: :unprocessable_entity
     end
@@ -62,7 +62,7 @@ class VisitorsController < ApplicationController
   # Updates visitor information
   def update
     if @visitor.update(visitor_params)
-      redirect_to visitor_path(@visitor), notice: "Visitor #{@visitor.name} was successfully updated."
+      redirect_to visitor_path(@visitor), notice: t("visitors.update.success", name: @visitor.name)
     else
       render :edit, status: :unprocessable_entity
     end
@@ -72,9 +72,9 @@ class VisitorsController < ApplicationController
   # Soft deletes (archives) a visitor
   def archive
     if @visitor.discard
-      redirect_to visitors_path, notice: "Visitor #{@visitor.name} was successfully archived."
+      redirect_to visitors_path, notice: t("visitors.archive.success", name: @visitor.name)
     else
-      redirect_to visitor_path(@visitor), alert: "Failed to archive visitor."
+      redirect_to visitor_path(@visitor), alert: t("visitors.archive.failure")
     end
   end
 
@@ -83,7 +83,7 @@ class VisitorsController < ApplicationController
   def set_visitor
     @visitor = Visitor.kept.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    redirect_to visitors_path, alert: "Visitor not found."
+    redirect_to visitors_path, alert: t("visitors.not_found")
   end
 
   def visitor_params
@@ -92,7 +92,7 @@ class VisitorsController < ApplicationController
 
   def require_admin
     unless current_user&.admin?
-      redirect_to visitors_path, alert: "You must be an administrator to perform this action."
+      redirect_to visitors_path, alert: t("visitors.admin_required")
     end
   end
 end

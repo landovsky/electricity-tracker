@@ -7,7 +7,7 @@ class MagicLinkMailer < ApplicationMailer
 
     mail(
       to: user.email,
-      subject: "Your login link — Electricity Tracker"
+      subject: t("mailer.login_link.subject")
     )
   end
 end

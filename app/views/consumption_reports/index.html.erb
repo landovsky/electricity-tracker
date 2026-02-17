@@ -7,11 +7,11 @@
       <% end %>
       <h1 class="text-lg font-bold text-gray-900">
         <i class="fa-solid fa-chart-pie text-blue-600 mr-1"></i>
-        Consumption Report
+        <%= t("reports.title") %>
       </h1>
     </div>
     <%= link_to readings_history_path, class: "text-sm text-blue-600 font-medium hover:text-blue-700" do %>
-      <i class="fa-solid fa-clock-rotate-left mr-1"></i>History
+      <i class="fa-solid fa-clock-rotate-left mr-1"></i><%= t("reports.history") %>
     <% end %>
   </div>
 </header>
@@ -24,18 +24,18 @@
       <div class="flex gap-2">
         <%= link_to consumption_reports_path(year: Date.today.year),
             class: "px-3 py-1.5 text-xs font-medium rounded-full #{'bg-blue-600 text-white' if params[:year].to_i == Date.today.year || params[:year].blank?} #{'bg-gray-100 text-gray-600 hover:bg-gray-200' unless params[:year].to_i == Date.today.year && params[:year].present?}" do %>
-          This year
+          <%= t("reports.this_year") %>
         <% end %>
         <%= link_to consumption_reports_path(year: Date.today.year - 1),
             class: "px-3 py-1.5 text-xs font-medium rounded-full #{'bg-blue-600 text-white' if params[:year].to_i == Date.today.year - 1} #{'bg-gray-100 text-gray-600 hover:bg-gray-200' unless params[:year].to_i == Date.today.year - 1}" do %>
-          Last year
+          <%= t("reports.last_year") %>
         <% end %>
       </div>
       <div class="flex items-center gap-2 text-sm text-gray-500">
         <i class="fa-solid fa-calendar-days text-gray-400 text-xs"></i>
-        <span><%= @start_date.strftime("%b %d, %Y") %></span>
+        <span><%= l(@start_date, format: :default) %></span>
         <span>—</span>
-        <span><%= @end_date.strftime("%b %d, %Y") %></span>
+        <span><%= l(@end_date, format: :default) %></span>
       </div>
     </div>
   </section>
@@ -43,16 +43,16 @@
   <!-- Meter Summary -->
   <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
-      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Period totals</h2>
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("reports.period_totals") %></h2>
     </div>
     <div class="grid grid-cols-2 divide-x divide-gray-100">
       <div class="p-4 text-center">
-        <div class="text-xs text-gray-500 mb-1"><i class="fa-solid fa-gauge-high mr-1"></i>Main meter delta</div>
+        <div class="text-xs text-gray-500 mb-1"><i class="fa-solid fa-gauge-high mr-1"></i><%= t("reports.main_meter_delta") %></div>
         <div class="text-2xl font-bold text-gray-900"><%= number_with_precision(@report[:total_meter_delta_kwh], precision: 0) %></div>
         <div class="text-xs text-gray-400">kWh</div>
       </div>
       <div class="p-4 text-center">
-        <div class="text-xs text-gray-500 mb-1"><i class="fa-solid fa-gauge mr-1"></i>Total consumption</div>
+        <div class="text-xs text-gray-500 mb-1"><i class="fa-solid fa-gauge mr-1"></i><%= t("reports.total_consumption") %></div>
         <div class="text-2xl font-bold text-gray-900"><%= number_with_precision(@report[:total_consumption_kwh], precision: 0) %></div>
         <div class="text-xs text-gray-400">kWh</div>
       </div>
@@ -63,16 +63,16 @@
     <!-- Per-Visitor Breakdown -->
     <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
-        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Per-visitor breakdown</h2>
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("reports.per_visitor_breakdown") %></h2>
       </div>
 
       <!-- Table header -->
       <div class="grid grid-cols-12 gap-1 px-4 py-2 border-b border-gray-100 text-xs text-gray-400 font-medium">
-        <div class="col-span-3">Visitor</div>
-        <div class="col-span-2 text-right">Shared</div>
-        <div class="col-span-2 text-right">Manual</div>
-        <div class="col-span-3 text-right">Empty&nbsp;house</div>
-        <div class="col-span-2 text-right font-semibold">Total</div>
+        <div class="col-span-3"><%= t("reports.visitor") %></div>
+        <div class="col-span-2 text-right"><%= t("reports.shared") %></div>
+        <div class="col-span-2 text-right"><%= t("reports.manual") %></div>
+        <div class="col-span-3 text-right"><%= t("reports.empty_house") %></div>
+        <div class="col-span-2 text-right font-semibold"><%= t("reports.total") %></div>
       </div>
 
       <!-- Rows -->
@@ -95,7 +95,7 @@
         total_empty_house = @report[:visitors].sum { |v| v[:empty_house_share].to_f }
       %>
       <div class="grid grid-cols-12 gap-1 px-4 py-3 bg-gray-50 border-t border-gray-200 text-sm font-semibold">
-        <div class="col-span-3 text-gray-700">Total</div>
+        <div class="col-span-3 text-gray-700"><%= t("reports.total") %></div>
         <div class="col-span-2 text-right text-gray-700"><%= number_with_precision(total_shared, precision: 0) %></div>
         <div class="col-span-2 text-right text-gray-700"><%= number_with_precision(total_manual, precision: 0) %></div>
         <div class="col-span-3 text-right text-gray-700"><%= number_with_precision(total_empty_house, precision: 0) %></div>
@@ -112,9 +112,9 @@
         <p class="text-xs flex items-center gap-1.5">
           <i class="fa-solid <%= icon_class %>"></i>
           <% if total_matches %>
-            Total (<%= number_with_precision(@report[:total_consumption_kwh], precision: 0) %> kWh) matches main meter delta. All consumption accounted for.
+            <%= t("reports.total_matches", total: number_with_precision(@report[:total_consumption_kwh], precision: 0)) %>
           <% else %>
-            Total (<%= number_with_precision(@report[:total_consumption_kwh], precision: 0) %> kWh) does not match main meter delta (<%= number_with_precision(@report[:total_meter_delta_kwh], precision: 0) %> kWh). Please review.
+            <%= t("reports.total_mismatch", total: number_with_precision(@report[:total_consumption_kwh], precision: 0), delta: number_with_precision(@report[:total_meter_delta_kwh], precision: 0)) %>
           <% end %>
         </p>
       </div>
@@ -123,7 +123,7 @@
     <!-- Per-visitor visual bars -->
     <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
-        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Per-visitor summary</h2>
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("reports.per_visitor_summary") %></h2>
       </div>
       <div class="px-4 py-3 space-y-3">
         <%
@@ -148,7 +148,7 @@
     <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div class="px-4 py-6 text-center text-gray-500">
         <i class="fa-solid fa-inbox text-3xl text-gray-300 mb-2"></i>
-        <p>No consumption data found for the selected period.</p>
+        <p><%= t("reports.no_data") %></p>
       </div>
     </section>
   <% end %>

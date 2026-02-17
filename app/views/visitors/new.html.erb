@@ -1,9 +1,9 @@
-<h1>New Visitor</h1>
+<h1><%= t("visitors.new.title") %></h1>
 
 <%= form_with model: @visitor do |form| %>
   <% if @visitor.errors.any? %>
     <div>
-      <h2><%= pluralize(@visitor.errors.count, "error") %> prohibited this visitor from being saved:</h2>
+      <h2><%= t("errors.messages.not_saved", count: @visitor.errors.count, resource: Visitor.model_name.human) %></h2>
       <ul>
         <% @visitor.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -32,4 +32,4 @@
   </div>
 <% end %>
 
-<%= link_to "Back to Visitors", visitors_path %>
+<%= link_to t("visitors.new.back"), visitors_path %>

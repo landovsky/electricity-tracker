@@ -45,7 +45,7 @@ class MeterReadingEvent < ApplicationRecord
                                       .first
 
     if previous_event && recorded_at < previous_event.recorded_at
-      errors.add(:recorded_at, "must be after or equal to the previous event (#{previous_event.recorded_at})")
+      errors.add(:recorded_at, :not_chronological, timestamp: previous_event.recorded_at)
     end
   end
 
@@ -54,6 +54,6 @@ class MeterReadingEvent < ApplicationRecord
     return if new_record? && meter_readings.empty?
 
     main_reading = meter_readings.find { |mr| mr.meter&.main? }
-    errors.add(:base, "Main meter reading is required") unless main_reading
+    errors.add(:base, :main_meter_required) unless main_reading
   end
 end

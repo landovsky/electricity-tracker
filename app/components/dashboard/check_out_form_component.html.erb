@@ -1,7 +1,7 @@
 <% if current_visitors.any? %>
   <%= form_with url: check_out_stay_path(current_visitors.first.stays.find { |s| s.open? }&.id || 0), method: :patch, class: "space-y-4", data: { controller: "checkout-form", checkout_form_target: "form" } do |f| %>
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Visitor</label>
+      <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("dashboard.check_out_form.visitor") %></label>
       <%= select_tag :stay_id,
         options_for_select(visitor_options_with_data, visitor_options.first&.last),
         class: "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500",
@@ -10,7 +10,7 @@
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Date &amp; time</label>
+      <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("dashboard.check_out_form.date_time") %></label>
       <%= datetime_field_tag :recorded_at,
         Time.current,
         class: "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
@@ -20,7 +20,7 @@
     <% if main_meter %>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">
-          Main meter reading <span class="text-red-500">*</span>
+          <%= t("dashboard.check_out_form.main_meter") %> <span class="text-red-500">*</span>
         </label>
         <%= number_field_tag :main_meter_reading,
           nil,
@@ -36,7 +36,7 @@
     <% if secondary_meter %>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">
-          <%= secondary_meter.label %> <span class="text-gray-400">(optional)</span>
+          <%= secondary_meter.label %> <span class="text-gray-400"><%= t("dashboard.check_out_form.optional") %></span>
         </label>
         <%= number_field_tag :secondary_meter_reading,
           nil,
@@ -50,19 +50,19 @@
     <% end %>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Note <span class="text-gray-400">(optional)</span></label>
+      <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("dashboard.check_out_form.note") %> <span class="text-gray-400"><%= t("dashboard.check_out_form.optional") %></span></label>
       <%= text_field_tag :note,
         nil,
-        placeholder: "e.g., Left early morning",
+        placeholder: t("dashboard.check_out_form.note_placeholder"),
         class: "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
       %>
     </div>
 
     <%= button_tag type: "submit", class: "w-full bg-brand-600 text-white py-3 rounded-lg font-medium text-sm hover:bg-brand-700 active:bg-brand-800 transition-colors" do %>
       <%= render Shared::IconComponent.new(icon_class: "fa-right-from-bracket", color: "mr-1.5") %>
-      Check Out
+      <%= t("dashboard.check_out_form.submit") %>
     <% end %>
   <% end %>
 <% else %>
-  <%= render Shared::EmptyStateComponent.new(message: "No visitors to check out.") %>
+  <%= render Shared::EmptyStateComponent.new(message: t("dashboard.check_out_form.no_visitors")) %>
 <% end %>

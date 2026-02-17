@@ -1,9 +1,9 @@
-<h2>Hello, <%= @user.name %>!</h2>
+<h2><%= t("mailer.login_link.greeting", name: @user.name) %></h2>
 
-<p>Click the link below to sign in to the Electricity Tracker:</p>
+<p><%= t("mailer.login_link.instruction_html") %></p>
 
-<p><%= link_to "Sign in", @login_url %></p>
+<p><%= link_to t("mailer.login_link.sign_in"), @login_url %></p>
 
-<p>This link will expire in <strong>15 minutes</strong>.</p>
+<p><%= t("mailer.login_link.expiry") %></p>
 
-<p>If you didn't request this, you can safely ignore this email.</p>
+<p><%= t("mailer.login_link.ignore") %></p>

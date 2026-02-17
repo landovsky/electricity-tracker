@@ -7,11 +7,11 @@
       <% end %>
       <h1 class="text-lg font-bold text-gray-900">
         <i class="fa-solid fa-clock-rotate-left text-blue-600 mr-1"></i>
-        Readings History
+        <%= t("history.title") %>
       </h1>
     </div>
     <%= link_to consumption_reports_path, class: "text-sm text-blue-600 font-medium hover:text-blue-700" do %>
-      <i class="fa-solid fa-chart-pie mr-1"></i>Report
+      <i class="fa-solid fa-chart-pie mr-1"></i><%= t("history.report") %>
     <% end %>
   </div>
 </header>
@@ -24,18 +24,18 @@
       <div class="flex gap-2">
         <%= form.select :visitor_id,
             options_from_collection_for_select(@visitors, :id, :name, params[:visitor_id]),
-            { include_blank: "All visitors" },
+            { include_blank: t("history.all_visitors") },
             class: "flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
         <%= form.select :year,
             options_for_select([
               ["2026", "2026"],
               ["2025", "2025"],
-              ["All time", ""]
+              [t("history.all_time"), ""]
             ], params[:year]),
             {},
             class: "border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
       </div>
-      <%= form.submit "Filter", class: "hidden" %>
+      <%= form.submit t("history.filter"), class: "hidden" %>
     <% end %>
   </section>
 
@@ -66,7 +66,7 @@
     all_events.sort_by! { |e| e[:timestamp] }.reverse!
 
     # Group by month
-    events_by_month = all_events.group_by { |e| e[:date].strftime("%B %Y") }
+    events_by_month = all_events.group_by { |e| I18n.l(e[:date], format: "%B %Y") }
   %>
 
   <% if all_events.any? %>
@@ -91,9 +91,9 @@
                     </span>
                     <div>
                       <div class="text-sm font-medium text-gray-900">
-                        <%= entry.visitor.name %> <span class="font-normal text-gray-500">logged <%= number_with_precision(entry.kwh, precision: 0) %> kWh</span>
+                        <%= entry.visitor.name %> <span class="font-normal text-gray-500"><%= t("history.logged", kwh: number_with_precision(entry.kwh, precision: 0)) %></span>
                       </div>
-                      <div class="text-xs text-gray-400 mt-0.5"><%= entry.date.strftime("%b %d, %Y") %></div>
+                      <div class="text-xs text-gray-400 mt-0.5"><%= l(entry.date, format: :default) %></div>
                     </div>
                   </div>
                   <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform" data-expandable-card-target="arrow"></i>
@@ -101,12 +101,12 @@
               </button>
               <div class="hidden px-4 pb-3 pt-0 ml-10 border-t border-gray-50" data-expandable-card-target="detail">
                 <div class="mt-3">
-                  <div class="text-xs"><span class="text-gray-400">Amount:</span> <span class="font-medium text-gray-700"><%= number_with_precision(entry.kwh, precision: 2) %> kWh</span></div>
+                  <div class="text-xs"><span class="text-gray-400"><%= t("history.amount") %></span> <span class="font-medium text-gray-700"><%= number_with_precision(entry.kwh, precision: 2) %> kWh</span></div>
                   <% if entry.note.present? %>
-                    <div class="text-xs mt-1"><span class="text-gray-400">Note:</span> <span class="font-medium text-gray-700"><%= entry.note %></span></div>
+                    <div class="text-xs mt-1"><span class="text-gray-400"><%= t("history.note") %></span> <span class="font-medium text-gray-700"><%= entry.note %></span></div>
                   <% end %>
                 </div>
-                <div class="text-xs text-gray-400 mt-2">Recorded by: <%= entry.recorded_by_user&.name || 'Unknown' %></div>
+                <div class="text-xs text-gray-400 mt-2"><%= t("history.recorded_by", name: entry.recorded_by_user&.name || t("history.unknown")) %></div>
               </div>
             </div>
           <% else %>
@@ -115,7 +115,7 @@
               is_check_in = event.event_type == 'check_in'
               badge_class = is_check_in ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-500'
               icon = is_check_in ? 'fa-right-to-bracket' : 'fa-right-from-bracket'
-              action_text = is_check_in ? 'checked in' : 'checked out'
+              action_text = is_check_in ? t("history.checked_in") : t("history.checked_out")
             %>
             <!-- Meter Reading Event -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-controller="expandable-card">
@@ -127,9 +127,9 @@
                     </span>
                     <div>
                       <div class="text-sm font-medium text-gray-900">
-                        <%= event.visitor&.name || 'Unknown' %> <span class="font-normal text-gray-500"><%= action_text %></span>
+                        <%= event.visitor&.name || t("history.unknown") %> <span class="font-normal text-gray-500"><%= action_text %></span>
                       </div>
-                      <div class="text-xs text-gray-400 mt-0.5"><%= event.recorded_at.strftime("%b %d, %Y") %> &middot; <%= event.recorded_at.strftime("%H:%M") %></div>
+                      <div class="text-xs text-gray-400 mt-0.5"><%= l(event.recorded_at, format: :default) %></div>
                     </div>
                   </div>
                   <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform" data-expandable-card-target="arrow"></i>
@@ -147,7 +147,7 @@
                 <% if event.note.present? %>
                   <div class="text-xs text-gray-500 mt-2"><%= event.note %></div>
                 <% end %>
-                <div class="text-xs text-gray-400 mt-2">Recorded by: <%= event.recorded_by_user&.name || 'Unknown' %></div>
+                <div class="text-xs text-gray-400 mt-2"><%= t("history.recorded_by", name: event.recorded_by_user&.name || t("history.unknown")) %></div>
               </div>
             </div>
           <% end %>
@@ -158,7 +158,7 @@
     <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div class="px-4 py-6 text-center text-gray-500">
         <i class="fa-solid fa-inbox text-3xl text-gray-300 mb-2"></i>
-        <p>No readings history found for the selected filters.</p>
+        <p><%= t("history.no_history") %></p>
       </div>
     </section>
   <% end %>

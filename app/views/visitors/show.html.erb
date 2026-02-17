@@ -1,29 +1,29 @@
 <h1><%= @visitor.name %></h1>
 
-<p>Status: <%= @visitor.status %></p>
-<p>Note: <%= @visitor.note %></p>
+<p><%= t("visitors.show.status") %> <%= @visitor.status %></p>
+<p><%= t("visitors.show.note") %> <%= @visitor.note %></p>
 
-<h2>Stays</h2>
+<h2><%= t("visitors.show.stays") %></h2>
 <% if @stays.any? %>
   <ul>
     <% @stays.each do |stay| %>
-      <li>Stay from <%= stay.created_at %></li>
+      <li><%= t("visitors.show.stay_from", date: stay.created_at) %></li>
     <% end %>
   </ul>
 <% else %>
-  <p>No stays found.</p>
+  <p><%= t("visitors.show.no_stays") %></p>
 <% end %>
 
-<h2>Manual Consumption Entries</h2>
+<h2><%= t("visitors.show.manual_entries") %></h2>
 <% if @manual_entries.any? %>
   <ul>
     <% @manual_entries.each do |entry| %>
-      <li><%= entry.date %>: <%= entry.kwh %> kWh</li>
+      <li><%= t("visitors.show.entry_format", date: entry.date, kwh: entry.kwh) %></li>
     <% end %>
   </ul>
 <% else %>
-  <p>No manual entries found.</p>
+  <p><%= t("visitors.show.no_entries") %></p>
 <% end %>
 
-<%= link_to "Edit", edit_visitor_path(@visitor) %>
-<%= link_to "Back to Visitors", visitors_path %>
+<%= link_to t("visitors.show.edit"), edit_visitor_path(@visitor) %>
+<%= link_to t("visitors.show.back"), visitors_path %>

@@ -1,8 +1,8 @@
 <turbo-frame id="house-status">
-  <%= render Shared::CardComponent.new(title: "House Status") do %>
+  <%= render Shared::CardComponent.new(title: t("dashboard.house_status.title")) do %>
     <!-- Who's here -->
     <div>
-      <h3 class="text-xs font-medium text-gray-400 uppercase mb-2">Currently here</h3>
+      <h3 class="text-xs font-medium text-gray-400 uppercase mb-2"><%= t("dashboard.house_status.currently_here") %></h3>
       <% if current_visitors.any? %>
         <div class="space-y-2">
           <% current_visitors.each do |visitor| %>
@@ -14,13 +14,13 @@
           <% end %>
         </div>
       <% else %>
-        <%= render Shared::EmptyStateComponent.new(message: "Nobody is at the house right now.") %>
+        <%= render Shared::EmptyStateComponent.new(message: t("dashboard.house_status.nobody_here")) %>
       <% end %>
     </div>
 
     <!-- Current readings -->
     <div>
-      <h3 class="text-xs font-medium text-gray-400 uppercase mb-2">Latest meter readings</h3>
+      <h3 class="text-xs font-medium text-gray-400 uppercase mb-2"><%= t("dashboard.house_status.latest_readings") %></h3>
       <% if last_meter_readings.any? %>
         <div class="grid grid-cols-2 gap-3">
           <% if main_reading %>
@@ -41,7 +41,7 @@
           <% end %>
         </div>
       <% else %>
-        <%= render Shared::EmptyStateComponent.new(message: "No meter readings recorded yet.") %>
+        <%= render Shared::EmptyStateComponent.new(message: t("dashboard.house_status.no_readings")) %>
       <% end %>
     </div>
   <% end %>

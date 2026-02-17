@@ -43,7 +43,7 @@ class Stay < ApplicationRecord
                            .where.not(id: id)
 
     if other_open_stays.exists?
-      errors.add(:base, "Visitor already has an open stay")
+      errors.add(:base, :visitor_open_stay)
     end
   end
 
@@ -57,7 +57,10 @@ class Stay < ApplicationRecord
       next unless check_out_reading
 
       if check_out_reading.value_kwh < check_in_reading.value_kwh
-        errors.add(:base, "Check-out reading for #{check_in_reading.meter.label} (#{check_out_reading.value_kwh} kWh) must be >= check-in reading (#{check_in_reading.value_kwh} kWh)")
+        errors.add(:base, :checkout_gte_checkin,
+                   meter_label: check_in_reading.meter.label,
+                   checkout_value: check_out_reading.value_kwh,
+                   checkin_value: check_in_reading.value_kwh)
       end
     end
   end

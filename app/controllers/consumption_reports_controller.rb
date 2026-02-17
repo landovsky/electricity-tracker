@@ -37,7 +37,7 @@ class ConsumptionReportsController < ApplicationController
     @property = Property.kept.first
 
     unless @property
-      redirect_to root_path, alert: "No property found. Please create a property first."
+      redirect_to root_path, alert: t("no_property")
     end
   end
 
@@ -59,7 +59,7 @@ class ConsumptionReportsController < ApplicationController
     end
   rescue ArgumentError => e
     # Invalid date format
-    flash[:alert] = "Invalid date format: #{e.message}"
+    flash[:alert] = t("invalid_date", error: e.message)
     redirect_to root_path
   end
 

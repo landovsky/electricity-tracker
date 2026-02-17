@@ -1,7 +1,7 @@
 <turbo-frame id="recent-activity">
   <%= render Shared::CardComponent.new(
-    title: "Recent Activity",
-    header_action: '<a href="/history" class="text-xs text-brand-600 font-medium hover:text-brand-700">View all <i class="fa-solid fa-arrow-right ml-0.5"></i></a>'.html_safe
+    title: t("dashboard.recent_activity.title"),
+    header_action: ('<a href="/history" class="text-xs text-brand-600 font-medium hover:text-brand-700">' + t("dashboard.recent_activity.view_all") + ' <i class="fa-solid fa-arrow-right ml-0.5"></i></a>').html_safe
   ) do %>
     <% if combined_activity.any? %>
       <ul class="divide-y divide-gray-50 -mx-4 -my-4">
@@ -16,7 +16,7 @@
         <% end %>
       </ul>
     <% else %>
-      <%= render Shared::EmptyStateComponent.new(message: "No recent activity.") %>
+      <%= render Shared::EmptyStateComponent.new(message: t("dashboard.recent_activity.no_activity")) %>
     <% end %>
   <% end %>
 </turbo-frame>

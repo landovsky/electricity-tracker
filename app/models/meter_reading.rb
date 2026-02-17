@@ -25,7 +25,7 @@ class MeterReading < ApplicationRecord
                                    .first
 
     if previous_reading && value_kwh < previous_reading.value_kwh
-      errors.add(:value_kwh, "must be greater than or equal to the previous reading (#{previous_reading.value_kwh} kWh)")
+      errors.add(:value_kwh, :not_monotonic, value: previous_reading.value_kwh)
     end
   end
 end
