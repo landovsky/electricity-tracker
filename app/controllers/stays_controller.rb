@@ -22,12 +22,20 @@ class StaysController < ApplicationController
   def create
     outcome = CheckInVisitor.run(check_in_params)
 
-    if outcome.valid?
-      redirect_to root_path, notice: "#{outcome.result.visitor.name} checked in successfully."
-    else
-      # Future enhancement: re-render inline form with Turbo Stream
-      # For now: redirect back with error flash
-      redirect_to root_path, alert: format_errors(outcome.errors)
+    respond_to do |format|
+      if outcome.valid?
+        format.html { redirect_to root_path, notice: "#{outcome.result.visitor.name} checked in successfully." }
+        format.turbo_stream do
+          flash.now[:notice] = "#{outcome.result.visitor.name} checked in successfully."
+          load_dashboard_data
+        end
+      else
+        format.html { redirect_to root_path, alert: format_errors(outcome.errors) }
+        format.turbo_stream do
+          flash.now[:alert] = format_errors(outcome.errors)
+          load_dashboard_data
+        end
+      end
     end
   end
 
@@ -37,12 +45,20 @@ class StaysController < ApplicationController
     stay = Stay.kept.find(params[:id])
     outcome = CheckOutVisitor.run(check_out_params(stay))
 
-    if outcome.valid?
-      redirect_to root_path, notice: "#{stay.visitor.name} checked out successfully."
-    else
-      # Future enhancement: re-render inline form with Turbo Stream
-      # For now: redirect back with error flash
-      redirect_to root_path, alert: format_errors(outcome.errors)
+    respond_to do |format|
+      if outcome.valid?
+        format.html { redirect_to root_path, notice: "#{stay.visitor.name} checked out successfully." }
+        format.turbo_stream do
+          flash.now[:notice] = "#{stay.visitor.name} checked out successfully."
+          load_dashboard_data
+        end
+      else
+        format.html { redirect_to root_path, alert: format_errors(outcome.errors) }
+        format.turbo_stream do
+          flash.now[:alert] = format_errors(outcome.errors)
+          load_dashboard_data
+        end
+      end
     end
   rescue ActiveRecord::RecordNotFound
     redirect_to root_path, alert: "Stay not found."
@@ -104,6 +120,26 @@ class StaysController < ApplicationController
 
   def format_errors(errors)
     errors.full_messages.join(". ")
+  end
+
+  # Load dashboard data for Turbo Stream responses
+  def load_dashboard_data
+    property = find_property
+    @current_visitors = property.current_visitors.includes(:stays)
+    @visitors_for_checkin = Visitor.kept.order(:name)
+    @visitors_for_checkout = @current_visitors
+    @last_meter_readings = property.meters.map do |meter|
+      reading = meter.meter_readings.kept.order(recorded_at: :desc).first
+      next unless reading
+
+      [meter.meter_type, {
+        label: meter.label,
+        value: reading.value,
+        date: reading.recorded_at
+      }]
+    end.compact.to_h
+    @meters = property.meters.kept.order(meter_type: :asc)
+    @recent_events = property.events.kept.order(recorded_at: :desc).limit(10).includes(:visitor, :stay, :meter_reading)
   end
 
   # Stub authentication method

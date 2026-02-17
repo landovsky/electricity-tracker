@@ -1,40 +1,46 @@
-<section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-  <!-- Tab bar (non-functional - interactivity is workspace-37) -->
+<section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-controller="action-forms" data-action-forms-default-tab-value="<%= default_tab %>">
+  <!-- Tab bar with Stimulus interactivity -->
   <div class="flex border-b border-gray-100">
-    <button type="button" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-brand-600 text-brand-600">
+    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="checkin" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
       <%= render Shared::IconComponent.new(icon_class: "fa-right-to-bracket", color: "mr-1") %>
       Check In
     </button>
-    <button type="button" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500">
+    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="checkout" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
       <%= render Shared::IconComponent.new(icon_class: "fa-right-from-bracket", color: "mr-1") %>
       Check Out
     </button>
-    <button type="button" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500">
+    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="manual" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
       <%= render Shared::IconComponent.new(icon_class: "fa-bolt", color: "mr-1") %>
       Log Entry
     </button>
   </div>
 
-  <!-- Check In Form (visible by default) -->
-  <div class="p-4">
-    <%= render Dashboard::CheckInFormComponent.new(
-      visitors: visitors_for_checkin,
-      last_readings: last_readings,
-      meters: meters
-    ) %>
-  </div>
+  <!-- Check In Form -->
+  <turbo-frame id="check-in-form" data-action-forms-target="formPanel" data-form-type="checkin">
+    <div class="p-4">
+      <%= render Dashboard::CheckInFormComponent.new(
+        visitors: visitors_for_checkin,
+        last_readings: last_readings,
+        meters: meters
+      ) %>
+    </div>
+  </turbo-frame>
 
-  <!-- Check Out Form (hidden - will be shown via Stimulus in workspace-37) -->
-  <div class="p-4 hidden">
-    <%= render Dashboard::CheckOutFormComponent.new(
-      current_visitors: visitors_for_checkout,
-      last_readings: last_readings,
-      meters: meters
-    ) %>
-  </div>
+  <!-- Check Out Form -->
+  <turbo-frame id="check-out-form" data-action-forms-target="formPanel" data-form-type="checkout">
+    <div class="p-4">
+      <%= render Dashboard::CheckOutFormComponent.new(
+        current_visitors: visitors_for_checkout,
+        last_readings: last_readings,
+        meters: meters
+      ) %>
+    </div>
+  </turbo-frame>
 
-  <!-- Manual Entry Form (hidden - will be shown via Stimulus in workspace-37) -->
-  <div class="p-4 hidden">
-    <%= render Dashboard::ManualEntryFormComponent.new(visitors: all_visitors) %>
-  </div>
+  <!-- Manual Entry Form -->
+  <turbo-frame id="manual-entry-form" data-action-forms-target="formPanel" data-form-type="manual">
+    <div class="p-4">
+      <%= render Dashboard::ManualEntryFormComponent.new(visitors: all_visitors) %>
+    </div>
+  </turbo-frame>
 </section>

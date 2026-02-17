@@ -1,0 +1,34 @@
+<%# Turbo Stream response for check-out %>
+
+<%# Update house status (visitor removed) %>
+<%= turbo_stream.replace "house-status" do %>
+  <%= render Dashboard::HouseStatusComponent.new(
+    current_visitors: @current_visitors,
+    last_meter_readings: @last_meter_readings
+  ) %>
+<% end %>
+
+<%# Update action forms to refresh visitor lists %>
+<%= turbo_stream.replace "check-out-form" do %>
+  <div class="p-4">
+    <%= render Dashboard::CheckOutFormComponent.new(
+      current_visitors: @visitors_for_checkout,
+      last_readings: @last_meter_readings,
+      meters: @meters
+    ) %>
+  </div>
+<% end %>
+
+<%# Update recent activity %>
+<%= turbo_stream.replace "recent-activity" do %>
+  <%= render Dashboard::RecentActivityComponent.new(
+    recent_events: @recent_events
+  ) %>
+<% end %>
+
+<%# Show toast notification %>
+<%= turbo_stream.append "toast-container" do %>
+  <% flash.each do |flash_type, message| %>
+    <%= render "shared/toast", flash_type: flash_type, message: message %>
+  <% end %>
+<% end %>

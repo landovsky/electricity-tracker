@@ -20,9 +20,11 @@
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
   </head>
 
   <body>
+    <div id="toast-container" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 space-y-2"></div>
     <%= yield %>
   </body>
 </html>

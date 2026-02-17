@@ -38,4 +38,13 @@ class Dashboard::CheckOutFormComponent < ApplicationComponent
       [ "#{visitor.name} (since #{checkin_date})", stay&.id ]
     end
   end
+
+  def visitor_options_with_data
+    current_visitors.map do |visitor|
+      stay = visitor.stays.find { |s| s.open? }
+      checkin_date = stay&.check_in_event&.recorded_at&.strftime("%b %d") || "unknown"
+      label = "#{visitor.name} (since #{checkin_date})"
+      [ label, stay&.id, { "data-stay-id": stay&.id } ]
+    end
+  end
 end

@@ -1,0 +1,24 @@
+<%# Turbo Stream response for manual consumption entry %>
+
+<%# Update recent activity %>
+<%= turbo_stream.replace "recent-activity" do %>
+  <%= render Dashboard::RecentActivityComponent.new(
+    recent_events: @recent_events
+  ) %>
+<% end %>
+
+<%# Reset manual entry form %>
+<%= turbo_stream.replace "manual-entry-form" do %>
+  <div class="p-4">
+    <%= render Dashboard::ManualEntryFormComponent.new(
+      visitors: @all_visitors
+    ) %>
+  </div>
+<% end %>
+
+<%# Show toast notification %>
+<%= turbo_stream.append "toast-container" do %>
+  <% flash.each do |flash_type, message| %>
+    <%= render "shared/toast", flash_type: flash_type, message: message %>
+  <% end %>
+<% end %>

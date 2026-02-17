@@ -14,4 +14,9 @@ class Dashboard::ActionFormsComponent < ApplicationComponent
   def all_visitors
     (visitors_for_checkin + visitors_for_checkout).uniq
   end
+
+  # Default tab based on whether visitors are currently checked in
+  def default_tab
+    visitors_for_checkout.any? ? "checkout" : "checkin"
+  end
 end

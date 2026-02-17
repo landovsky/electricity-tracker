@@ -1,46 +1,48 @@
-<%= render Shared::CardComponent.new(title: "House Status") do %>
-  <!-- Who's here -->
-  <div>
-    <h3 class="text-xs font-medium text-gray-400 uppercase mb-2">Currently here</h3>
-    <% if current_visitors.any? %>
-      <div class="space-y-2">
-        <% current_visitors.each do |visitor| %>
-          <% stay = visitor.stays.find { |s| s.open? } %>
-          <%= render Dashboard::VisitorCardComponent.new(
-            visitor: visitor,
-            checked_in_at: stay&.check_in_event&.recorded_at
-          ) %>
-        <% end %>
-      </div>
-    <% else %>
-      <%= render Shared::EmptyStateComponent.new(message: "Nobody is at the house right now.") %>
-    <% end %>
-  </div>
+<turbo-frame id="house-status">
+  <%= render Shared::CardComponent.new(title: "House Status") do %>
+    <!-- Who's here -->
+    <div>
+      <h3 class="text-xs font-medium text-gray-400 uppercase mb-2">Currently here</h3>
+      <% if current_visitors.any? %>
+        <div class="space-y-2">
+          <% current_visitors.each do |visitor| %>
+            <% stay = visitor.stays.find { |s| s.open? } %>
+            <%= render Dashboard::VisitorCardComponent.new(
+              visitor: visitor,
+              checked_in_at: stay&.check_in_event&.recorded_at
+            ) %>
+          <% end %>
+        </div>
+      <% else %>
+        <%= render Shared::EmptyStateComponent.new(message: "Nobody is at the house right now.") %>
+      <% end %>
+    </div>
 
-  <!-- Current readings -->
-  <div>
-    <h3 class="text-xs font-medium text-gray-400 uppercase mb-2">Latest meter readings</h3>
-    <% if last_meter_readings.any? %>
-      <div class="grid grid-cols-2 gap-3">
-        <% if main_reading %>
-          <%= render Dashboard::MeterReadingCardComponent.new(
-            label: main_reading[:label],
-            value: main_reading[:value],
-            date: main_reading[:date],
-            icon_class: "fa-gauge-high"
-          ) %>
-        <% end %>
-        <% if secondary_reading %>
-          <%= render Dashboard::MeterReadingCardComponent.new(
-            label: secondary_reading[:label],
-            value: secondary_reading[:value],
-            date: secondary_reading[:date],
-            icon_class: "fa-gauge"
-          ) %>
-        <% end %>
-      </div>
-    <% else %>
-      <%= render Shared::EmptyStateComponent.new(message: "No meter readings recorded yet.") %>
-    <% end %>
-  </div>
-<% end %>
+    <!-- Current readings -->
+    <div>
+      <h3 class="text-xs font-medium text-gray-400 uppercase mb-2">Latest meter readings</h3>
+      <% if last_meter_readings.any? %>
+        <div class="grid grid-cols-2 gap-3">
+          <% if main_reading %>
+            <%= render Dashboard::MeterReadingCardComponent.new(
+              label: main_reading[:label],
+              value: main_reading[:value],
+              date: main_reading[:date],
+              icon_class: "fa-gauge-high"
+            ) %>
+          <% end %>
+          <% if secondary_reading %>
+            <%= render Dashboard::MeterReadingCardComponent.new(
+              label: secondary_reading[:label],
+              value: secondary_reading[:value],
+              date: secondary_reading[:date],
+              icon_class: "fa-gauge"
+            ) %>
+          <% end %>
+        </div>
+      <% else %>
+        <%= render Shared::EmptyStateComponent.new(message: "No meter readings recorded yet.") %>
+      <% end %>
+    </div>
+  <% end %>
+</turbo-frame>
