@@ -29,6 +29,12 @@ namespace :app do
       puts "  Created admin user: #{u.email}"
     end
 
-    puts "Setup complete. Property: #{property.name}, Meters: #{Meter.count}, Users: #{User.count}"
+    %w[Tomas Petr].each do |name|
+      Visitor.find_or_create_by!(name: name) do |v|
+        puts "  Created visitor: #{v.name}"
+      end
+    end
+
+    puts "Setup complete. Property: #{property.name}, Meters: #{Meter.count}, Users: #{User.count}, Visitors: #{Visitor.count}"
   end
 end
