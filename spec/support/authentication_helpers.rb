@@ -43,5 +43,12 @@ RSpec.configure do |config|
 
   config.before(:each, type: :system) do
     ActionMailer::Base.deliveries.clear
+    # Auto-authenticate system specs by disabling auth.
+    # Individual specs can test the auth flow by re-enabling it.
+    ENV["DISABLE_AUTH"] = "true"
+  end
+
+  config.after(:each, type: :system) do
+    ENV.delete("DISABLE_AUTH")
   end
 end

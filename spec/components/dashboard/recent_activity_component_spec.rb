@@ -14,7 +14,7 @@ RSpec.describe Dashboard::RecentActivityComponent, type: :component do
       recorded_at: 2.days.ago,
       stay_as_check_in: stay,
       stay_as_check_out: nil,
-      meter_readings: [meter_reading]
+      meter_readings: [ meter_reading ]
     )
   end
   let(:manual_entry) do
@@ -29,7 +29,7 @@ RSpec.describe Dashboard::RecentActivityComponent, type: :component do
 
   it "renders recent activity section with header" do
     render_inline(described_class.new(
-      recent_events: [event],
+      recent_events: [ event ],
       recent_manual_entries: []
     ))
 
@@ -39,8 +39,8 @@ RSpec.describe Dashboard::RecentActivityComponent, type: :component do
 
   it "renders events and manual entries combined and sorted" do
     render_inline(described_class.new(
-      recent_events: [event],
-      recent_manual_entries: [manual_entry]
+      recent_events: [ event ],
+      recent_manual_entries: [ manual_entry ]
     ))
 
     expect(page).to have_text("Alice")
@@ -59,7 +59,7 @@ RSpec.describe Dashboard::RecentActivityComponent, type: :component do
 
   it "renders meter readings summary for events" do
     render_inline(described_class.new(
-      recent_events: [event],
+      recent_events: [ event ],
       recent_manual_entries: []
     ))
 

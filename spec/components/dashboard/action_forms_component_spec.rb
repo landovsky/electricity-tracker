@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Dashboard::ActionFormsComponent, type: :component do
   let(:visitor) { instance_double("Visitor", id: 1, name: "Alice") }
   let(:main_meter) { instance_double("Meter", id: 1, meter_type: "main", label: "Main meter") }
-  let(:meters) { [main_meter] }
+  let(:meters) { [ main_meter ] }
   let(:last_readings) do
     {
       "main" => { value: 12_487, date: Date.parse("2026-02-15") }
@@ -14,7 +14,7 @@ RSpec.describe Dashboard::ActionFormsComponent, type: :component do
 
   it "renders tabbed container with three tab buttons" do
     render_inline(described_class.new(
-      visitors_for_checkin: [visitor],
+      visitors_for_checkin: [ visitor ],
       visitors_for_checkout: [],
       meters: meters,
       last_readings: last_readings
@@ -27,7 +27,7 @@ RSpec.describe Dashboard::ActionFormsComponent, type: :component do
 
   it "renders all three form components" do
     render_inline(described_class.new(
-      visitors_for_checkin: [visitor],
+      visitors_for_checkin: [ visitor ],
       visitors_for_checkout: [],
       meters: meters,
       last_readings: last_readings
@@ -42,7 +42,7 @@ RSpec.describe Dashboard::ActionFormsComponent, type: :component do
 
   it "shows check-in tab as active" do
     render_inline(described_class.new(
-      visitors_for_checkin: [visitor],
+      visitors_for_checkin: [ visitor ],
       visitors_for_checkout: [],
       meters: meters,
       last_readings: last_readings

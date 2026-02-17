@@ -79,5 +79,4 @@ class ConsumptionReportsController < ApplicationController
   def format_errors(errors)
     errors.full_messages.join(". ")
   end
-
 end

@@ -24,13 +24,13 @@ RSpec.describe MeterReadingEvent, type: :model do
 
     describe ".recent" do
       it "returns events in reverse chronological order" do
-        expect(MeterReadingEvent.recent.pluck(:id)).to eq([event3.id, event2.id, event1.id])
+        expect(MeterReadingEvent.recent.pluck(:id)).to eq([ event3.id, event2.id, event1.id ])
       end
     end
 
     describe ".chronological" do
       it "returns events in chronological order" do
-        expect(MeterReadingEvent.chronological.pluck(:id)).to eq([event1.id, event2.id, event3.id])
+        expect(MeterReadingEvent.chronological.pluck(:id)).to eq([ event1.id, event2.id, event3.id ])
       end
     end
   end

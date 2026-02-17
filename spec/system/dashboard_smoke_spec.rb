@@ -36,7 +36,7 @@ RSpec.describe "Dashboard", type: :system do
     visit root_path
 
     # Visitor should be available for selection
-    expect(page).to have_select("visitor_id", with_options: [visitor.name])
+    expect(page).to have_select("visitor_id", with_options: [ visitor.name ])
   end
 
   scenario "SystemHelpers are available", :skip_in_ci do

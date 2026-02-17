@@ -101,7 +101,7 @@ RSpec.configure do |config|
       elsif ENV["HEADLESS"] == "false"
         driven_by :selenium_chrome
       else
-        driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400]
+        driven_by :selenium, using: :headless_chrome, screen_size: [ 1400, 1400 ]
       end
     rescue => e
       # Fall back to rack_test if Selenium fails (e.g., Chrome not available)

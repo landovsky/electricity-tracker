@@ -116,11 +116,11 @@ class ManualConsumptionEntriesController < ApplicationController
       reading = meter.meter_readings.kept.order(recorded_at: :desc).first
       next unless reading
 
-      [meter.meter_type, {
+      [ meter.meter_type, {
         label: meter.label,
         value: reading.value,
         date: reading.recorded_at
-      }]
+      } ]
     end.compact.to_h
     @meters = property.meters.kept.order(meter_type: :asc)
     @recent_events = property.events.kept.order(recorded_at: :desc).limit(10).includes(:visitor, :stay, :meter_reading)

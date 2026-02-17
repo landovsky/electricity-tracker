@@ -95,5 +95,4 @@ class VisitorsController < ApplicationController
       redirect_to visitors_path, alert: "You must be an administrator to perform this action."
     end
   end
-
 end

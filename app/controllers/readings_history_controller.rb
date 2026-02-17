@@ -86,5 +86,4 @@ class ReadingsHistoryController < ApplicationController
     flash.now[:alert] = "Invalid date format: #{e.message}"
     ManualConsumptionEntry.none
   end
-
 end

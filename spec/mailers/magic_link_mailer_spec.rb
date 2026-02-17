@@ -10,7 +10,7 @@ RSpec.describe MagicLinkMailer, type: :mailer do
     subject(:mail) { described_class.login_link(user: user, token: token) }
 
     it "sends to the user's email" do
-      expect(mail.to).to eq(["petr@example.com"])
+      expect(mail.to).to eq([ "petr@example.com" ])
     end
 
     it "has the correct subject" do

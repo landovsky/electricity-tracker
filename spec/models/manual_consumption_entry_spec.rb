@@ -39,7 +39,7 @@ RSpec.describe ManualConsumptionEntry, type: :model do
     describe ".recent" do
       it "returns entries in reverse chronological order" do
         entries = ManualConsumptionEntry.recent
-        expect(entries.pluck(:kwh)).to eq([15, 20, 10])
+        expect(entries.pluck(:kwh)).to eq([ 15, 20, 10 ])
       end
     end
 
@@ -47,13 +47,13 @@ RSpec.describe ManualConsumptionEntry, type: :model do
       it "returns entries within the specified date range" do
         entries = ManualConsumptionEntry.for_date_range(2.days.ago, Time.zone.today)
         expect(entries.count).to eq(2)
-        expect(entries.pluck(:kwh)).to match_array([20, 15])
+        expect(entries.pluck(:kwh)).to match_array([ 20, 15 ])
       end
 
       it "includes entries on the boundary dates" do
         entries = ManualConsumptionEntry.for_date_range(3.days.ago, 1.day.ago)
         expect(entries.count).to eq(2)
-        expect(entries.pluck(:kwh)).to match_array([10, 20])
+        expect(entries.pluck(:kwh)).to match_array([ 10, 20 ])
       end
     end
   end

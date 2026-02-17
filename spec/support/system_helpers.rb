@@ -228,9 +228,9 @@ module SystemHelpers
     # Use scopes instead of status column (status is computed)
     stay = if status == 'open'
              Stay.kept.open.find_by(visitor: visitor)
-           else
+    else
              Stay.kept.closed.find_by(visitor: visitor)
-           end
+    end
     expect(stay).to be_present, "Expected #{status} stay for #{visitor.name} but found none"
     stay
   end

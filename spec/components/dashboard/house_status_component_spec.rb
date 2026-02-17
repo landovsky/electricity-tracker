@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Dashboard::HouseStatusComponent, type: :component do
   let(:event) { instance_double("Event", recorded_at: 2.days.ago) }
   let(:stay) { instance_double("Stay", open?: true, check_in_event: event) }
-  let(:visitor) { instance_double("Visitor", name: "Alice", stays: [stay]) }
+  let(:visitor) { instance_double("Visitor", name: "Alice", stays: [ stay ]) }
 
   let(:last_meter_readings) do
     {
@@ -16,7 +16,7 @@ RSpec.describe Dashboard::HouseStatusComponent, type: :component do
 
   it "renders house status with current visitors" do
     render_inline(described_class.new(
-      current_visitors: [visitor],
+      current_visitors: [ visitor ],
       last_meter_readings: last_meter_readings
     ))
 
