@@ -9,11 +9,21 @@ export default class extends Controller {
 
   connect() {
     // Set initial active tab based on default
-    const defaultTab = this.defaultTabValue || "checkin"
-    this.switchToTab(defaultTab)
+    this.activeTab = this.defaultTabValue || "checkin"
+    this.switchToTab(this.activeTab)
 
     this.handleCheckoutVisitor = this.checkOutVisitor.bind(this)
     window.addEventListener("checkout-visitor", this.handleCheckoutVisitor)
+  }
+
+  // When turbo_stream.replace swaps a panel, the new element lacks the
+  // "hidden" class. Re-apply visibility based on the currently active tab.
+  formPanelTargetConnected(panel) {
+    if (panel.dataset.formType !== this.activeTab) {
+      panel.classList.add("hidden")
+    } else {
+      panel.classList.remove("hidden")
+    }
   }
 
   disconnect() {
@@ -45,6 +55,8 @@ export default class extends Controller {
   }
 
   switchToTab(tabName) {
+    this.activeTab = tabName
+
     // Update all tab buttons
     this.tabButtonTargets.forEach(button => {
       const isActive = button.dataset.tab === tabName
