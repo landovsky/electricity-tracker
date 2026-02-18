@@ -116,15 +116,15 @@ class AnalyzePeriods < ApplicationService
 
   def find_manual_entries(period_start, period_end)
     # Manual entries are attributed to a period if their date falls within the period's date range
-    # We use inclusive ranges on both ends.
-    # Note: If meter readings happen at different times on the same calendar day,
-    # manual entries for that day will be attributed to the earlier period.
+    # We use an inclusive start and exclusive end to prevent boundary dates from appearing in multiple periods.
+    # This means a manual entry dated on the period end date will be attributed to the next period,
+    # which is correct since the next period starts at that time.
     start_date = period_start.to_date
     end_date = period_end.to_date
 
     ManualConsumptionEntry.kept
                           .where(property_id: property.id)
-                          .where(date: start_date..end_date)
+                          .where("date >= ? AND date < ?", start_date, end_date)
                           .order(:date)
   end
 end

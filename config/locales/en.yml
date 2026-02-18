@@ -241,6 +241,7 @@ en:
   # Service error messages
   services:
     check_in_visitor:
+      visitor_has_open_stay: "already has an open stay"
       not_chronological: "must be after or equal to previous event (%{timestamp})"
 
   # Stays controller

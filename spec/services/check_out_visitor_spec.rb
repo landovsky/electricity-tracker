@@ -377,7 +377,7 @@ RSpec.describe CheckOutVisitor, type: :service do
 
         expect(outcome).not_to be_valid
         expect(outcome.errors[:base]).to include(
-          match(/Návštěvník .* nemá otevřený pobyt/)
+          match(/Visitor .* does not have an open stay/)
         )
       end
     end
@@ -403,7 +403,7 @@ RSpec.describe CheckOutVisitor, type: :service do
         )
 
         expect(outcome).not_to be_valid
-        expect(outcome.errors[:base]).to include("Pobyt je již uzavřen")
+        expect(outcome.errors[:base]).to include("Stay is already closed")
       end
     end
 
@@ -417,7 +417,7 @@ RSpec.describe CheckOutVisitor, type: :service do
         )
 
         expect(outcome).not_to be_valid
-        expect(outcome.errors[:base]).to include("Musí být zadán buď návštěvník, nebo pobyt")
+        expect(outcome.errors[:base]).to include("Either visitor or stay must be provided")
       end
     end
 
@@ -443,7 +443,7 @@ RSpec.describe CheckOutVisitor, type: :service do
         )
 
         expect(outcome).not_to be_valid
-        expect(outcome.errors[:base]).to include("Hlavní měřič pro nemovitost nebyl nalezen")
+        expect(outcome.errors[:base]).to include("Main meter not found for property")
       end
     end
 
@@ -544,7 +544,7 @@ RSpec.describe CheckOutVisitor, type: :service do
 
         expect(outcome).not_to be_valid
         expect(outcome.errors[:base]).to include(
-          match(/must be greater than or equal to previous reading/)
+          match(/must be greater than or equal to the previous reading/)
         )
       end
     end

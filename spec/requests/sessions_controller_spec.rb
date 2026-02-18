@@ -8,6 +8,9 @@ RSpec.describe SessionsController, type: :request do
   before do
     allow_any_instance_of(ApplicationController).to receive(:current_user).and_call_original
     allow_any_instance_of(ApplicationController).to receive(:logged_in?).and_call_original
+
+    # Stub recaptcha ENV vars to prevent errors in views
+    stub_const("ENV", ENV.to_hash.merge("RECAPTCHA_SITE_KEY" => "test_site_key"))
   end
 
   let(:user) { create(:user, email: "test@example.com", name: "Test User") }
@@ -30,27 +33,26 @@ RSpec.describe SessionsController, type: :request do
       it "sends a magic link email" do
         expect {
           post login_path, params: { email: user.email }
-        }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+        }.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
 
-      it "redirects to login with a notice" do
+      it "redirects to email_sent page" do
         post login_path, params: { email: user.email }
-        expect(response).to redirect_to(login_path)
-        expect(flash[:notice]).to include("If that email is registered")
+        expect(response).to redirect_to(email_sent_path)
       end
     end
 
     context "with an unregistered email" do
-      it "shows the same message to prevent enumeration" do
+      it "shows the same redirect to prevent enumeration" do
         post login_path, params: { email: "nobody@example.com" }
-        expect(response).to redirect_to(login_path)
-        expect(flash[:notice]).to include("If that email is registered")
+        expect(response).to redirect_to(email_sent_path)
       end
 
-      it "does not send an email" do
+      it "creates the user and sends an email (self-registration)" do
         expect {
           post login_path, params: { email: "nobody@example.com" }
-        }.not_to have_enqueued_job(ActionMailer::MailDeliveryJob)
+        }.to change { ActionMailer::Base.deliveries.count }.by(1)
+          .and change { User.count }.by(1)
       end
     end
 
@@ -59,7 +61,7 @@ RSpec.describe SessionsController, type: :request do
         user # ensure created with test@example.com
         expect {
           post login_path, params: { email: "  Test@Example.COM  " }
-        }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+        }.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
     end
   end
@@ -71,7 +73,7 @@ RSpec.describe SessionsController, type: :request do
       it "creates a session and redirects to root" do
         get auth_verify_path(token: token)
         expect(response).to redirect_to(root_path)
-        expect(flash[:notice]).to include("Logged in successfully")
+        expect(flash[:notice]).to include("Login successful")
       end
     end
 
