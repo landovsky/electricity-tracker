@@ -9,5 +9,5 @@
     "release:major": "release-it major",
     "release:dry": "release-it --dry-run"
   },
-  "version": "0.0.12"
+  "version": "0.0.13"
 }
