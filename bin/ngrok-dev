@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PORT="${PORT:-3000}"
+
+# Kill any existing processes on the port and ngrok
+lsof -ti:"$PORT" 2>/dev/null | xargs kill -9 2>/dev/null || true
+pkill -f ngrok 2>/dev/null || true
+sleep 1
+
+# Start ngrok
+ngrok http "$PORT" > /dev/null 2>&1 &
+NGROK_PID=$!
+
+# Wait for ngrok to be ready
+for i in {1..10}; do
+  NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels 2>/dev/null \
+    | python3 -c "import sys,json; tunnels=json.load(sys.stdin)['tunnels']; [print(t['public_url']) for t in tunnels if t['public_url'].startswith('https')]" 2>/dev/null) \
+    && [ -n "$NGROK_URL" ] && break
+  sleep 1
+done
+
+if [ -z "${NGROK_URL:-}" ]; then
+  echo "ERROR: Failed to start ngrok"
+  kill $NGROK_PID 2>/dev/null || true
+  exit 1
+fi
+
+echo ""
+echo "=========================================="
+echo "  ngrok URL: $NGROK_URL"
+echo "=========================================="
+echo ""
+
+# Cleanup on exit
+cleanup() {
+  echo ""
+  echo "Shutting down..."
+  kill $NGROK_PID 2>/dev/null || true
+  lsof -ti:"$PORT" 2>/dev/null | xargs kill -9 2>/dev/null || true
+}
+trap cleanup EXIT INT TERM
+
+# Start Rails server (foreground)
+DISABLE_AUTH=true bin/rails server -b 0.0.0.0 -p "$PORT"
