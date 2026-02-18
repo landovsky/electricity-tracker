@@ -1,0 +1,10 @@
+{
+  "ignored_warnings": [
+    {
+      "fingerprint": "5a5ec774d58e70a11ee012b5828bb089c995ab28d76f68700fc79732ad2cf8dd",
+      "note": "Admin-only controller (require_admin before_action)"
+    }
+  ],
+  "updated": "2026-02-18",
+  "brakeman_version": "8.0.2"
+}
