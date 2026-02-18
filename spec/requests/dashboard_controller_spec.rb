@@ -30,28 +30,27 @@ RSpec.describe DashboardController, type: :request do
       it "displays property name" do
         get root_path
 
-        expect(response.body).to include("Electricity Tracker Dashboard")
-        expect(response.body).not_to include("No property configured")
+        expect(response.body).to include("Electricity #{property.name}")
+        expect(response.body).not_to include(I18n.t("dashboard.no_property"))
       end
 
       context "with no visitors" do
         it "displays empty state for current visitors" do
           get root_path
 
-          expect(response.body).to include("Nobody is at the house right now")
+          expect(response.body).to include(I18n.t("dashboard.house_status.nobody_here"))
         end
 
         it "displays empty state for meter readings" do
           get root_path
 
-          expect(response.body).to include("No meter readings recorded yet")
+          expect(response.body).to include(I18n.t("dashboard.house_status.no_readings"))
         end
 
         it "displays empty state for recent activity" do
           get root_path
 
-          expect(response.body).to include("No recent events")
-          expect(response.body).to include("No recent manual entries")
+          expect(response.body).to include(I18n.t("dashboard.recent_activity.no_activity"))
         end
       end
 

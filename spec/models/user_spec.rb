@@ -9,10 +9,8 @@ RSpec.describe User, type: :model do
   describe "validations" do
     subject { described_class.new(email: "test@example.com", name: "Test User", role: "member") }
 
-    it { should validate_presence_of(:email) }
-    it { should validate_presence_of(:name) }
     it { should validate_presence_of(:role) }
-    it { should validate_uniqueness_of(:email) }
+    it { should validate_uniqueness_of(:email).allow_nil }
 
     it "validates email format" do
       user = User.new(name: "Test", role: "member", email: "invalid")

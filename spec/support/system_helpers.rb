@@ -86,7 +86,7 @@ module SystemHelpers
       fill_in "date", with: date.is_a?(Date) ? date.strftime("%Y-%m-%d") : date
       fill_in "note", with: note if note.present?
 
-      click_button "Log Consumption"
+      click_button I18n.t("dashboard.manual_entry_form.submit")
     end
 
     wait_for_turbo

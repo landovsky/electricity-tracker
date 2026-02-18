@@ -17,12 +17,14 @@ RSpec.describe Stay, type: :model do
     let(:property) { Property.create!(name: "Test Property") }
     let(:visitor1) { Visitor.create!(name: "Test Visitor 1", status: "active") }
     let(:visitor2) { Visitor.create!(name: "Test Visitor 2", status: "active") }
-    let(:check_in) { MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in") }
-    let(:check_out) { MeterReadingEvent.create!(recorded_at: Time.current, event_type: "check_out") }
 
     before do
-      Stay.create!(visitor: visitor1, property: property, check_in_event: check_in)
-      Stay.create!(visitor: visitor2, property: property, check_in_event: check_in, check_out_event: check_out)
+      check_in1 = MeterReadingEvent.create!(recorded_at: 2.days.ago, event_type: "check_in")
+      check_in2 = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")
+      check_out2 = MeterReadingEvent.create!(recorded_at: Time.current, event_type: "check_out")
+
+      Stay.create!(visitor: visitor1, property: property, check_in_event: check_in1)
+      Stay.create!(visitor: visitor2, property: property, check_in_event: check_in2, check_out_event: check_out2)
     end
 
     describe ".open" do
@@ -55,15 +57,16 @@ RSpec.describe Stay, type: :model do
   describe "#status" do
     let(:property) { Property.create!(name: "Test Property") }
     let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
-    let(:check_in) { MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in") }
-    let(:check_out) { MeterReadingEvent.create!(recorded_at: Time.current, event_type: "check_out") }
 
     it "returns 'open' when check_out_event_id is nil" do
+      check_in = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")
       stay = Stay.create!(visitor: visitor, property: property, check_in_event: check_in)
       expect(stay.status).to eq("open")
     end
 
     it "returns 'closed' when check_out_event_id is present" do
+      check_in = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")
+      check_out = MeterReadingEvent.create!(recorded_at: Time.current, event_type: "check_out")
       stay = Stay.create!(visitor: visitor, property: property, check_in_event: check_in, check_out_event: check_out)
       expect(stay.status).to eq("closed")
     end
@@ -72,14 +75,15 @@ RSpec.describe Stay, type: :model do
   describe "#open?" do
     let(:property) { Property.create!(name: "Test Property") }
     let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
-    let(:check_in) { MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in") }
 
     it "returns true when stay is open" do
+      check_in = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")
       stay = Stay.create!(visitor: visitor, property: property, check_in_event: check_in)
       expect(stay.open?).to be true
     end
 
     it "returns false when stay is closed" do
+      check_in = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")
       check_out = MeterReadingEvent.create!(recorded_at: Time.current, event_type: "check_out")
       stay = Stay.create!(visitor: visitor, property: property, check_in_event: check_in, check_out_event: check_out)
       expect(stay.open?).to be false
@@ -89,14 +93,15 @@ RSpec.describe Stay, type: :model do
   describe "#closed?" do
     let(:property) { Property.create!(name: "Test Property") }
     let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
-    let(:check_in) { MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in") }
 
     it "returns false when stay is open" do
+      check_in = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")
       stay = Stay.create!(visitor: visitor, property: property, check_in_event: check_in)
       expect(stay.closed?).to be false
     end
 
     it "returns true when stay is closed" do
+      check_in = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")
       check_out = MeterReadingEvent.create!(recorded_at: Time.current, event_type: "check_out")
       stay = Stay.create!(visitor: visitor, property: property, check_in_event: check_in, check_out_event: check_out)
       expect(stay.closed?).to be true
@@ -106,23 +111,24 @@ RSpec.describe Stay, type: :model do
   describe "C2: visitor can have at most one open stay" do
     let(:property) { Property.create!(name: "Test Property") }
     let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
-    let(:check_in1) { MeterReadingEvent.create!(recorded_at: 2.days.ago, event_type: "check_in") }
-    let(:check_in2) { MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in") }
 
     context "when visitor has no open stays" do
       it "allows creating an open stay" do
-        stay = Stay.new(visitor: visitor, property: property, check_in_event: check_in1)
+        check_in = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")
+        stay = Stay.new(visitor: visitor, property: property, check_in_event: check_in)
         expect(stay).to be_valid
       end
     end
 
     context "when visitor has a closed stay" do
       before do
+        check_in = MeterReadingEvent.create!(recorded_at: 2.days.ago, event_type: "check_in")
         check_out = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_out")
-        Stay.create!(visitor: visitor, property: property, check_in_event: check_in1, check_out_event: check_out)
+        Stay.create!(visitor: visitor, property: property, check_in_event: check_in, check_out_event: check_out)
       end
 
       it "allows creating another open stay" do
+        check_in2 = MeterReadingEvent.create!(recorded_at: Time.current, event_type: "check_in")
         stay = Stay.new(visitor: visitor, property: property, check_in_event: check_in2)
         expect(stay).to be_valid
       end
@@ -130,10 +136,12 @@ RSpec.describe Stay, type: :model do
 
     context "when visitor has an open stay" do
       before do
+        check_in1 = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")
         Stay.create!(visitor: visitor, property: property, check_in_event: check_in1)
       end
 
       it "prevents creating another open stay" do
+        check_in2 = MeterReadingEvent.create!(recorded_at: Time.current, event_type: "check_in")
         stay = Stay.new(visitor: visitor, property: property, check_in_event: check_in2)
         expect(stay).not_to be_valid
         expect(stay.errors[:base]).to include(I18n.t("activerecord.errors.models.stay.attributes.base.visitor_open_stay"))
@@ -148,11 +156,13 @@ RSpec.describe Stay, type: :model do
 
     context "when visitor has a soft-deleted open stay" do
       before do
-        stay = Stay.create!(visitor: visitor, property: property, check_in_event: check_in1)
+        check_in = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")
+        stay = Stay.create!(visitor: visitor, property: property, check_in_event: check_in)
         stay.discard
       end
 
       it "allows creating a new open stay" do
+        check_in2 = MeterReadingEvent.create!(recorded_at: Time.current, event_type: "check_in")
         stay = Stay.new(visitor: visitor, property: property, check_in_event: check_in2)
         expect(stay).to be_valid
       end
@@ -199,11 +209,13 @@ RSpec.describe Stay, type: :model do
         check_in.meter_readings.create!(meter: main_meter, value_kwh: 100)
 
         check_out = MeterReadingEvent.create!(recorded_at: Time.current, event_type: "check_out")
-        check_out.meter_readings.create!(meter: main_meter, value_kwh: 80)
+        # Use save(validate: false) to bypass C1 validation and test C3 validation on Stay
+        reading = check_out.meter_readings.new(meter: main_meter, value_kwh: 80)
+        reading.save(validate: false)
 
         stay = Stay.new(visitor: visitor, property: property, check_in_event: check_in, check_out_event: check_out)
         expect(stay).not_to be_valid
-        expect(stay.errors[:base]).to include(match(/Check-out reading for Main.*must be >= check-in reading/))
+        expect(stay.errors[:base]).to include(match(/check-out reading for Main.*must be >= check-in reading/))
       end
     end
 
