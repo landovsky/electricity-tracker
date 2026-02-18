@@ -91,9 +91,10 @@ cs:
     title: "Měřič spotřeby"
     log_out: "Odhlásit"
     nav:
-      dashboard: "Přehled"
+      dashboard: "Spotřeba"
       reports: "Spotřeba"
       history: "Historie"
+    admin_nav:
       visitors: "Návštěvníci"
 
   # Authentication
@@ -292,7 +293,7 @@ cs:
   # Readings history
   history:
     title: "Historie odečtů"
-    report: "Přehled"
+    report: "Spotřeba"
     all_visitors: "Všichni návštěvníci"
     all_time: "Celé období"
     filter: "Filtrovat"

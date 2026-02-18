@@ -1,5 +1,9 @@
 <turbo-frame id="house-status" class="block">
-  <%= render Shared::CardComponent.new(title: t("dashboard.house_status.title", property_name: property_name)) do %>
+  <%# TODO: temporary sign-out button in header_action until proper user navigation is implemented %>
+  <%= render Shared::CardComponent.new(
+    title: t("dashboard.house_status.title", property_name: property_name),
+    header_action: button_to(t("layout.log_out"), logout_path, method: :delete, class: "cursor-pointer text-xs text-gray-400 hover:text-gray-600", form: { data: { turbo_frame: "_top" } })
+  ) do %>
     <!-- Who's here -->
     <div>
       <h3 class="text-xs font-medium text-gray-400 uppercase mb-2"><%= t("dashboard.house_status.currently_here") %></h3>
@@ -21,7 +25,13 @@
 
     <!-- Current readings -->
     <div>
-      <h3 class="text-xs font-medium text-gray-400 uppercase mb-2"><%= t("dashboard.house_status.latest_readings") %></h3>
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-xs font-medium text-gray-400 uppercase"><%= t("dashboard.house_status.latest_readings") %></h3>
+        <%= link_to consumption_reports_path, class: "cursor-pointer text-xs text-gray-400 hover:text-brand-600 font-medium flex items-center gap-1", data: { turbo_frame: "_top" } do %>
+          <%= t("layout.nav.reports") %>
+          <i class="fa-solid fa-arrow-right text-[10px]"></i>
+        <% end %>
+      </div>
       <% if last_meter_readings.any? %>
         <div class="grid grid-cols-2 gap-3">
           <% if main_reading %>
