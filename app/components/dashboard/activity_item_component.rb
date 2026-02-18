@@ -40,6 +40,6 @@ class Dashboard::ActivityItemComponent < ApplicationComponent
   def formatted_date
     return "" unless date
 
-    date.strftime("%b %d")
+    I18n.l(date.to_date, format: :short)
   end
 end

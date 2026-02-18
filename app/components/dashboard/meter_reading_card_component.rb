@@ -15,6 +15,6 @@ class Dashboard::MeterReadingCardComponent < ApplicationComponent
   end
 
   def formatted_date
-    date.strftime("%b %d") if date
+    I18n.l(date.to_date, format: :short) if date
   end
 end
