@@ -16,6 +16,7 @@
   </div>
 
   <!-- Check In Form -->
+  <div style="display:none;" data-test="checkin-visitors">Available visitors for check-in: <%= visitors_for_checkin.any? ? visitors_for_checkin.map(&:name).join(", ") : "None" %></div>
   <turbo-frame id="check-in-form" data-action-forms-target="formPanel" data-form-type="checkin" class="<%= 'hidden' unless default_tab == 'checkin' %>">
     <div class="p-4">
       <%= render Dashboard::CheckInFormComponent.new(
@@ -28,6 +29,7 @@
   </turbo-frame>
 
   <!-- Check Out Form -->
+  <div style="display:none;" data-test="checkout-visitors">Available visitors for check-out: <%= visitors_for_checkout.any? ? visitors_for_checkout.map(&:name).join(", ") : "None" %></div>
   <turbo-frame id="check-out-form" data-action-forms-target="formPanel" data-form-type="checkout" class="<%= 'hidden' unless default_tab == 'checkout' %>">
     <div class="p-4">
       <%= render Dashboard::CheckOutFormComponent.new(
