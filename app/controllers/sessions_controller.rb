@@ -15,6 +15,9 @@
 # 4. POST /login/verify_otp → Verify OTP, create session
 #
 # 5. DELETE /logout          → Destroy session
+
+require "ostruct"
+
 class SessionsController < ApplicationController
   skip_before_action :require_authentication, only: %i[new create email_sent create_sms otp_form verify_otp verify]
   skip_before_action :require_onboarding, only: %i[new create email_sent create_sms otp_form verify_otp verify destroy]
@@ -45,8 +48,8 @@ class SessionsController < ApplicationController
   # POST /login/sms — SMS OTP flow
   def create_sms
     unless verify_recaptcha(action: "sms_login", minimum_score: 0.5, secret_key: ENV["RECAPTCHA_SECRET_KEY"])
-      score = recaptcha_reply&.dig("score")
-      Rails.logger.warn("reCAPTCHA failed for SMS login – score: #{score}, errors: #{recaptcha_reply&.dig("error-codes")}")
+      score = recaptcha_reply&.score
+      Rails.logger.warn("reCAPTCHA failed for SMS login – score: #{score}, errors: #{recaptcha_reply&.error_codes}")
 
       if Rails.env.development?
         flash[:alert] = "reCAPTCHA failed (dev – pokračujeme). Score: #{score}"
@@ -57,7 +60,7 @@ class SessionsController < ApplicationController
     end
 
     # Store score for debugging regardless of pass/fail
-    captcha_score = recaptcha_reply&.dig("score")
+    captcha_score = recaptcha_reply&.score
 
     phone = params[:phone_number].to_s.strip
     outcome = FindOrCreateUserByPhone.run(phone_number: phone)
