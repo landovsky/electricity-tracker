@@ -31,7 +31,7 @@
   ) %>
 <% end %>
 
-<%# Reset check-in form %>
+<%# Reset check-in form (nil visitor on success so prompt shows) %>
 <%= turbo_stream.replace "check-in-form" do %>
   <turbo-frame id="check-in-form" data-action-forms-target="formPanel" data-form-type="checkin">
     <div class="p-4">
@@ -39,7 +39,7 @@
         visitors: @visitors_for_checkin,
         last_readings: @last_meter_readings,
         meters: @meters,
-        selected_visitor_id: @default_visitor_id
+        selected_visitor_id: flash[:notice] ? nil : @default_visitor_id
       ) %>
     </div>
   </turbo-frame>
