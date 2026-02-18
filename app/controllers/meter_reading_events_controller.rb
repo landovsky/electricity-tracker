@@ -1,21 +1,19 @@
 # frozen_string_literal: true
 
 class MeterReadingEventsController < ApplicationController
-  before_action :set_event
-
   def destroy
-    if @event.check_in? && @event.stay_as_check_in&.check_out_event_id.present?
-      redirect_to readings_history_path, alert: t("meter_reading_events.destroy.has_checkout")
-      return
+    event = MeterReadingEvent.kept.find(params[:id])
+    outcome = DeleteMeterReadingEvent.run(event: event)
+
+    if outcome.valid?
+      flash.now[:notice] = t("meter_reading_events.destroy.success")
+    else
+      flash.now[:alert] = outcome.errors.full_messages.join(", ")
     end
 
-    @event.discard
-    redirect_to readings_history_path, notice: t("meter_reading_events.destroy.success")
-  end
-
-  private
-
-  def set_event
-    @event = MeterReadingEvent.kept.find(params[:id])
+    respond_to do |format|
+      format.turbo_stream { render "destroy", locals: { event: event } }
+      format.html { redirect_to readings_history_path, flash.to_h }
+    end
   end
 end

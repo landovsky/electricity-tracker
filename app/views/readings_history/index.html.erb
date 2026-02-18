@@ -119,7 +119,7 @@
               action_text = is_check_in ? t("history.checked_in") : t("history.checked_out")
             %>
             <!-- Meter Reading Event -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-controller="expandable-card">
+            <div id="<%= dom_id(event) %>" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-controller="expandable-card">
               <button type="button" data-action="click->expandable-card#toggle" class="w-full px-4 py-3 text-left">
                 <div class="flex items-start justify-between">
                   <div class="flex items-start gap-3">
@@ -152,8 +152,8 @@
                   <div class="text-xs text-gray-400"><%= t("history.recorded_by", name: event.recorded_by_user&.name || t("history.unknown")) %></div>
                   <%= button_to meter_reading_event_path(event), method: :delete,
                         form: { data: { turbo_confirm: t("meter_reading_events.destroy.confirm") } },
-                        class: "text-gray-300 hover:text-red-500 transition-colors p-1" do %>
-                    <i class="fa-solid fa-trash-can text-xs"></i>
+                        class: "inline-flex items-center justify-center w-7 h-7 rounded-lg border border-red-200 text-red-400 hover:text-red-600 hover:border-red-300 hover:bg-red-50 transition-colors cursor-pointer" do %>
+                    <i class="fa-solid fa-trash-can text-[10px]"></i>
                   <% end %>
                 </div>
               </div>

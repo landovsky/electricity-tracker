@@ -1,0 +1,9 @@
+<% if event.discarded? %>
+  <%= turbo_stream.remove event %>
+<% end %>
+
+<%= turbo_stream.append "toast-container" do %>
+  <% flash.each do |flash_type, message| %>
+    <%= render "shared/toast", flash_type: flash_type, message: message %>
+  <% end %>
+<% end %>
