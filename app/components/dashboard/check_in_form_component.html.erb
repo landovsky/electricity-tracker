@@ -16,37 +16,39 @@
     %>
   </div>
 
-  <% if main_meter %>
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">
-        <%= t("dashboard.check_in_form.main_meter") %> <span class="text-red-500">*</span>
-      </label>
-      <%= number_field_tag :main_meter_reading,
-        last_main_reading&.dig(:value),
-        placeholder: "kWh",
-        class: "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
-      %>
-      <% if last_main_reading %>
-        <p class="text-xs text-gray-400 mt-1"><%= last_reading_hint(last_main_reading) %></p>
-      <% end %>
-    </div>
-  <% end %>
+  <div class="<%= 'flex gap-3' if meters.size == 2 %>">
+    <% if main_meter %>
+      <div class="<%= 'flex-1' if meters.size == 2 %>">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          <%= t("dashboard.check_in_form.main_meter") %> <span class="text-red-500">*</span>
+        </label>
+        <%= number_field_tag :main_meter_reading,
+          last_main_reading&.dig(:value),
+          placeholder: "kWh",
+          class: "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+        %>
+        <% if last_main_reading %>
+          <p class="text-xs text-gray-400 mt-1"><%= last_reading_hint(last_main_reading) %></p>
+        <% end %>
+      </div>
+    <% end %>
 
-  <% if secondary_meter %>
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">
-        <%= secondary_meter.label %> <span class="text-gray-400"><%= t("dashboard.check_in_form.optional") %></span>
-      </label>
-      <%= number_field_tag :secondary_meter_reading,
-        last_secondary_reading&.dig(:value),
-        placeholder: "kWh",
-        class: "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
-      %>
-      <% if last_secondary_reading %>
-        <p class="text-xs text-gray-400 mt-1"><%= last_reading_hint(last_secondary_reading) %></p>
-      <% end %>
-    </div>
-  <% end %>
+    <% if secondary_meter %>
+      <div class="<%= 'flex-1' if meters.size == 2 %>">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          <%= secondary_meter.label %> <span class="text-gray-400"><%= t("dashboard.check_in_form.optional") %></span>
+        </label>
+        <%= number_field_tag :secondary_meter_reading,
+          last_secondary_reading&.dig(:value),
+          placeholder: "kWh",
+          class: "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+        %>
+        <% if last_secondary_reading %>
+          <p class="text-xs text-gray-400 mt-1"><%= last_reading_hint(last_secondary_reading) %></p>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 
   <div>
     <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("dashboard.check_in_form.note") %> <span class="text-gray-400"><%= t("dashboard.check_in_form.optional") %></span></label>
