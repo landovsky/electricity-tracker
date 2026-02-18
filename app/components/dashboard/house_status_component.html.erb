@@ -27,7 +27,7 @@
     <div>
       <div class="flex items-center justify-between mb-2">
         <h3 class="text-xs font-medium text-gray-400 uppercase"><%= t("dashboard.house_status.latest_readings") %></h3>
-        <%= link_to consumption_reports_path, class: "cursor-pointer text-xs text-gray-400 hover:text-brand-600 font-medium flex items-center gap-1", data: { turbo_frame: "_top" } do %>
+        <%= link_to consumption_reports_path, class: "cursor-pointer text-xs text-brand-600 font-medium hover:text-brand-700 flex items-center gap-1", data: { turbo_frame: "_top" } do %>
           <%= t("layout.nav.reports") %>
           <i class="fa-solid fa-arrow-right text-[10px]"></i>
         <% end %>
