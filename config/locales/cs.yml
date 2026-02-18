@@ -96,6 +96,7 @@ cs:
       history: "Historie"
     admin_nav:
       visitors: "Návštěvníci"
+      users: "Uživatelé"
 
   # Authentication
   sessions:
@@ -263,6 +264,40 @@ cs:
     not_found: "Návštěvník nebyl nalezen."
     admin_required: "Tuto akci může provést pouze administrátor."
 
+  # Users
+  users:
+    index:
+      title: "Uživatelé"
+      no_users: "Nebyli nalezeni žádní uživatelé."
+      new_user: "Nový uživatel"
+      role_admin: "Admin"
+      role_member: "Člen"
+    new:
+      title: "Nový uživatel"
+    edit:
+      title: "Upravit uživatele"
+    show:
+      details: "Kontaktní údaje"
+      edit: "Upravit"
+      role_admin: "Admin"
+      role_member: "Člen"
+      default_visitor: "Výchozí návštěvník"
+      archive: "Archivovat"
+      archive_confirm: "Opravdu chcete archivovat tohoto uživatele?"
+    form:
+      role_member: "Člen"
+      role_admin: "Admin"
+      default_visitor: "Výchozí návštěvník"
+    create:
+      success: "Uživatel %{name} byl úspěšně vytvořen."
+    update:
+      success: "Uživatel %{name} byl úspěšně upraven."
+    archive:
+      success: "Uživatel %{name} byl úspěšně archivován."
+      failure: "Archivace uživatele se nezdařila."
+    not_found: "Uživatel nebyl nalezen."
+    admin_required: "Tuto akci může provést pouze administrátor."
+
   # Consumption reports
   reports:
     title: "Přehled spotřeby"
@@ -337,8 +372,17 @@ cs:
       visitor:
         create: "Vytvořit návštěvníka"
         update: "Uložit návštěvníka"
+      user:
+        create: "Vytvořit uživatele"
+        update: "Uložit uživatele"
     label:
       visitor:
         name: "Jméno"
         status: "Stav"
         note: "Poznámka"
+      user:
+        name: "Jméno"
+        email: "E-mail"
+        phone_number: "Telefon"
+        role: "Role"
+        default_visitor_id: "Výchozí návštěvník"

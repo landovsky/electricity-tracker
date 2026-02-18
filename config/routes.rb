@@ -89,6 +89,13 @@ Rails.application.routes.draw do
     end
   end
 
+  # Users (admin-only management)
+  resources :users, except: [ :destroy ] do
+    member do
+      patch :archive
+    end
+  end
+
   # =============================================================================
   # ADMIN NAMESPACE (Future Extension Point)
   # =============================================================================

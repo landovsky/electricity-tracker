@@ -38,6 +38,7 @@
         <div class="flex items-center gap-6">
           <%= link_to root_path, class: "cursor-pointer text-blue-600 hover:text-blue-700 leading-none" do %><i class="fa-solid fa-house text-sm"></i><% end %>
           <%= link_to t("layout.admin_nav.visitors"), visitors_path, class: "cursor-pointer text-sm font-medium leading-none #{request.path.start_with?('/visitors') ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}" %>
+          <%= link_to t("layout.admin_nav.users"), users_path, class: "cursor-pointer text-sm font-medium leading-none #{request.path.start_with?('/users') ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}" %>
         </div>
         <div class="flex items-center gap-3">
           <span class="text-sm text-gray-400 leading-none"><%= current_user.name %></span>
