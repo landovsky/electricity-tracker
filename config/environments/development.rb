@@ -41,7 +41,7 @@ Rails.application.configure do
   config.action_mailer.default_url_options = if ENV["APP_HOST"]
     { host: URI.parse(ENV["APP_HOST"]).host, protocol: URI.parse(ENV["APP_HOST"]).scheme }
   else
-    { host: "localhost", port: 3000 }
+    { host: "localhost", port: ENV.fetch("PORT", 3000) }
   end
 
   # Use letter_opener by default; switch to :smtp to send real emails
