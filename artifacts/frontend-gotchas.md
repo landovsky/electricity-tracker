@@ -65,6 +65,16 @@ A generic fallback is defined in `config/locales/cs.yml` at `cs.active_interacti
 
 ## Turbo Streams & Stimulus
 
+### Forms inside turbo-frames with turbo_stream responses
+
+Forms inside `<turbo-frame>` elements trigger frame-scoped navigation by default. If the server responds with `turbo_stream` format, both the stream actions AND frame navigation may execute, causing duplicate rendering (e.g., the form appears twice).
+
+**Fix:** Add `data: { turbo_frame: "_top" }` to forms that expect turbo_stream responses. This tells frame navigation to target the full page (which is harmless since the turbo_stream response handles all updates). The streams still process normally.
+
+```erb
+<%= form_with url: stays_path, data: { turbo_frame: "_top" } do |f| %>
+```
+
 ### Preserving Stimulus targets in Turbo Stream replacements
 
 When replacing a `<turbo-frame>` via `turbo_stream.replace`, ensure the replacement HTML includes the same `data-*-target` attributes. Stimulus controllers bound to the parent won't re-discover targets in new DOM unless the controller reconnects.
