@@ -78,8 +78,12 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.start
+  end
+
+  config.before(:each, type: :system, js: true) do
+    DatabaseCleaner.strategy = :deletion
   end
 
   config.after(:each) do
@@ -93,21 +97,13 @@ RSpec.configure do |config|
   end
 
   # System test configuration
+  # Use fast rack_test by default; use `js: true` tag for tests needing JavaScript
   config.before(:each, type: :system) do
-    # Try to use headless Chrome if available, fall back to rack_test
-    begin
-      if ENV["CAPYBARA_DRIVER"] == "rack_test"
-        driven_by :rack_test
-      elsif ENV["HEADLESS"] == "false"
-        driven_by :selenium_chrome
-      else
-        driven_by :selenium, using: :headless_chrome, screen_size: [ 1400, 1400 ]
-      end
-    rescue => e
-      # Fall back to rack_test if Selenium fails (e.g., Chrome not available)
-      warn "⚠️  Selenium not available (#{e.message}), falling back to rack_test"
-      driven_by :rack_test
-    end
+    driven_by :rack_test
+  end
+
+  config.before(:each, type: :system, js: true) do
+    driven_by :selenium, using: :headless_chrome, screen_size: [ 1400, 1400 ]
   end
 
   # Include SystemHelpers for system tests
