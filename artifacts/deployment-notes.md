@@ -55,6 +55,8 @@ RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 | `SECRET_KEY_BASE` | Rails secret | K8s secret `sucha-meter-secrets` |
 | `DISABLE_AUTH` | Skip auth, auto-assign first user | K8s deployment env |
 | `ADMIN_EMAIL` | Bootstrap admin user email | K8s deployment env |
+| `RECAPTCHA_SITE_KEY` | Google reCAPTCHA v3 site key | K8s secret `sucha-meter-secrets` |
+| `RECAPTCHA_SECRET_KEY` | Google reCAPTCHA v3 secret key | K8s secret `sucha-meter-secrets` |
 | `RAILS_ENV` | Production mode | Dockerfile ENV |
 
 ## Release Process
