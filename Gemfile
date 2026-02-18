@@ -37,6 +37,9 @@ gem "nilify_blanks", "~> 1.4"
 # View components
 gem "view_component", "~> 3.22"
 
+# Google reCAPTCHA verification
+gem "recaptcha", "~> 5.17"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

@@ -126,6 +126,7 @@ cs:
       invalid_phone: "Neplatné telefonní číslo. Zadejte české číslo ve formátu +420..."
       invalid_code: "Neplatný nebo expirovaný kód. Zkuste to prosím znovu."
       session_expired: "Relace vypršela. Začněte prosím znovu."
+      recaptcha_failed: "Ověření proti robotům selhalo. Zkuste to prosím znovu."
     otp:
       title: "Ověřovací kód — Měřič spotřeby"
       heading: "Zadejte ověřovací kód"
