@@ -95,6 +95,7 @@ cs:
       reports: "Spotřeba"
       history: "Historie"
     admin_nav:
+      properties: "Nemovitosti"
       visitors: "Návštěvníci"
       users: "Uživatelé"
 
@@ -298,6 +299,34 @@ cs:
     not_found: "Uživatel nebyl nalezen."
     admin_required: "Tuto akci může provést pouze administrátor."
 
+  # Properties
+  properties:
+    index:
+      title: "Nemovitosti"
+      no_properties: "Nebyly nalezeny žádné nemovitosti."
+      new_property: "Nová nemovitost"
+      meters: "měřičů"
+    new:
+      title: "Nová nemovitost"
+    edit:
+      title: "Upravit nemovitost"
+    show:
+      details: "Podrobnosti"
+      edit: "Upravit"
+      address: "Adresa"
+      meters_count: "Počet měřičů"
+      current_visitors: "Aktuální návštěvníci"
+      archive: "Archivovat"
+      archive_confirm: "Opravdu chcete archivovat tuto nemovitost?"
+    create:
+      success: "Nemovitost %{name} byla úspěšně vytvořena."
+    update:
+      success: "Nemovitost %{name} byla úspěšně upravena."
+    archive:
+      success: "Nemovitost %{name} byla úspěšně archivována."
+      failure: "Archivace nemovitosti se nezdařila."
+    not_found: "Nemovitost nebyla nalezena."
+
   # Consumption reports
   reports:
     title: "Přehled spotřeby"
@@ -375,6 +404,9 @@ cs:
       user:
         create: "Vytvořit uživatele"
         update: "Uložit uživatele"
+      property:
+        create: "Vytvořit nemovitost"
+        update: "Uložit nemovitost"
     label:
       visitor:
         name: "Jméno"
@@ -386,3 +418,6 @@ cs:
         phone_number: "Telefon"
         role: "Role"
         default_visitor_id: "Výchozí návštěvník"
+      property:
+        name: "Název"
+        address: "Adresa"

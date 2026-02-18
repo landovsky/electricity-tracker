@@ -89,6 +89,13 @@ Rails.application.routes.draw do
     end
   end
 
+  # Properties (admin-only management)
+  resources :properties, except: [ :destroy ] do
+    member do
+      patch :archive
+    end
+  end
+
   # Users (admin-only management)
   resources :users, except: [ :destroy ] do
     member do
