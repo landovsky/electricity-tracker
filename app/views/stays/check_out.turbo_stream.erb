@@ -11,14 +11,16 @@
 
 <%# Update action forms to refresh visitor lists %>
 <%= turbo_stream.replace "check-out-form" do %>
-  <div class="p-4">
-    <%= render Dashboard::CheckOutFormComponent.new(
-      current_visitors: @visitors_for_checkout,
-      last_readings: @last_meter_readings,
-      meters: @meters,
-      selected_visitor_id: @default_visitor_id
-    ) %>
-  </div>
+  <turbo-frame id="check-out-form" data-action-forms-target="formPanel" data-form-type="checkout">
+    <div class="p-4">
+      <%= render Dashboard::CheckOutFormComponent.new(
+        current_visitors: @visitors_for_checkout,
+        last_readings: @last_meter_readings,
+        meters: @meters,
+        selected_visitor_id: @default_visitor_id
+      ) %>
+    </div>
+  </turbo-frame>
 <% end %>
 
 <%# Update recent activity %>
