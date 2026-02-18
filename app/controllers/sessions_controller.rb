@@ -108,6 +108,13 @@ class SessionsController < ApplicationController
   private
 
   def after_login_path(user)
+    ensure_default_visitor(user) if user.onboarded?
     user.onboarded? ? root_path : onboarding_path
+  end
+
+  def ensure_default_visitor(user)
+    return if user.default_visitor_id.present?
+
+    CreateDefaultVisitorForUser.run(user: user)
   end
 end
