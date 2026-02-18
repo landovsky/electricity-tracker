@@ -48,7 +48,7 @@ RSpec.describe Dashboard::ActionFormsComponent, type: :component do
       last_readings: last_readings
     ))
 
-    # Check-in tab should have active styling
-    expect(page).to have_css("button.border-brand-600.text-brand-600", text: "Check In")
+    # Check-in tab should have active styling (emerald color)
+    expect(page).to have_css("button.border-emerald-600.text-emerald-700.bg-emerald-50", text: "Check In")
   end
 end

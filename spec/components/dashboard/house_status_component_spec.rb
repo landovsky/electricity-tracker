@@ -43,9 +43,9 @@ RSpec.describe Dashboard::HouseStatusComponent, type: :component do
 
     expect(page).to have_text(I18n.t("dashboard.house_status.latest_readings"))
     expect(page).to have_text("Main meter")
-    expect(page).to have_text("12 487")
+    expect(page).to have_text("12,487")
     expect(page).to have_text("Upper floor")
-    expect(page).to have_text("3 219")
+    expect(page).to have_text("3,219")
   end
 
   it "renders empty state when no meter readings" do

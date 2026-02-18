@@ -1,6 +1,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
-ENV['RAILS_ENV'] ||= 'test'
+# Force RAILS_ENV to 'test' (don't use ||= as system env might have it set to development)
+ENV['RAILS_ENV'] = 'test'
 # Unset DATABASE_URL to use database.yml config for SQLite
 ENV.delete('DATABASE_URL')
 require_relative '../config/environment'
@@ -38,6 +39,11 @@ rescue ActiveRecord::PendingMigrationError => e
   load Rails.root.join("db", "schema.rb")
 end
 RSpec.configure do |config|
+  # Force English locale for tests
+  config.before(:each) do
+    I18n.locale = :en
+  end
+
   # We're using FactoryBot, not fixtures
   config.use_transactional_fixtures = false
 

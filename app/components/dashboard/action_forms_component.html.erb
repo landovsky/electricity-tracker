@@ -1,22 +1,22 @@
 <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-controller="action-forms" data-action-forms-default-tab-value="<%= default_tab %>">
   <!-- Tab bar with Stimulus interactivity -->
   <div class="flex border-b border-gray-100">
-    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="checkin" data-active-color="emerald" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="checkin" data-active-color="emerald" class="flex-1 py-3 text-sm font-medium text-center border-b-2 <%= default_tab == 'checkin' ? 'border-emerald-600 bg-emerald-50 text-emerald-700' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' %>">
       <%= render Shared::IconComponent.new(icon_class: "fa-right-to-bracket", color: "mr-1") %>
       <%= t("dashboard.actions.check_in") %>
     </button>
-    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="checkout" data-active-color="amber" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="checkout" data-active-color="amber" class="flex-1 py-3 text-sm font-medium text-center border-b-2 <%= default_tab == 'checkout' ? 'border-amber-600 bg-amber-50 text-amber-700' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' %>">
       <%= render Shared::IconComponent.new(icon_class: "fa-right-from-bracket", color: "mr-1") %>
       <%= t("dashboard.actions.check_out") %>
     </button>
-    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="manual" data-active-color="violet" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="manual" data-active-color="violet" class="flex-1 py-3 text-sm font-medium text-center border-b-2 <%= default_tab == 'manual' ? 'border-violet-600 bg-violet-50 text-violet-700' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' %>">
       <%= render Shared::IconComponent.new(icon_class: "fa-bolt", color: "mr-1") %>
       <%= t("dashboard.actions.log_entry") %>
     </button>
   </div>
 
   <!-- Check In Form -->
-  <turbo-frame id="check-in-form" data-action-forms-target="formPanel" data-form-type="checkin">
+  <turbo-frame id="check-in-form" data-action-forms-target="formPanel" data-form-type="checkin" class="<%= 'hidden' unless default_tab == 'checkin' %>">
     <div class="p-4">
       <%= render Dashboard::CheckInFormComponent.new(
         visitors: visitors_for_checkin,
@@ -28,7 +28,7 @@
   </turbo-frame>
 
   <!-- Check Out Form -->
-  <turbo-frame id="check-out-form" data-action-forms-target="formPanel" data-form-type="checkout">
+  <turbo-frame id="check-out-form" data-action-forms-target="formPanel" data-form-type="checkout" class="<%= 'hidden' unless default_tab == 'checkout' %>">
     <div class="p-4">
       <%= render Dashboard::CheckOutFormComponent.new(
         current_visitors: visitors_for_checkout,
@@ -40,7 +40,7 @@
   </turbo-frame>
 
   <!-- Manual Entry Form -->
-  <turbo-frame id="manual-entry-form" data-action-forms-target="formPanel" data-form-type="manual">
+  <turbo-frame id="manual-entry-form" data-action-forms-target="formPanel" data-form-type="manual" class="<%= 'hidden' unless default_tab == 'manual' %>">
     <div class="p-4">
       <%= render Dashboard::ManualEntryFormComponent.new(
         visitors: all_visitors,

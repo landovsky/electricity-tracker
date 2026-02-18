@@ -15,13 +15,14 @@ RSpec.describe Stay, type: :model do
 
   describe "scopes" do
     let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
+    let(:visitor1) { Visitor.create!(name: "Test Visitor 1", status: "active") }
+    let(:visitor2) { Visitor.create!(name: "Test Visitor 2", status: "active") }
     let(:check_in) { MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in") }
     let(:check_out) { MeterReadingEvent.create!(recorded_at: Time.current, event_type: "check_out") }
 
     before do
-      Stay.create!(visitor: visitor, property: property, check_in_event: check_in)
-      Stay.create!(visitor: visitor, property: property, check_in_event: check_in, check_out_event: check_out)
+      Stay.create!(visitor: visitor1, property: property, check_in_event: check_in)
+      Stay.create!(visitor: visitor2, property: property, check_in_event: check_in, check_out_event: check_out)
     end
 
     describe ".open" do

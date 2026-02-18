@@ -1,31 +1,445 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
-  hello: "Hello world"
+  # Rails defaults
+  activerecord:
+    errors:
+      messages:
+        blank: "can't be blank"
+        taken: "has already been taken"
+        invalid: "is invalid"
+        not_a_number: "is not a number"
+        greater_than: "must be greater than %{count}"
+        greater_than_or_equal_to: "must be greater than or equal to %{count}"
+        less_than: "must be less than %{count}"
+        too_short: "is too short (minimum is %{count} characters)"
+        too_long: "is too long (maximum is %{count} characters)"
+        record_invalid: "Validation failed: %{errors}"
+        inclusion: "is not included in the list"
+      models:
+        stay:
+          attributes:
+            base:
+              visitor_open_stay: "Visitor already has an open stay"
+              checkout_gte_checkin: "check-out reading for %{meter_label} (%{checkout_value} kWh) must be >= check-in reading (%{checkin_value} kWh)"
+        meter_reading:
+          attributes:
+            value_kwh:
+              not_monotonic: "must be greater than or equal to previous reading (%{value} kWh)"
+        meter_reading_event:
+          attributes:
+            recorded_at:
+              not_chronological: "must be after previous event (%{timestamp})"
+            base:
+              main_meter_required: "Main meter reading is required"
+        manual_consumption_entry:
+          attributes:
+            kwh:
+              exceeds_period: "Warning: Manual entry kWh (%{kwh}) exceeds unallocated consumption for period"
+    attributes:
+      visitor:
+        name: "Name"
+        status: "Status"
+        note: "Note"
+      stay:
+        visitor: "Visitor"
+        property: "Property"
+      meter:
+        label: "Label"
+        meter_type: "Meter type"
+        unit: "Unit"
+      meter_reading:
+        value_kwh: "Value kWh"
+      meter_reading_event:
+        recorded_at: "Recorded at"
+        event_type: "Event type"
+      manual_consumption_entry:
+        date: "Date"
+        kwh: "kWh"
+        note: "Note"
+      user:
+        name: "Name"
+        email: "Email"
+        role: "Role"
+      property:
+        name: "Name"
+        address: "Address"
+    models:
+      visitor: "Visitor"
+      stay: "Stay"
+      meter: "Meter"
+      meter_reading: "Meter reading"
+      meter_reading_event: "Reading event"
+      manual_consumption_entry: "Manual consumption entry"
+      user: "User"
+      property: "Property"
+    enums:
+      visitor:
+        status:
+          active: "Active"
+          archived: "Archived"
+
+  # ActiveInteraction error translations
+  active_interaction:
+    errors:
+      messages:
+        missing: "can't be blank"
+
+  errors:
+    messages:
+      not_saved:
+        one: "1 error prevented this %{resource} from being saved:"
+        other: "%{count} errors prevented this %{resource} from being saved:"
+
+  # HTML5 form validation messages
+  form:
+    validation:
+      error:
+        required: "This field is required"
+        field: "Please fill in this field"
+        select: "Please select one of the options"
+        number: "Please enter a number"
+        email: "Please enter a valid email"
+
+  # App name
+  app_name: "Electricity Tracker"
+
+  # Layout & navigation
+  layout:
+    title: "Electricity Tracker"
+    log_out: "Log out"
+    nav:
+      dashboard: "Dashboard"
+      reports: "Reports"
+      history: "History"
+    admin_nav:
+      properties: "Properties"
+      visitors: "Visitors"
+      users: "Users"
+
+  # Authentication
+  sessions:
+    new:
+      title: "Sign In — Electricity Tracker"
+      heading: "Electricity Tracker"
+      subtitle: "Register with email or SMS?"
+      method_email: "Email"
+      method_sms: "SMS"
+      email_label: "Email address"
+      email_placeholder: "your@email.com"
+      phone_label: "Phone number"
+      phone_placeholder: "+420 777 123 456"
+      submit_email: "Send login link"
+      submit_sms: "Send verification code"
+      help_text_email: "We'll send you a login link via email — no password needed."
+      help_text_sms: "We'll send you a 6-digit verification code via SMS."
+    email_sent:
+      title: "Link sent — Electricity Tracker"
+      heading: "Link sent!"
+      instruction: "Check your email and click the login link."
+      expiry: "The link expires in 15 minutes."
+      back: "Back to sign in"
+    sms:
+      otp_message: "Your Electricity Tracker verification code: %{code}"
+      invalid_phone: "Invalid phone number. Enter a Czech number in +420... format."
+      invalid_code: "Invalid or expired code. Please try again."
+      session_expired: "Session expired. Please start again."
+      recaptcha_failed: "Bot verification failed. Please try again."
+    otp:
+      title: "Verification code — Electricity Tracker"
+      heading: "Enter verification code"
+      instruction: "We sent you an SMS with a 6-digit code."
+      code_label: "Verification code"
+      submit: "Verify"
+      back: "Back to sign in"
+    verify:
+      success: "Login successful."
+      failure: "Invalid or expired link. Please request a new one."
+    destroy:
+      notice: "Logged out successfully."
+
+  # Onboarding (first-time user name input)
+  onboarding:
+    title: "What's your name? — Electricity Tracker"
+    heading: "What's your name?"
+    instruction: "Tell us how to address you."
+    name_label: "Name"
+    name_placeholder: "John Doe"
+    submit: "Continue"
+    success: "Welcome to Electricity Tracker!"
+    name_required: "Name is required."
+
+  # Authentication (application controller)
+  auth:
+    login_required: "Please sign in to continue."
+
+  # Magic link mailer
+  mailer:
+    login_link:
+      subject: "Your login link — Electricity Tracker"
+      greeting: "Hi, %{name}!"
+      instruction_html: "Click the link below to sign in to Electricity Tracker:"
+      instruction_text: "To sign in to Electricity Tracker, visit:"
+      sign_in: "Sign in"
+      expiry: "The link expires in 15 minutes."
+      ignore: "If you didn't request this, you can safely ignore this email."
+
+  # Dashboard
+  dashboard:
+    no_property: "No property configured. Please create a property first."
+    house_status:
+      title: "Electricity %{property_name}"
+      currently_here: "Who's currently here?"
+      nobody_here: "Nobody here right now, or nobody checked in."
+      latest_readings: "Latest meter readings"
+      no_readings: "No readings recorded yet."
+    actions:
+      check_in: "Check In"
+      check_out: "Check Out"
+      log_entry: "Log Entry"
+    check_in_form:
+      visitor: "Visitor"
+      select_visitor: "Select visitor..."
+      date_time: "Date and time"
+      main_meter: "Main meter reading"
+      optional: "(optional)"
+      note: "Note"
+      note_placeholder: "e.g. weekend stay"
+      submit: "Check In"
+      last_reading: "Last reading: %{value} kWh (%{date})"
+    check_out_form:
+      visitor: "Visitor"
+      date_time: "Date and time"
+      main_meter: "Main meter reading"
+      optional: "(optional)"
+      note: "Note"
+      note_placeholder: "e.g. early morning departure"
+      submit: "Check Out"
+      no_visitors: "No visitors to check out."
+      since: "since %{date}"
+      last_reading: "Last reading: %{value} kWh (%{date})"
+    manual_entry_form:
+      visitor: "Visitor"
+      select_visitor: "Select visitor..."
+      date: "Date"
+      consumption: "Consumption"
+      note: "Note"
+      note_placeholder: "e.g. car charging"
+      submit: "Log Entry"
+    recent_activity:
+      title: "Recent activity"
+      view_all: "View all"
+      no_activity: "No recent activity."
+      checked_in: "checked in"
+      checked_out: "checked out"
+      logged_kwh: "logged %{kwh} kWh"
+      unknown: "Unknown"
+      main_reading: "Main: %{value}"
+    visitor_card:
+      check_out: "Check out"
+      recently: "recently"
+      since: "since %{date}"
+
+  # Service error messages
+  services:
+    check_in_visitor:
+      not_chronological: "must be after or equal to previous event (%{timestamp})"
+
+  # Stays controller
+  stays:
+    check_in_success: "%{name} — check-in recorded."
+    check_out_success: "%{name} — check-out recorded."
+    not_found: "Stay not found."
+
+  # Manual consumption entries controller
+  manual_entries:
+    success: "Manual entry recorded: %{kwh} kWh for %{name}"
+
+  # Visitors
+  visitors:
+    index:
+      title: "Visitors"
+      no_visitors: "No visitors found."
+      new_visitor: "New visitor"
+    new:
+      title: "New visitor"
+      back: "Back to visitors"
+    edit:
+      title: "Edit visitor"
+      show: "View"
+      back: "Back to visitors"
+    show:
+      status: "Status:"
+      note: "Note:"
+      stays: "Stays"
+      stay_from: "Stay from %{date}"
+      no_stays: "No stays."
+      manual_entries: "Manual consumption entries"
+      entry_format: "%{date}: %{kwh} kWh"
+      no_entries: "No manual entries."
+      edit: "Edit"
+      back: "Back to visitors"
+    create:
+      success: "Visitor %{name} created successfully."
+    update:
+      success: "Visitor %{name} updated successfully."
+    archive:
+      success: "Visitor %{name} archived successfully."
+      failure: "Failed to archive visitor."
+    not_found: "Visitor not found."
+    admin_required: "Only admins can perform this action."
+
+  # Users
+  users:
+    index:
+      title: "Users"
+      no_users: "No users found."
+      new_user: "New user"
+      role_admin: "Admin"
+      role_member: "Member"
+    new:
+      title: "New user"
+    edit:
+      title: "Edit user"
+    show:
+      details: "Contact details"
+      edit: "Edit"
+      role_admin: "Admin"
+      role_member: "Member"
+      default_visitor: "Default visitor"
+      archive: "Archive"
+      archive_confirm: "Are you sure you want to archive this user?"
+    form:
+      role_member: "Member"
+      role_admin: "Admin"
+      default_visitor: "Default visitor"
+    create:
+      success: "User %{name} created successfully."
+    update:
+      success: "User %{name} updated successfully."
+    archive:
+      success: "User %{name} archived successfully."
+      failure: "Failed to archive user."
+    not_found: "User not found."
+    admin_required: "Only admins can perform this action."
+
+  # Properties
+  properties:
+    index:
+      title: "Properties"
+      no_properties: "No properties found."
+      new_property: "New property"
+      meters: "meters"
+    new:
+      title: "New property"
+    edit:
+      title: "Edit property"
+    show:
+      details: "Details"
+      edit: "Edit"
+      address: "Address"
+      meters_count: "Meter count"
+      current_visitors: "Current visitors"
+      archive: "Archive"
+      archive_confirm: "Are you sure you want to archive this property?"
+    create:
+      success: "Property %{name} created successfully."
+    update:
+      success: "Property %{name} updated successfully."
+    archive:
+      success: "Property %{name} archived successfully."
+      failure: "Failed to archive property."
+    not_found: "Property not found."
+
+  # Consumption reports
+  reports:
+    title: "Consumption report"
+    history: "History"
+    this_year: "This year"
+    last_year: "Last year"
+    period_totals: "Period totals"
+    main_meter_delta: "Main meter delta"
+    total_consumption: "Total consumption"
+    per_visitor_breakdown: "Per-visitor breakdown"
+    visitor: "Visitor"
+    shared: "Shared"
+    manual: "Manual"
+    empty_house: "Empty house"
+    total: "Total"
+    total_matches: "Total (%{total} kWh) matches main meter delta. All consumption is allocated."
+    total_mismatch: "Total (%{total} kWh) does not match main meter delta (%{delta} kWh). Please verify."
+    per_visitor_summary: "Per-visitor summary"
+    no_data: "No consumption data found for the selected period."
+
+  # Meter reading events
+  meter_reading_events:
+    destroy:
+      success: "Event deleted successfully."
+      has_checkout: "Cannot delete check-in with associated check-out. Delete check-out first."
+      confirm: "Are you sure you want to delete this event? This action cannot be undone."
+
+  # Readings history
+  history:
+    title: "Readings history"
+    report: "Report"
+    all_visitors: "All visitors"
+    all_time: "All time"
+    filter: "Filter"
+    logged: "logged %{kwh} kWh"
+    checked_in: "check-in"
+    checked_out: "check-out"
+    amount: "Amount:"
+    note: "Note:"
+    recorded_by: "Recorded by: %{name}"
+    unknown: "Unknown"
+    no_history: "No reading history found for selected filters."
+
+  # Common
+  no_property: "No property found. Please create a property first."
+  invalid_date: "Invalid date format: %{error}"
+
+  # Date/time formats
+  date:
+    formats:
+      default: "%Y-%m-%d"
+      short: "%b %d"
+      long: "%B %d, %Y"
+    month_names: [~, "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    abbr_month_names: [~, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    day_names: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    abbr_day_names: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  time:
+    formats:
+      default: "%Y-%m-%d %H:%M"
+      short: "%b %d %H:%M"
+      long: "%B %d, %Y %H:%M"
+
+  number:
+    format:
+      separator: "."
+      delimiter: ","
+      precision: 2
+
+  helpers:
+    submit:
+      visitor:
+        create: "Create visitor"
+        update: "Save visitor"
+      user:
+        create: "Create user"
+        update: "Save user"
+      property:
+        create: "Create property"
+        update: "Save property"
+    label:
+      visitor:
+        name: "Name"
+        status: "Status"
+        note: "Note"
+      user:
+        name: "Name"
+        email: "Email"
+        phone_number: "Phone"
+        role: "Role"
+        default_visitor_id: "Default visitor"
+      property:
+        name: "Name"
+        address: "Address"

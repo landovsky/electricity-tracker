@@ -544,7 +544,7 @@ RSpec.describe CheckOutVisitor, type: :service do
 
         expect(outcome).not_to be_valid
         expect(outcome.errors[:base]).to include(
-          match(/musí být větší nebo roven předchozímu odečtu/)
+          match(/must be greater than or equal to previous reading/)
         )
       end
     end

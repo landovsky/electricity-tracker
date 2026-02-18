@@ -65,7 +65,7 @@ RSpec.describe MeterReading, type: :model do
         event2 = MeterReadingEvent.create!(recorded_at: Time.current, event_type: "check_out")
         reading = event2.meter_readings.build(meter: meter, value_kwh: 50)
         expect(reading).not_to be_valid
-        expect(reading.errors[:value_kwh]).to include(match(/musí být větší nebo roven předchozímu odečtu/))
+        expect(reading.errors[:value_kwh]).to include(match(/must be greater than or equal to previous reading/))
       end
     end
 
@@ -88,7 +88,7 @@ RSpec.describe MeterReading, type: :model do
         # Secondary meter validation is independent
         secondary_reading = event2.meter_readings.build(meter: secondary_meter, value_kwh: 40)
         expect(secondary_reading).not_to be_valid
-        expect(secondary_reading.errors[:value_kwh]).to include(match(/musí být větší nebo roven předchozímu odečtu/))
+        expect(secondary_reading.errors[:value_kwh]).to include(match(/must be greater than or equal to previous reading/))
       end
     end
 

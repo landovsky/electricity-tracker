@@ -37,11 +37,11 @@ class MeterReadingEvent < ApplicationRecord
   def chronological_consistency
     return unless recorded_at.present?
 
-    # Find the most recent event before this one
+    # Find the most recently created event (by ID, not timestamp)
+    # to ensure new events are not backdated before existing events
     previous_event = MeterReadingEvent.kept
-                                      .where("recorded_at < ?", recorded_at)
                                       .where.not(id: id)
-                                      .order(recorded_at: :desc)
+                                      .order(id: :desc)
                                       .first
 
     if previous_event && recorded_at < previous_event.recorded_at

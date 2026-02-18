@@ -72,7 +72,7 @@ RSpec.describe MeterReadingEvent, type: :model do
       event = MeterReadingEvent.new(recorded_at: 3.days.ago, event_type: "check_in")
       event.meter_readings.build(meter: meter, value_kwh: 50)
       expect(event).not_to be_valid
-      expect(event.errors[:recorded_at]).to include(match(/musí být po předchozí události/))
+      expect(event.errors[:recorded_at]).to include(match(/must be after previous event/))
     end
   end
 
