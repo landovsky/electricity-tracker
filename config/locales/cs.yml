@@ -19,7 +19,7 @@ cs:
           attributes:
             base:
               visitor_open_stay: "Návštěvník již má otevřený pobyt"
-              checkout_gte_checkin: "Odchozí odečet pro %{meter_label} (%{checkout_value} kWh) musí být >= příchozí odečet (%{checkin_value} kWh)"
+              checkout_gte_checkin: "odečet při odejzdu pro %{meter_label} (%{checkout_value} kWh) musí být >= odečet při příjezdu (%{checkin_value} kWh)"
         meter_reading:
           attributes:
             value_kwh:
@@ -77,11 +77,27 @@ cs:
           active: "Aktivní"
           archived: "Archivovaný"
 
+  # ActiveInteraction error translations
+  active_interaction:
+    errors:
+      messages:
+        missing: "musí být vyplněno"
+
   errors:
     messages:
       not_saved:
         one: "Jedna chyba bránila uložení záznamu %{resource}:"
         other: "%{count} chyb(y) bránilo uložení záznamu %{resource}:"
+
+  # HTML5 form validation messages
+  form:
+    validation:
+      error:
+        required: "Toto pole je povinné"
+        field: "Vyplňte prosím toto pole"
+        select: "Vyberte prosím jednu z možností"
+        number: "Zadejte prosím číslo"
+        email: "Zadejte prosím platný e-mail"
 
   # App name
   app_name: "Měřič spotřeby"
@@ -222,9 +238,14 @@ cs:
       recently: "nedávno"
       since: "od %{date}"
 
+  # Service error messages
+  services:
+    check_in_visitor:
+      not_chronological: "musí být po předchozí události nebo roven (%{timestamp})"
+
   # Stays controller
   stays:
-    check_in_success: "%{name} — příchod zaznamenán."
+    check_in_success: "%{name} — příjezd zaznamenán."
     check_out_success: "%{name} — odjezd zaznamenán."
     not_found: "Pobyt nebyl nalezen."
 

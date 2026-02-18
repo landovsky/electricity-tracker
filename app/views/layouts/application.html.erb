@@ -47,7 +47,11 @@
         </div>
       </nav>
     <% end %>
-    <div id="toast-container" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 space-y-2"></div>
+    <div id="toast-container" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 space-y-2">
+      <% flash.each do |flash_type, message| %>
+        <%= render "shared/toast", flash_type: flash_type, message: message %>
+      <% end %>
+    </div>
     <%= yield %>
   </body>
 </html>

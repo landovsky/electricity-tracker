@@ -26,7 +26,5 @@
 #
 # See: https://viewcomponent.org/guide/
 class ApplicationComponent < ViewComponent::Base
-  # Common helper methods or configuration can be added here.
-  # For example, if all components need access to certain helpers,
-  # you can delegate or include them at this level.
+  include ValidationHelper
 end

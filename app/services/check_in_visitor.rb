@@ -74,7 +74,7 @@ class CheckInVisitor < ApplicationService
     return unless last_event
 
     if recorded_at < last_event.recorded_at
-      errors.add(:recorded_at, "must be after or equal to the previous event (#{last_event.recorded_at})")
+      errors.add(:recorded_at, I18n.t("services.check_in_visitor.not_chronological", timestamp: I18n.l(last_event.recorded_at)))
     end
   end
 

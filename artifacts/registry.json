@@ -43,5 +43,10 @@
     "filename": "artifacts/deployment-notes.md",
     "description": "Deployment infrastructure and known issues. Covers K3s/Flux GitOps pipeline, GHCR image publishing, Tailwind CSS Docker build gotcha (split RUN commands), production bootstrap rake task, environment variables, release process, and resolved deployment issues. Read when deploying, debugging production, or modifying the Dockerfile/CI.",
     "usage": "decide"
+  },
+  {
+    "filename": "artifacts/frontend-gotchas.md",
+    "description": "Frontend pitfalls and patterns. Covers flash/toast rendering (full page vs Turbo Stream), HTML5 form validation helper usage, ActiveInteraction vs ActiveRecord error translation, Stimulus target preservation in Turbo replacements, and form styling conventions. Read when working on forms, flash messages, toasts, or Turbo Stream responses.",
+    "usage": "decide"
   }
 ]
