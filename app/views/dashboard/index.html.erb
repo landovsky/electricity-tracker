@@ -6,7 +6,8 @@
   <% else %>
     <%= render Dashboard::HouseStatusComponent.new(
       current_visitors: @current_visitors,
-      last_meter_readings: @last_meter_readings
+      last_meter_readings: @last_meter_readings,
+      property_name: @property.name
     ) %>
 
     <%= render Dashboard::ActionFormsComponent.new(

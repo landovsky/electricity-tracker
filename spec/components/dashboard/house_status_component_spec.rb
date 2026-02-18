@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Dashboard::HouseStatusComponent, type: :component do
   let(:event) { instance_double("Event", recorded_at: 2.days.ago) }
-  let(:stay) { instance_double("Stay", open?: true, check_in_event: event) }
+  let(:stay) { instance_double("Stay", id: 1, open?: true, check_in_event: event) }
   let(:visitor) { instance_double("Visitor", name: "Alice", stays: [ stay ]) }
 
   let(:last_meter_readings) do
@@ -17,10 +17,11 @@ RSpec.describe Dashboard::HouseStatusComponent, type: :component do
   it "renders house status with current visitors" do
     render_inline(described_class.new(
       current_visitors: [ visitor ],
-      last_meter_readings: last_meter_readings
+      last_meter_readings: last_meter_readings,
+      property_name: "Test House"
     ))
 
-    expect(page).to have_css("h2", text: I18n.t("dashboard.house_status.title"))
+    expect(page).to have_css("h2", text: I18n.t("dashboard.house_status.title", property_name: "Test House"))
     expect(page).to have_text(I18n.t("dashboard.house_status.currently_here"))
     expect(page).to have_text("Alice")
   end
@@ -40,11 +41,11 @@ RSpec.describe Dashboard::HouseStatusComponent, type: :component do
       last_meter_readings: last_meter_readings
     ))
 
-    expect(page).to have_text("Latest meter readings")
+    expect(page).to have_text(I18n.t("dashboard.house_status.latest_readings"))
     expect(page).to have_text("Main meter")
-    expect(page).to have_text("12,487")
+    expect(page).to have_text("12 487")
     expect(page).to have_text("Upper floor")
-    expect(page).to have_text("3,219")
+    expect(page).to have_text("3 219")
   end
 
   it "renders empty state when no meter readings" do
@@ -53,6 +54,6 @@ RSpec.describe Dashboard::HouseStatusComponent, type: :component do
       last_meter_readings: {}
     ))
 
-    expect(page).to have_text("No meter readings recorded yet.")
+    expect(page).to have_text(I18n.t("dashboard.house_status.no_readings"))
   end
 end

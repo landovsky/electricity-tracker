@@ -4,7 +4,8 @@
 <%= turbo_stream.replace "house-status" do %>
   <%= render Dashboard::HouseStatusComponent.new(
     current_visitors: @current_visitors,
-    last_meter_readings: @last_meter_readings
+    last_meter_readings: @last_meter_readings,
+    property_name: @property_name
   ) %>
 <% end %>
 

@@ -123,6 +123,7 @@ class StaysController < ApplicationController
   # Load dashboard data for Turbo Stream responses
   def load_dashboard_data
     property = find_property
+    @property_name = property.name
     @current_visitors = property.current_visitors.includes(:stays)
     @visitors_for_checkin = Visitor.kept.order(:name)
     @visitors_for_checkout = @current_visitors

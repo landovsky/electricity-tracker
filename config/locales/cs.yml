@@ -166,7 +166,7 @@ cs:
   dashboard:
     no_property: "Nemovitost není nastavena. Nejprve prosím vytvořte nemovitost."
     house_status:
-      title: "Elektřina Suchá"
+      title: "Elektřina %{property_name}"
       currently_here: "Kdo tu právě je?"
       nobody_here: "Momentálně tu nikdo není, nebo se nezapsal."
       latest_readings: "Poslední odečty měřičů"
@@ -179,7 +179,7 @@ cs:
       visitor: "Návštěvník"
       select_visitor: "Vyberte návštěvníka..."
       date_time: "Datum a čas"
-      main_meter: "Odečet hlavního měřiče"
+      main_meter: "Stav hlavního měřiče"
       optional: "(nepovinné)"
       note: "Poznámka"
       note_placeholder: "např. víkendový pobyt"
@@ -188,7 +188,7 @@ cs:
     check_out_form:
       visitor: "Návštěvník"
       date_time: "Datum a čas"
-      main_meter: "Odečet hlavního měřiče"
+      main_meter: "Stav hlavního měřiče"
       optional: "(nepovinné)"
       note: "Poznámka"
       note_placeholder: "např. odjezd brzy ráno"
