@@ -35,7 +35,7 @@ gem "audited", "~> 5.7"
 gem "nilify_blanks", "~> 1.4"
 
 # View components
-gem "view_component", "~> 3.22"
+gem "view_component", "~> 4.4"
 
 # Google reCAPTCHA verification
 gem "recaptcha", "~> 5.17"
