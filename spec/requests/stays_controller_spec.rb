@@ -50,7 +50,7 @@ RSpec.describe StaysController, type: :request do
       it "redirects to root with success notice" do
         post stays_path, params: valid_params
         expect(response).to redirect_to(root_path)
-        expect(flash[:notice]).to include("checked in successfully")
+        expect(flash[:notice]).to include("check-in recorded")
       end
 
       it "associates the stay with the visitor and property" do
@@ -160,21 +160,21 @@ RSpec.describe StaysController, type: :request do
         invalid_params = valid_params.merge(main_meter_reading: 900.0)
         post stays_path, params: invalid_params
         expect(response).to redirect_to(root_path)
-        expect(flash[:alert]).to include("must be greater than or equal to the previous reading")
+        expect(flash[:alert]).to include("must be greater than or equal to previous reading")
       end
 
       it "accepts reading equal to previous reading" do
         same_params = valid_params.merge(main_meter_reading: 1000.0)
         post stays_path, params: same_params
         expect(response).to redirect_to(root_path)
-        expect(flash[:notice]).to include("checked in successfully")
+        expect(flash[:notice]).to include("check-in recorded")
       end
 
       it "accepts reading higher than previous reading" do
         higher_params = valid_params.merge(main_meter_reading: 1100.0)
         post stays_path, params: higher_params
         expect(response).to redirect_to(root_path)
-        expect(flash[:notice]).to include("checked in successfully")
+        expect(flash[:notice]).to include("check-in recorded")
       end
     end
 
@@ -192,7 +192,7 @@ RSpec.describe StaysController, type: :request do
         past_params = valid_params.merge(recorded_at: Time.current.iso8601)
         post stays_path, params: past_params
         expect(response).to redirect_to(root_path)
-        expect(flash[:alert]).to include("must be after or equal to the previous event")
+        expect(flash[:alert]).to include("must be after or equal to previous event")
       end
     end
   end
@@ -240,7 +240,7 @@ RSpec.describe StaysController, type: :request do
       it "redirects to root with success notice" do
         patch check_out_stay_path(open_stay), params: valid_params
         expect(response).to redirect_to(root_path)
-        expect(flash[:notice]).to include("checked out successfully")
+        expect(flash[:notice]).to include("check-out recorded")
       end
 
       it "associates the check-out event with the stay" do
@@ -261,7 +261,7 @@ RSpec.describe StaysController, type: :request do
       it "closes the stay" do
         patch check_out_stay_path(open_stay), params: minimal_params
         expect(response).to redirect_to(root_path)
-        expect(flash[:notice]).to include("checked out successfully")
+        expect(flash[:notice]).to include("check-out recorded")
       end
 
       it "uses current time when recorded_at is not provided" do
@@ -305,14 +305,14 @@ RSpec.describe StaysController, type: :request do
         same_params = valid_params.merge(main_meter_reading: 1000.0)
         patch check_out_stay_path(open_stay), params: same_params
         expect(response).to redirect_to(root_path)
-        expect(flash[:notice]).to include("checked out successfully")
+        expect(flash[:notice]).to include("check-out recorded")
       end
 
       it "accepts check-out reading higher than check-in reading" do
         higher_params = valid_params.merge(main_meter_reading: 1100.0)
         patch check_out_stay_path(open_stay), params: higher_params
         expect(response).to redirect_to(root_path)
-        expect(flash[:notice]).to include("checked out successfully")
+        expect(flash[:notice]).to include("check-out recorded")
       end
     end
 
@@ -353,7 +353,7 @@ RSpec.describe StaysController, type: :request do
         params_without_secondary = valid_params.except(:secondary_meter_reading)
         patch check_out_stay_path(open_stay), params: params_without_secondary
         expect(response).to redirect_to(root_path)
-        expect(flash[:notice]).to include("checked out successfully")
+        expect(flash[:notice]).to include("check-out recorded")
       end
 
       it "defaults secondary meter to last known value when not provided" do
