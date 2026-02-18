@@ -37,19 +37,33 @@ export default class extends Controller {
     this.switchToTab(tabName)
   }
 
+  // Color mapping: data-active-color → [border, text, active bg]
+  static colorMap = {
+    emerald: ["border-emerald-600", "text-emerald-700", "bg-emerald-50"],
+    amber:   ["border-amber-600",   "text-amber-700",   "bg-amber-50"],
+    violet:  ["border-violet-600",  "text-violet-700",  "bg-violet-50"],
+  }
+
   switchToTab(tabName) {
     // Update all tab buttons
     this.tabButtonTargets.forEach(button => {
       const isActive = button.dataset.tab === tabName
+      const color = button.dataset.activeColor || "brand"
+      const [borderClass, textClass, bgClass] = this.constructor.colorMap[color] || ["border-brand-600", "text-brand-700", "bg-brand-50"]
+
+      // Remove all possible bg/border classes
+      const allBg = Object.values(this.constructor.colorMap).map(c => c[2])
+      const allBorder = Object.values(this.constructor.colorMap).map(c => c[0])
+      button.classList.remove(...allBg, ...allBorder, "border-transparent")
+
+      // Text color is always the tab's own color
+      button.classList.remove("text-gray-500", "hover:text-gray-700", "hover:border-gray-300")
+      button.classList.add(textClass)
 
       if (isActive) {
-        // Active tab styling
-        button.classList.remove("border-transparent", "text-gray-500", "hover:text-gray-700", "hover:border-gray-300")
-        button.classList.add("border-brand-600", "text-brand-600")
+        button.classList.add(borderClass, bgClass)
       } else {
-        // Inactive tab styling
-        button.classList.remove("border-brand-600", "text-brand-600")
-        button.classList.add("border-transparent", "text-gray-500", "hover:text-gray-700", "hover:border-gray-300")
+        button.classList.add("border-transparent")
       }
     })
 

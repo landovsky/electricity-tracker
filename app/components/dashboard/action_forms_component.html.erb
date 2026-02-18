@@ -1,15 +1,15 @@
 <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-controller="action-forms" data-action-forms-default-tab-value="<%= default_tab %>">
   <!-- Tab bar with Stimulus interactivity -->
   <div class="flex border-b border-gray-100">
-    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="checkin" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="checkin" data-active-color="emerald" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
       <%= render Shared::IconComponent.new(icon_class: "fa-right-to-bracket", color: "mr-1") %>
       <%= t("dashboard.actions.check_in") %>
     </button>
-    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="checkout" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="checkout" data-active-color="amber" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
       <%= render Shared::IconComponent.new(icon_class: "fa-right-from-bracket", color: "mr-1") %>
       <%= t("dashboard.actions.check_out") %>
     </button>
-    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="manual" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+    <button type="button" data-action-forms-target="tabButton" data-action="click->action-forms#switchTab" data-tab="manual" data-active-color="violet" class="flex-1 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
       <%= render Shared::IconComponent.new(icon_class: "fa-bolt", color: "mr-1") %>
       <%= t("dashboard.actions.log_entry") %>
     </button>
