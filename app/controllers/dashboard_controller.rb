@@ -31,6 +31,9 @@ class DashboardController < ApplicationController
                                                    .recent
                                                    .limit(5)
 
+    # Default visitor for pre-selecting in forms
+    @default_visitor_id = current_user&.default_visitor_id
+
     # Data for inline forms
 
     # Visitors available for check-in (active visitors without open stays)

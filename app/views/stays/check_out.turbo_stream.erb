@@ -15,7 +15,8 @@
     <%= render Dashboard::CheckOutFormComponent.new(
       current_visitors: @visitors_for_checkout,
       last_readings: @last_meter_readings,
-      meters: @meters
+      meters: @meters,
+      selected_visitor_id: @default_visitor_id
     ) %>
   </div>
 <% end %>

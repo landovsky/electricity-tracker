@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 class Dashboard::CheckInFormComponent < ApplicationComponent
-  def initialize(visitors:, last_readings:, meters:)
+  def initialize(visitors:, last_readings:, meters:, selected_visitor_id: nil)
     @visitors = visitors
     @last_readings = last_readings
     @meters = meters
+    @selected_visitor_id = selected_visitor_id
   end
 
-  attr_reader :visitors, :last_readings, :meters
+  attr_reader :visitors, :last_readings, :meters, :selected_visitor_id
 
   def main_meter
     meters.find { |m| m.meter_type == "main" }

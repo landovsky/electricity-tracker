@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_17_205743) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_18_080351) do
   create_table "audits", force: :cascade do |t|
     t.string "action"
     t.integer "associated_id"
@@ -114,6 +114,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_17_205743) do
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.integer "default_visitor_id"
     t.datetime "deleted_at"
     t.string "email"
     t.string "name"
@@ -122,6 +123,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_17_205743) do
     t.string "sms_otp_code"
     t.datetime "sms_otp_sent_at"
     t.datetime "updated_at", null: false
+    t.index ["default_visitor_id"], name: "index_users_on_default_visitor_id"
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["phone_number"], name: "index_users_on_phone_number", unique: true, where: "phone_number IS NOT NULL"
@@ -144,4 +146,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_17_205743) do
   add_foreign_key "meters", "properties"
   add_foreign_key "stays", "properties"
   add_foreign_key "stays", "visitors"
+  add_foreign_key "users", "visitors", column: "default_visitor_id"
 end

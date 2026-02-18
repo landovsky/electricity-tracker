@@ -21,7 +21,8 @@
       <%= render Dashboard::CheckInFormComponent.new(
         visitors: visitors_for_checkin,
         last_readings: last_readings,
-        meters: meters
+        meters: meters,
+        selected_visitor_id: default_visitor_id
       ) %>
     </div>
   </turbo-frame>
@@ -32,7 +33,8 @@
       <%= render Dashboard::CheckOutFormComponent.new(
         current_visitors: visitors_for_checkout,
         last_readings: last_readings,
-        meters: meters
+        meters: meters,
+        selected_visitor_id: default_visitor_id
       ) %>
     </div>
   </turbo-frame>
@@ -40,7 +42,10 @@
   <!-- Manual Entry Form -->
   <turbo-frame id="manual-entry-form" data-action-forms-target="formPanel" data-form-type="manual">
     <div class="p-4">
-      <%= render Dashboard::ManualEntryFormComponent.new(visitors: all_visitors) %>
+      <%= render Dashboard::ManualEntryFormComponent.new(
+        visitors: all_visitors,
+        selected_visitor_id: default_visitor_id
+      ) %>
     </div>
   </turbo-frame>
 </section>

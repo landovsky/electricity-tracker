@@ -12,7 +12,8 @@
 <%= turbo_stream.replace "manual-entry-form" do %>
   <div class="p-4">
     <%= render Dashboard::ManualEntryFormComponent.new(
-      visitors: @all_visitors
+      visitors: @all_visitors,
+      selected_visitor_id: @default_visitor_id
     ) %>
   </div>
 <% end %>

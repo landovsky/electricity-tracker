@@ -127,6 +127,7 @@ class StaysController < ApplicationController
     @current_visitors = property.current_visitors.includes(:stays)
     @visitors_for_checkin = Visitor.kept.order(:name)
     @visitors_for_checkout = @current_visitors
+    @default_visitor_id = current_user&.default_visitor_id
     @last_meter_readings = property.meters.map do |meter|
       reading = meter.meter_readings.kept.joins(:meter_reading_event).order("meter_reading_events.recorded_at DESC").first
       next unless reading

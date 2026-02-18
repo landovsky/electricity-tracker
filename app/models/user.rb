@@ -8,6 +8,7 @@ class User < ApplicationRecord
   # Associations
   has_many :meter_reading_events, foreign_key: :recorded_by_user_id, dependent: :nullify
   has_many :manual_consumption_entries, foreign_key: :recorded_by_user_id, dependent: :nullify
+  belongs_to :default_visitor, class_name: "Visitor", optional: true
 
   # Validations
   validates :email, uniqueness: true, allow_nil: true

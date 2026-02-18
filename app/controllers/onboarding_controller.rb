@@ -10,11 +10,22 @@ class OnboardingController < ApplicationController
   end
 
   def update
-    if current_user.update(name: params[:name].to_s.strip)
-      redirect_to root_path, notice: t("onboarding.success")
-    else
+    name = params[:name].to_s.strip
+
+    if name.blank?
       flash.now[:alert] = t("onboarding.name_required")
       render :show, status: :unprocessable_entity
+      return
+    end
+
+    ActiveRecord::Base.transaction do
+      if current_user.update(name: name)
+        CreateDefaultVisitorForUser.run!(user: current_user)
+        redirect_to root_path, notice: t("onboarding.success")
+      else
+        flash.now[:alert] = t("onboarding.name_required")
+        render :show, status: :unprocessable_entity
+      end
     end
   end
 end

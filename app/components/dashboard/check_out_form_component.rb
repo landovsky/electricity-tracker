@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 class Dashboard::CheckOutFormComponent < ApplicationComponent
-  def initialize(current_visitors:, last_readings:, meters:)
+  def initialize(current_visitors:, last_readings:, meters:, selected_visitor_id: nil)
     @current_visitors = current_visitors
     @last_readings = last_readings
     @meters = meters
+    @selected_visitor_id = selected_visitor_id
   end
 
-  attr_reader :current_visitors, :last_readings, :meters
+  attr_reader :current_visitors, :last_readings, :meters, :selected_visitor_id
 
   def main_meter
     meters.find { |m| m.meter_type == "main" }
@@ -48,5 +49,18 @@ class Dashboard::CheckOutFormComponent < ApplicationComponent
       label = "#{visitor.name} (#{I18n.t('dashboard.check_out_form.since', date: checkin_date)})"
       [ label, stay&.id, { "data-stay-id": stay&.id } ]
     end
+  end
+
+  # Returns the stay_id to pre-select in the checkout dropdown.
+  #
+  # If a selected_visitor_id is provided, we find that visitor's open stay
+  # and return its id. If the visitor has no open stay (not currently checked in),
+  # we fall back to the first visitor in the list (existing behaviour).
+  def selected_stay_id
+    return visitor_options.first&.last unless selected_visitor_id
+
+    visitor = current_visitors.find { |v| v.id == selected_visitor_id }
+    stay = visitor&.stays&.find { |s| s.open? }
+    stay&.id || visitor_options.first&.last
   end
 end

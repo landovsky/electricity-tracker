@@ -24,5 +24,12 @@ FactoryBot.define do
     trait :not_onboarded do
       name { nil }
     end
+
+    trait :with_default_visitor do
+      after(:create) do |user|
+        visitor = create(:visitor, name: user.name)
+        user.update_column(:default_visitor_id, visitor.id)
+      end
+    end
   end
 end
