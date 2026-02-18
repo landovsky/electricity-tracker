@@ -7,6 +7,9 @@ import { application } from "controllers/application"
 import ActionFormsController from "controllers/action_forms_controller"
 application.register("action-forms", ActionFormsController)
 
+import AutoSubmitController from "controllers/auto_submit_controller"
+application.register("auto-submit", AutoSubmitController)
+
 import CheckoutFormController from "controllers/checkout_form_controller"
 application.register("checkout-form", CheckoutFormController)
 

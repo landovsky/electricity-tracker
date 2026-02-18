@@ -20,20 +20,21 @@
 
   <!-- Filters -->
   <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <%= form_with url: readings_history_path, method: :get, class: "px-4 py-3 space-y-3" do |form| %>
+    <%= form_with url: readings_history_path, method: :get, class: "px-4 py-3 space-y-3", data: { controller: "auto-submit" } do |form| %>
       <div class="flex gap-2">
         <%= form.select :visitor_id,
             options_from_collection_for_select(@visitors, :id, :name, params[:visitor_id]),
             { include_blank: t("history.all_visitors") },
-            class: "flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+            class: "flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+            data: { action: "change->auto-submit#submit" } %>
         <%= form.select :year,
-            options_for_select([
-              ["2026", "2026"],
-              ["2025", "2025"],
-              [t("history.all_time"), ""]
-            ], params[:year]),
+            options_for_select(
+              year_filter_options,
+              params[:year]
+            ),
             {},
-            class: "border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+            class: "border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+            data: { action: "change->auto-submit#submit" } %>
       </div>
       <%= form.submit t("history.filter"), class: "hidden" %>
     <% end %>

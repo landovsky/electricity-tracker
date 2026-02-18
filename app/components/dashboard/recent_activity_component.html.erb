@@ -1,7 +1,7 @@
 <turbo-frame id="recent-activity">
   <%= render Shared::CardComponent.new(
     title: t("dashboard.recent_activity.title"),
-    header_action: ('<a href="/readings_history" class="text-xs text-brand-600 font-medium hover:text-brand-700">' + t("dashboard.recent_activity.view_all") + ' <i class="fa-solid fa-arrow-right ml-0.5"></i></a>').html_safe
+    header_action: ('<a href="/readings_history" data-turbo-frame="_top" class="text-xs text-brand-600 font-medium hover:text-brand-700">' + t("dashboard.recent_activity.view_all") + ' <i class="fa-solid fa-arrow-right ml-0.5"></i></a>').html_safe
   ) do %>
     <% if combined_activity.any? %>
       <ul class="divide-y divide-gray-50 -mx-4 -my-4">
