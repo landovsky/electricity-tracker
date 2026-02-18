@@ -71,6 +71,9 @@ Rails.application.routes.draw do
   # Single index action with date range params (year, start_date, end_date)
   get "consumption_reports", to: "consumption_reports#index", as: :consumption_reports
 
+  # Meter Reading Events
+  resources :meter_reading_events, only: [ :destroy ]
+
   # Readings History (S3)
   # Chronological log of all meter reading events and manual entries
   # Filterable by visitor and date range

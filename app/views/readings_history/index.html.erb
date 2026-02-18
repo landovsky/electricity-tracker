@@ -148,7 +148,14 @@
                 <% if event.note.present? %>
                   <div class="text-xs text-gray-500 mt-2"><%= event.note %></div>
                 <% end %>
-                <div class="text-xs text-gray-400 mt-2"><%= t("history.recorded_by", name: event.recorded_by_user&.name || t("history.unknown")) %></div>
+                <div class="flex items-center justify-between mt-2">
+                  <div class="text-xs text-gray-400"><%= t("history.recorded_by", name: event.recorded_by_user&.name || t("history.unknown")) %></div>
+                  <%= button_to meter_reading_event_path(event), method: :delete,
+                        form: { data: { turbo_confirm: t("meter_reading_events.destroy.confirm") } },
+                        class: "text-gray-300 hover:text-red-500 transition-colors p-1" do %>
+                    <i class="fa-solid fa-trash-can text-xs"></i>
+                  <% end %>
+                </div>
               </div>
             </div>
           <% end %>

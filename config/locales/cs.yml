@@ -282,6 +282,13 @@ cs:
     per_visitor_summary: "Shrnutí dle návštěvníků"
     no_data: "Pro vybrané období nebyla nalezena žádná data o spotřebě."
 
+  # Meter reading events
+  meter_reading_events:
+    destroy:
+      success: "Událost byla úspěšně smazána."
+      has_checkout: "Nelze smazat příjezd, ke kterému existuje odjezd. Nejprve smažte odjezd."
+      confirm: "Opravdu chcete smazat tuto událost? Tato akce je nevratná."
+
   # Readings history
   history:
     title: "Historie odečtů"
