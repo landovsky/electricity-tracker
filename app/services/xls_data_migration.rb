@@ -521,6 +521,11 @@ class XlsDataMigration
     create_reading!(close_event, @meter_vt, closing_vt)
     create_reading!(close_event, @meter_nt, closing_nt)
 
+    # Year-boundary events: create intermediate boundary events at each Jan 1 so that
+    # year-filtered reports (e.g. ?year=2025) find events within their date range.
+    # Readings are computed by accumulating per-visit consumption chronologically.
+    create_year_boundary_events!(visits, opening_vt, opening_nt)
+
     vt_delta = closing_vt - opening_vt
     nt_delta = closing_nt - opening_nt
     total_delta = vt_delta + nt_delta
@@ -530,6 +535,50 @@ class XlsDataMigration
     puts "    Close: #{close_event.recorded_at.to_date} — VT=#{closing_vt.to_i} NT=#{closing_nt.to_i}"
     puts "    Deltas: VT=#{vt_delta.to_i} (expected 269), NT=#{nt_delta.to_i} (expected 1672)"
     puts "    Total: #{total_delta.to_i} kWh (expected 1941)"
+  end
+
+  # Creates intermediate boundary events at each Jan 1 that falls between the opening
+  # and closing dates. This allows year-filtered reports (?year=2025) to find boundary
+  # events within their date range and build periods correctly.
+  #
+  # Readings are computed by accumulating per-visit VT/NT consumption chronologically
+  # from the opening readings, so each year boundary has the correct global meter state.
+  def create_year_boundary_events!(visits, opening_vt, opening_nt)
+    first_year = visits.min_by { |v| v[:check_in_date] }[:check_in_date].year
+    last_year = visits.max_by { |v| v[:check_out_date] }[:check_out_date].year
+
+    return if first_year == last_year # No year crossings
+
+    # Accumulate consumption chronologically to compute meter state at each Jan 1
+    sorted_visits = visits.sort_by { |v| v[:check_out_date] }
+
+    (first_year + 1..last_year).each do |year|
+      jan1 = Date.new(year, 1, 1)
+
+      # Sum consumption from all visits with check_out_date before Jan 1
+      vt_before = sorted_visits.select { |v| v[:check_out_date] < jan1 }.sum { |v| v[:vt_cons] || 0 }
+      nt_before = sorted_visits.select { |v| v[:check_out_date] < jan1 }.sum { |v| v[:nt_cons] || 0 }
+
+      mid_vt = opening_vt + vt_before
+      mid_nt = opening_nt + nt_before
+
+      # Create TWO events: one at end of old year, one at start of new year.
+      # AnalyzePeriods filters by date_range, so each year needs both a start and end
+      # event within its range. Identical readings ensure zero delta between them.
+      dec31 = Date.new(year - 1, 12, 31)
+      [ dec31.end_of_day, jan1.beginning_of_day ].each do |timestamp|
+        event = MeterReadingEvent.new(
+          event_type: "check_out",
+          recorded_at: timestamp,
+          recorded_by_user: @admin
+        )
+        event.save!(validate: false)
+        create_reading!(event, @meter_vt, mid_vt)
+        create_reading!(event, @meter_nt, mid_nt)
+      end
+
+      puts "    Year boundary #{year}: VT=#{mid_vt.to_i} NT=#{mid_nt.to_i}"
+    end
   end
 
   # Creates one ManualConsumptionEntry per visit for per-visitor kWh attribution.
@@ -583,7 +632,7 @@ class XlsDataMigration
     puts "  Users: #{User.count}"
     puts "  Stays: #{Stay.count}"
     puts "  MeterReadingEvents: #{MeterReadingEvent.count}"
-    puts "  MeterReadings: #{MeterReading.count} (expected 4 — 2 boundary events × 2 meters)"
+    puts "  MeterReadings: #{MeterReading.count}"
     puts "  ManualConsumptionEntries: #{ManualConsumptionEntry.count}"
 
     puts "\nPer-visitor consumption (from ManualConsumptionEntries):"
@@ -624,7 +673,7 @@ class XlsDataMigration
 
     # Boundary event check
     events_with_readings = MeterReadingEvent.joins(:meter_readings).distinct.count
-    puts "\n  Events with readings: #{events_with_readings} (expected 2)"
+    puts "\n  Events with readings: #{events_with_readings}"
   end
 
   # === Helper methods ===
