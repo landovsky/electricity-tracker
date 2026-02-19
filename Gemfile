@@ -84,6 +84,10 @@ group :development, :test do
 end
 
 group :development do
+  # XLS file reading for data migration
+  gem "roo", "~> 2.10"
+  gem "roo-xls", "~> 2.0"
+
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 
