@@ -83,11 +83,11 @@ group :development, :test do
   gem "database_cleaner-active_record", "~> 2.2"
 end
 
-group :development do
-  # XLS file reading for data migration
-  gem "roo", "~> 2.10"
-  gem "roo-xls", "~> 2.0"
+# XLS file reading for data migration
+gem "roo", "~> 2.10"
+gem "roo-xls", "~> 2.0"
 
+group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 

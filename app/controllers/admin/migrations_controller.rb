@@ -8,6 +8,8 @@ module Admin
     def xls
       XlsDataMigration.run
       redirect_back fallback_location: root_path, notice: t("admin.migrations.xls_success")
+    rescue => e
+      redirect_back fallback_location: root_path, alert: "XLS migration failed: #{e.message}"
     end
 
     private
