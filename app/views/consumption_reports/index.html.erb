@@ -105,9 +105,9 @@
 
       <!-- Totals row -->
       <%
-        total_shared = @report[:visitors].sum { |v| v[:period_shares].to_f }
-        total_manual = @report[:visitors].sum { |v| v[:manual_entries].to_f }
-        total_empty_house = @report[:visitors].sum { |v| v[:empty_house_share].to_f }
+        total_shared = @report[:visitors].sum { |v| v[:period_shares_kwh].to_f }
+        total_manual = @report[:visitors].sum { |v| v[:manual_entries_kwh].to_f }
+        total_empty_house = @report[:visitors].sum { |v| v[:empty_house_share_kwh].to_f }
       %>
       <div class="grid grid-cols-12 gap-1 px-4 py-3 bg-gray-50 border-t border-gray-200 text-sm font-semibold">
         <div class="col-span-3 text-gray-700"><%= t("reports.total") %></div>
