@@ -3,6 +3,9 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # Keep users logged in for 1 year (default session cookie expires on browser close)
+  config.session_store :cookie_store, expire_after: 1.year
+
   # Code is not reloaded between requests.
   config.enable_reloading = false
 
