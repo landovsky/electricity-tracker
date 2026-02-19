@@ -42,7 +42,12 @@ class ConsumptionReportsController < ApplicationController
   end
 
   def set_date_range
-    if params[:year].present?
+    if params[:year] == "all"
+      # All time: from earliest event to today
+      earliest = MeterReadingEvent.kept.minimum(:recorded_at)&.to_date
+      @start_date = earliest || Date.new(Date.today.year, 1, 1)
+      @end_date = Date.today
+    elsif params[:year].present?
       # Year param: use Jan 1 to Dec 31 of that year
       year = params[:year].to_i
       @start_date = Date.new(year, 1, 1)
