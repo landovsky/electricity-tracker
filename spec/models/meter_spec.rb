@@ -12,7 +12,12 @@ RSpec.describe Meter, type: :model do
     it { should validate_presence_of(:meter_type) }
     it { should validate_presence_of(:label) }
     it { should validate_presence_of(:unit) }
-    it { should validate_uniqueness_of(:meter_type).scoped_to(:property_id) }
+    it "allows multiple meters of the same type per property" do
+      property = Property.create!(name: "Multi-meter Property")
+      Meter.create!(property: property, meter_type: "main", label: "Main - VT", unit: "kWh")
+      meter2 = Meter.new(property: property, meter_type: "main", label: "Main - NT", unit: "kWh")
+      expect(meter2).to be_valid
+    end
   end
 
   describe "enums" do

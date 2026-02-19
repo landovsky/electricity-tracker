@@ -71,8 +71,7 @@ RSpec.describe AnalyzePeriods do
         expect(period[:start_time]).to eq(stay_a.check_in_event.recorded_at)
         expect(period[:end_time]).to eq(stay_a.check_out_event.recorded_at)
         expect(period[:duration_hours]).to be_within(0.1).of(48.0)
-        expect(period[:total_kwh]).to eq(BigDecimal("50.0"))
-        expect(period[:upper_floor_kwh]).to eq(BigDecimal("25.0"))
+        expect(period[:total_kwh]).to eq(BigDecimal("75.0"))
         expect(period[:present_visitors]).to contain_exactly(visitor_a)
         expect(period[:manual_entries]).to eq([])
       end
@@ -122,7 +121,7 @@ RSpec.describe AnalyzePeriods do
         period1 = periods[0]
         expect(period1[:start_event]).to eq(stay_a.check_in_event)
         expect(period1[:end_event]).to eq(stay_a.check_out_event)
-        expect(period1[:total_kwh]).to eq(BigDecimal("30.0"))
+        expect(period1[:total_kwh]).to eq(BigDecimal("45.0"))
         expect(period1[:present_visitors]).to contain_exactly(visitor_a)
 
         # Period 2: Empty house gap (Alice's checkout to Bob's checkin)
@@ -136,7 +135,7 @@ RSpec.describe AnalyzePeriods do
         period3 = periods[2]
         expect(period3[:start_event]).to eq(stay_b.check_in_event)
         expect(period3[:end_event]).to eq(stay_b.check_out_event)
-        expect(period3[:total_kwh]).to eq(BigDecimal("40.0"))
+        expect(period3[:total_kwh]).to eq(BigDecimal("60.0"))
         expect(period3[:present_visitors]).to contain_exactly(visitor_b)
       end
     end
@@ -247,23 +246,23 @@ RSpec.describe AnalyzePeriods do
 
         # Period 1: event1 -> event2 (Alice alone)
         expect(periods[0][:present_visitors]).to contain_exactly(visitor_a)
-        expect(periods[0][:total_kwh]).to eq(BigDecimal("20.0"))
+        expect(periods[0][:total_kwh]).to eq(BigDecimal("30.0"))
 
         # Period 2: event2 -> event3 (Alice + Bob)
         expect(periods[1][:present_visitors]).to contain_exactly(visitor_a, visitor_b)
-        expect(periods[1][:total_kwh]).to eq(BigDecimal("30.0"))
+        expect(periods[1][:total_kwh]).to eq(BigDecimal("45.0"))
 
         # Period 3: event3 -> event4 (Alice + Bob + Charlie)
         expect(periods[2][:present_visitors]).to contain_exactly(visitor_a, visitor_b, visitor_c)
-        expect(periods[2][:total_kwh]).to eq(BigDecimal("40.0"))
+        expect(periods[2][:total_kwh]).to eq(BigDecimal("60.0"))
 
         # Period 4: event4 -> event5 (Bob + Charlie)
         expect(periods[3][:present_visitors]).to contain_exactly(visitor_b, visitor_c)
-        expect(periods[3][:total_kwh]).to eq(BigDecimal("30.0"))
+        expect(periods[3][:total_kwh]).to eq(BigDecimal("45.0"))
 
         # Period 5: event5 -> event6 (Charlie alone)
         expect(periods[4][:present_visitors]).to contain_exactly(visitor_c)
-        expect(periods[4][:total_kwh]).to eq(BigDecimal("20.0"))
+        expect(periods[4][:total_kwh]).to eq(BigDecimal("30.0"))
       end
     end
 
@@ -352,19 +351,19 @@ RSpec.describe AnalyzePeriods do
 
         # Period 1: Alice present
         expect(periods[0][:present_visitors]).to contain_exactly(visitor_a)
-        expect(periods[0][:total_kwh]).to eq(BigDecimal("50.0"))
+        expect(periods[0][:total_kwh]).to eq(BigDecimal("75.0"))
 
         # Period 2: Empty house (event2 -> event3)
         expect(periods[1][:present_visitors]).to be_empty
-        expect(periods[1][:total_kwh]).to eq(BigDecimal("20.0"))
+        expect(periods[1][:total_kwh]).to eq(BigDecimal("30.0"))
 
         # Period 3: Empty house (event3 -> event4)
         expect(periods[2][:present_visitors]).to be_empty
-        expect(periods[2][:total_kwh]).to eq(BigDecimal("20.0"))
+        expect(periods[2][:total_kwh]).to eq(BigDecimal("30.0"))
 
         # Period 4: Alice present again
         expect(periods[3][:present_visitors]).to contain_exactly(visitor_a)
-        expect(periods[3][:total_kwh]).to eq(BigDecimal("30.0"))
+        expect(periods[3][:total_kwh]).to eq(BigDecimal("45.0"))
       end
     end
 
@@ -470,11 +469,11 @@ RSpec.describe AnalyzePeriods do
 
         # Period 1: Alice alone (event1 -> event2)
         expect(periods[0][:present_visitors]).to contain_exactly(visitor_a)
-        expect(periods[0][:total_kwh]).to eq(BigDecimal("50.0"))
+        expect(periods[0][:total_kwh]).to eq(BigDecimal("75.0"))
 
         # Period 2: Bob alone (event2 -> event3)
         expect(periods[1][:present_visitors]).to contain_exactly(visitor_b)
-        expect(periods[1][:total_kwh]).to eq(BigDecimal("50.0"))
+        expect(periods[1][:total_kwh]).to eq(BigDecimal("75.0"))
       end
     end
 
@@ -750,15 +749,15 @@ RSpec.describe AnalyzePeriods do
 
         # Period 1: event1 -> event2 (Alice alone)
         expect(periods[0][:present_visitors]).to contain_exactly(visitor_a)
-        expect(periods[0][:total_kwh]).to eq(BigDecimal("20.0"))
+        expect(periods[0][:total_kwh]).to eq(BigDecimal("30.0"))
 
         # Period 2: event2 -> event3 (Alice + Bob overlap)
         expect(periods[1][:present_visitors]).to contain_exactly(visitor_a, visitor_b)
-        expect(periods[1][:total_kwh]).to eq(BigDecimal("30.0"))
+        expect(periods[1][:total_kwh]).to eq(BigDecimal("45.0"))
 
         # Period 3: event3 -> event4 (Bob alone)
         expect(periods[2][:present_visitors]).to contain_exactly(visitor_b)
-        expect(periods[2][:total_kwh]).to eq(BigDecimal("30.0"))
+        expect(periods[2][:total_kwh]).to eq(BigDecimal("45.0"))
       end
     end
 
@@ -805,7 +804,7 @@ RSpec.describe AnalyzePeriods do
         # Period from event1 to event2 should include Alice (who is still checked in)
         period = periods.first
         expect(period[:present_visitors]).to contain_exactly(visitor_a)
-        expect(period[:total_kwh]).to eq(BigDecimal("50.0"))
+        expect(period[:total_kwh]).to eq(BigDecimal("75.0"))
       end
     end
 
@@ -851,7 +850,6 @@ RSpec.describe AnalyzePeriods do
 
         period = periods.first
         expect(period[:total_kwh]).to eq(BigDecimal("50.0"))
-        expect(period[:upper_floor_kwh]).to eq(BigDecimal("0")) # Default when missing
         expect(period[:present_visitors]).to contain_exactly(visitor_a)
       end
     end

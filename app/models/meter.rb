@@ -13,9 +13,18 @@ class Meter < ApplicationRecord
   validates :meter_type, presence: true
   validates :label, presence: true
   validates :unit, presence: true
-  validates :meter_type, uniqueness: { scope: :property_id }
 
   # Scopes
   scope :main, -> { where(meter_type: "main") }
   scope :secondary, -> { where(meter_type: "secondary") }
+  scope :grouped, ->(group) { where(meter_group: group) }
+
+  # Returns the last recorded reading for this meter
+  def last_reading
+    meter_readings
+      .kept
+      .joins(:meter_reading_event)
+      .order("meter_reading_events.recorded_at DESC")
+      .first
+  end
 end

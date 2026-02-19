@@ -96,17 +96,17 @@ RSpec.describe "Consumption Report Flows", type: :system do
         alice_result = result[:visitors].find { |v| v[:visitor] == visitor_alice }
         bob_result = result[:visitors].find { |v| v[:visitor] == visitor_bob }
 
-        # Alice: 100 kWh period + 25 kWh empty house share
-        expect(alice_result[:period_shares_kwh]).to eq(100.0)
-        expect(alice_result[:empty_house_share_kwh]).to eq(25.0)
-        expect(alice_result[:total_kwh]).to eq(125.0)
+        # Alice: 150 kWh period (main 100 + secondary 50) + 37.5 kWh empty house share (75 / 2)
+        expect(alice_result[:period_shares_kwh]).to eq(150.0)
+        expect(alice_result[:empty_house_share_kwh]).to eq(37.5)
+        expect(alice_result[:total_kwh]).to eq(187.5)
 
-        # Bob: 100 kWh period + 25 kWh empty house share
-        expect(bob_result[:period_shares_kwh]).to eq(100.0)
-        expect(bob_result[:empty_house_share_kwh]).to eq(25.0)
-        expect(bob_result[:total_kwh]).to eq(125.0)
+        # Bob: 150 kWh period (main 100 + secondary 50) + 37.5 kWh empty house share (75 / 2)
+        expect(bob_result[:period_shares_kwh]).to eq(150.0)
+        expect(bob_result[:empty_house_share_kwh]).to eq(37.5)
+        expect(bob_result[:total_kwh]).to eq(187.5)
 
-        expect(result[:total_consumption_kwh]).to eq(250.0)
+        expect(result[:total_consumption_kwh]).to eq(375.0)
       end
     end
 
@@ -226,13 +226,13 @@ RSpec.describe "Consumption Report Flows", type: :system do
         result = outcome.result
 
         result[:visitors].each do |visitor_result|
-          expect(visitor_result[:period_shares_kwh]).to eq(100.0)
+          expect(visitor_result[:period_shares_kwh]).to eq(150.0)
           expect(visitor_result[:manual_entries_kwh]).to eq(0.0)
           expect(visitor_result[:empty_house_share_kwh]).to eq(0.0)
-          expect(visitor_result[:total_kwh]).to eq(100.0)
+          expect(visitor_result[:total_kwh]).to eq(150.0)
         end
 
-        expect(result[:total_consumption_kwh]).to eq(300.0)
+        expect(result[:total_consumption_kwh]).to eq(450.0)
       end
 
       it "handles partial overlaps with equal split" do
@@ -301,13 +301,13 @@ RSpec.describe "Consumption Report Flows", type: :system do
         alice_result = result[:visitors].find { |v| v[:visitor] == visitor_alice }
         bob_result = result[:visitors].find { |v| v[:visitor] == visitor_bob }
 
-        # Alice: 100 (alone) + 100 (overlap split) = 200
-        expect(alice_result[:total_kwh]).to eq(200.0)
+        # Alice: 150 (alone, main 100 + secondary 50) + 150 (overlap split of 300) = 300
+        expect(alice_result[:total_kwh]).to eq(300.0)
 
-        # Bob: 100 (overlap split) + 100 (alone) = 200
-        expect(bob_result[:total_kwh]).to eq(200.0)
+        # Bob: 150 (overlap split of 300) + 150 (alone, main 100 + secondary 50) = 300
+        expect(bob_result[:total_kwh]).to eq(300.0)
 
-        expect(result[:total_consumption_kwh]).to eq(400.0)
+        expect(result[:total_consumption_kwh]).to eq(600.0)
       end
     end
 
@@ -354,17 +354,17 @@ RSpec.describe "Consumption Report Flows", type: :system do
         alice_result = result[:visitors].find { |v| v[:visitor] == visitor_alice }
         bob_result = result[:visitors].find { |v| v[:visitor] == visitor_bob }
 
-        # Alice: 100 (period) + 50 (empty house share)
-        expect(alice_result[:period_shares_kwh]).to eq(100.0)
-        expect(alice_result[:empty_house_share_kwh]).to eq(50.0)
-        expect(alice_result[:total_kwh]).to eq(150.0)
+        # Alice: 150 (period, main 100 + secondary 50) + 75 (empty house share, 150 / 2)
+        expect(alice_result[:period_shares_kwh]).to eq(150.0)
+        expect(alice_result[:empty_house_share_kwh]).to eq(75.0)
+        expect(alice_result[:total_kwh]).to eq(225.0)
 
-        # Bob: 100 (period) + 50 (empty house share)
-        expect(bob_result[:period_shares_kwh]).to eq(100.0)
-        expect(bob_result[:empty_house_share_kwh]).to eq(50.0)
-        expect(bob_result[:total_kwh]).to eq(150.0)
+        # Bob: 150 (period, main 100 + secondary 50) + 75 (empty house share, 150 / 2)
+        expect(bob_result[:period_shares_kwh]).to eq(150.0)
+        expect(bob_result[:empty_house_share_kwh]).to eq(75.0)
+        expect(bob_result[:total_kwh]).to eq(225.0)
 
-        expect(result[:total_consumption_kwh]).to eq(300.0)
+        expect(result[:total_consumption_kwh]).to eq(450.0)
       end
 
       it "handles only empty house periods (no stays)" do
@@ -417,7 +417,7 @@ RSpec.describe "Consumption Report Flows", type: :system do
         result = outcome.result
         expect(result[:visitors]).to be_empty
         expect(result[:total_consumption_kwh]).to eq(0.0)
-        expect(result[:total_meter_delta_kwh]).to eq(100.0)
+        expect(result[:total_meter_delta_kwh]).to eq(150.0)
       end
     end
 
@@ -426,9 +426,9 @@ RSpec.describe "Consumption Report Flows", type: :system do
 
       it "attributes manual entry and deducts from empty house pool" do
         # Timeline:
-        # Jan 1-10: Empty house (100 kWh total)
+        # Jan 1-10: Empty house (150 kWh total: main 100 + secondary 50)
         # Manual entry by Alice: 30 kWh on Jan 5
-        # Alice gets: 30 (manual) + 70 (empty house share) = 100 kWh
+        # Alice gets: 30 (manual) + 120 (empty house share = 150 - 30) = 150 kWh
         user = create(:user)
         event1 = create(:meter_reading_event,
           recorded_at: Date.new(2026, 1, 1).beginning_of_day,
@@ -481,10 +481,10 @@ RSpec.describe "Consumption Report Flows", type: :system do
 
         expect(alice_result[:period_shares_kwh]).to eq(0.0)
         expect(alice_result[:manual_entries_kwh]).to eq(30.0)
-        expect(alice_result[:empty_house_share_kwh]).to eq(70.0)
-        expect(alice_result[:total_kwh]).to eq(100.0)
+        expect(alice_result[:empty_house_share_kwh]).to eq(120.0)
+        expect(alice_result[:total_kwh]).to eq(150.0)
 
-        expect(result[:total_consumption_kwh]).to eq(100.0)
+        expect(result[:total_consumption_kwh]).to eq(150.0)
       end
     end
 
@@ -494,11 +494,11 @@ RSpec.describe "Consumption Report Flows", type: :system do
 
       it "attributes manual entry and splits remainder among present visitors" do
         # Timeline:
-        # Jan 1-10: Alice and Bob both present (200 kWh total)
+        # Jan 1-10: Alice and Bob both present (300 kWh total: main 200 + secondary 100)
         # Manual entry by Alice: 40 kWh on Jan 5
-        # Remainder: 200 - 40 = 160 kWh split equally (80 each)
-        # Alice total: 80 (share) + 40 (manual) = 120 kWh
-        # Bob total: 80 (share) = 80 kWh
+        # Remainder: 300 - 40 = 260 kWh split equally (130 each)
+        # Alice total: 130 (share) + 40 (manual) = 170 kWh
+        # Bob total: 130 (share) = 130 kWh
         user = create(:user)
 
         # Create shared check-in event
@@ -553,17 +553,17 @@ RSpec.describe "Consumption Report Flows", type: :system do
         alice_result = result[:visitors].find { |v| v[:visitor] == visitor_alice }
         bob_result = result[:visitors].find { |v| v[:visitor] == visitor_bob }
 
-        expect(alice_result[:period_shares_kwh]).to eq(80.0)
+        expect(alice_result[:period_shares_kwh]).to eq(130.0)
         expect(alice_result[:manual_entries_kwh]).to eq(40.0)
         expect(alice_result[:empty_house_share_kwh]).to eq(0.0)
-        expect(alice_result[:total_kwh]).to eq(120.0)
+        expect(alice_result[:total_kwh]).to eq(170.0)
 
-        expect(bob_result[:period_shares_kwh]).to eq(80.0)
+        expect(bob_result[:period_shares_kwh]).to eq(130.0)
         expect(bob_result[:manual_entries_kwh]).to eq(0.0)
         expect(bob_result[:empty_house_share_kwh]).to eq(0.0)
-        expect(bob_result[:total_kwh]).to eq(80.0)
+        expect(bob_result[:total_kwh]).to eq(130.0)
 
-        expect(result[:total_consumption_kwh]).to eq(200.0)
+        expect(result[:total_consumption_kwh]).to eq(300.0)
       end
     end
 
@@ -575,8 +575,7 @@ RSpec.describe "Consumption Report Flows", type: :system do
         # Jan 1-10: Alice present
         # Main meter: 1000 -> 1100 (100 kWh)
         # Secondary meter: 500 -> 550 (50 kWh)
-        # KNOWN ISSUE: Current implementation only tracks main meter consumption (100 kWh)
-        # Should track total: 150 kWh when secondary meter support is fully implemented
+        # total_kwh sums ALL meters: 100 + 50 = 150 kWh
         timeline = build_timeline(property) do |t|
           t.add_stay(visitor_alice,
             check_in: Date.new(2026, 1, 1).beginning_of_day,
@@ -601,19 +600,10 @@ RSpec.describe "Consumption Report Flows", type: :system do
 
         alice_result = result[:visitors].first
 
-        # Verify secondary meter readings are captured (even if not yet summed)
-        periods_outcome = AnalyzePeriods.run(
-          property: property,
-          date_range: { start_date: Date.new(2026, 1, 1), end_date: Date.new(2026, 1, 10) }
-        )
-        periods = periods_outcome.result
-        expect(periods.first[:upper_floor_kwh].to_f).to eq(50.0)
-
-        # Current behavior: only main meter is counted (100 kWh)
-        # TODO: Update when secondary meter summing is implemented
-        expect(alice_result[:total_kwh].to_f).to eq(100.0)
-        expect(result[:total_consumption_kwh].to_f).to eq(100.0)
-        expect(result[:total_meter_delta_kwh].to_f).to eq(100.0)
+        # Both meters are now summed: main (100 kWh) + secondary (50 kWh) = 150 kWh
+        expect(alice_result[:total_kwh].to_f).to eq(150.0)
+        expect(result[:total_consumption_kwh].to_f).to eq(150.0)
+        expect(result[:total_meter_delta_kwh].to_f).to eq(150.0)
       end
     end
 
@@ -769,8 +759,8 @@ RSpec.describe "Consumption Report Flows", type: :system do
       result = outcome.result
       alice_result = result[:visitors].first
 
-      # Should only include January consumption (100 kWh)
-      expect(alice_result[:total_kwh]).to eq(100.0)
+      # Should only include January consumption (main 100 + secondary 50 = 150 kWh)
+      expect(alice_result[:total_kwh]).to eq(150.0)
     end
   end
 

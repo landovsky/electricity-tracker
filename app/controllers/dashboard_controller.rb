@@ -15,7 +15,7 @@ class DashboardController < ApplicationController
                                .distinct
                                .order(:name)
 
-    # Last meter readings (most recent reading for each meter type)
+    # Last meter readings keyed by meter ID
     @last_meter_readings = build_last_meter_readings
 
     # Recent activity - last 5 meter reading events
@@ -46,7 +46,7 @@ class DashboardController < ApplicationController
     @visitors_for_checkout = @current_visitors
 
     # Meters for the property (for form fields)
-    @meters = @property.meters.kept.order(:meter_type)
+    @meters = @property.meters.kept.order(:meter_type, :meter_group, :label)
   end
 
   private
@@ -54,26 +54,17 @@ class DashboardController < ApplicationController
   def build_last_meter_readings
     return {} unless @property
 
-    readings_hash = {}
+    @property.meters.kept.each_with_object({}) do |meter, hash|
+      reading = meter.last_reading
+      next unless reading
 
-    # Get the most recent meter reading event with readings
-    last_event = MeterReadingEvent.kept
-                                  .joins(:meter_readings)
-                                  .includes(meter_readings: :meter)
-                                  .recent
-                                  .first
-
-    return readings_hash unless last_event
-
-    # Build hash of meter_type => { value, date, meter_label }
-    last_event.meter_readings.each do |reading|
-      readings_hash[reading.meter.meter_type] = {
+      hash[meter.id] = {
         value: reading.value_kwh,
-        date: last_event.recorded_at,
-        label: reading.meter.label
+        date: reading.meter_reading_event.recorded_at,
+        label: meter.label,
+        meter_type: meter.meter_type,
+        meter_group: meter.meter_group
       }
     end
-
-    readings_hash
   end
 end

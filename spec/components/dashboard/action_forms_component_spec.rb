@@ -4,11 +4,11 @@ require "rails_helper"
 
 RSpec.describe Dashboard::ActionFormsComponent, type: :component do
   let(:visitor) { instance_double("Visitor", id: 1, name: "Alice") }
-  let(:main_meter) { instance_double("Meter", id: 1, meter_type: "main", label: "Main meter") }
+  let(:main_meter) { instance_double("Meter", id: 1, meter_type: "main", label: "Main meter", main?: true, meter_group: nil) }
   let(:meters) { [ main_meter ] }
   let(:last_readings) do
     {
-      "main" => { value: 12_487, date: Date.parse("2026-02-15") }
+      1 => { label: "Main meter", value: 12_487, date: Date.parse("2026-02-15"), meter_type: "main", meter_group: nil }
     }
   end
 

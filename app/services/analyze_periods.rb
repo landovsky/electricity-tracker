@@ -18,7 +18,6 @@
 #     end_time: Time,
 #     duration_hours: Float,
 #     total_kwh: Decimal,
-#     upper_floor_kwh: Decimal,
 #     present_visitors: [Visitor, ...],
 #     manual_entries: [ManualConsumptionEntry, ...]
 #   }
@@ -71,8 +70,7 @@ class AnalyzePeriods < ApplicationService
         start_time: start_event.recorded_at,
         end_time: end_event.recorded_at,
         duration_hours: calculate_duration_hours(start_event.recorded_at, end_event.recorded_at),
-        total_kwh: calculate_meter_delta(start_event, end_event, "main"),
-        upper_floor_kwh: calculate_meter_delta(start_event, end_event, "secondary"),
+        total_kwh: calculate_total_delta(start_event, end_event),
         present_visitors: find_present_visitors(start_event.recorded_at, end_event.recorded_at),
         manual_entries: find_manual_entries(start_event.recorded_at, end_event.recorded_at)
       }
@@ -85,13 +83,21 @@ class AnalyzePeriods < ApplicationService
     ((end_time - start_time) / 1.hour).round(2)
   end
 
-  def calculate_meter_delta(start_event, end_event, meter_type)
-    start_reading = start_event.meter_readings.joins(:meter).find_by(meters: { meter_type: meter_type })
-    end_reading = end_event.meter_readings.joins(:meter).find_by(meters: { meter_type: meter_type })
+  # Sum deltas across ALL meters for total consumption in a period
+  def calculate_total_delta(start_event, end_event)
+    meters = property.meters.kept
+    total = BigDecimal("0")
 
-    return BigDecimal("0") unless start_reading && end_reading
+    meters.each do |meter|
+      start_reading = start_event.meter_readings.find_by(meter: meter)
+      end_reading = end_event.meter_readings.find_by(meter: meter)
 
-    end_reading.value_kwh - start_reading.value_kwh
+      next unless start_reading && end_reading
+
+      total += end_reading.value_kwh - start_reading.value_kwh
+    end
+
+    total
   end
 
   def find_present_visitors(period_start, period_end)
@@ -115,10 +121,6 @@ class AnalyzePeriods < ApplicationService
   end
 
   def find_manual_entries(period_start, period_end)
-    # Manual entries are attributed to a period if their date falls within the period's date range
-    # We use an inclusive start and exclusive end to prevent boundary dates from appearing in multiple periods.
-    # This means a manual entry dated on the period end date will be attributed to the next period,
-    # which is correct since the next period starts at that time.
     start_date = period_start.to_date
     end_date = period_end.to_date
 

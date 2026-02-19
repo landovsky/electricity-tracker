@@ -6,11 +6,11 @@ RSpec.describe Dashboard::CheckOutFormComponent, type: :component do
   let(:event) { instance_double("Event", recorded_at: 2.days.ago) }
   let(:stay) { instance_double("Stay", id: 1, open?: true, check_in_event: event) }
   let(:visitor) { instance_double("Visitor", id: 1, name: "Alice", stays: [ stay ]) }
-  let(:main_meter) { instance_double("Meter", id: 1, meter_type: "main", label: "Main meter") }
+  let(:main_meter) { instance_double("Meter", id: 1, meter_type: "main", label: "Main meter", main?: true, meter_group: nil) }
   let(:meters) { [ main_meter ] }
   let(:last_readings) do
     {
-      "main" => { value: 12_487, date: Date.parse("2026-02-15") }
+      1 => { value: 12_487, date: Date.parse("2026-02-15"), meter_type: "main" }
     }
   end
 
@@ -33,7 +33,7 @@ RSpec.describe Dashboard::CheckOutFormComponent, type: :component do
       meters: meters
     ))
 
-    expect(page).to have_field("main_meter_reading")
+    expect(page).to have_field("meter_readings[1]")
     expect(page).to have_text("Last reading: 12,487 kWh (Feb 15)")
   end
 

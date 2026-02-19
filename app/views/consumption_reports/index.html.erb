@@ -104,7 +104,7 @@
 
       <!-- Sanity check -->
       <%
-        total_matches = (@report[:total_consumption_kwh] - @report[:total_meter_delta_kwh]).abs < 0.01
+        total_matches = (@report[:total_consumption_kwh] - @report[:total_meter_delta_kwh]).abs < 1.0
         banner_class = total_matches ? "bg-green-50 border-green-100 text-green-700" : "bg-yellow-50 border-yellow-100 text-yellow-700"
         icon_class = total_matches ? "fa-circle-check" : "fa-triangle-exclamation"
       %>

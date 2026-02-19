@@ -253,8 +253,9 @@ RSpec.describe "Check-out Flows", type: :system do
           select select_option.text, from: "stay_id"
 
           fill_in "recorded_at", with: Time.current.strftime("%Y-%m-%dT%H:%M")
-          # main_meter_reading intentionally left blank
-          fill_in "secondary_meter_reading", with: 525.0
+          # Explicitly clear the main meter field (it is pre-filled with last known reading)
+          fill_in "meter_readings[#{main_meter.id}]", with: ""
+          fill_in "meter_readings[#{secondary_meter.id}]", with: 525.0
 
           click_button I18n.t("dashboard.check_out_form.submit")
         end

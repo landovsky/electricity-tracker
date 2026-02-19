@@ -32,22 +32,15 @@
           <i class="fa-solid fa-arrow-right text-[10px]"></i>
         <% end %>
       </div>
-      <% if last_meter_readings.any? %>
+      <% readings = sorted_readings %>
+      <% if readings.any? %>
         <div class="grid grid-cols-2 gap-3">
-          <% if main_reading %>
+          <% readings.each do |reading| %>
             <%= render Dashboard::MeterReadingCardComponent.new(
-              label: main_reading[:label],
-              value: main_reading[:value],
-              date: main_reading[:date],
-              icon_class: "fa-gauge-high"
-            ) %>
-          <% end %>
-          <% if secondary_reading %>
-            <%= render Dashboard::MeterReadingCardComponent.new(
-              label: secondary_reading[:label],
-              value: secondary_reading[:value],
-              date: secondary_reading[:date],
-              icon_class: "fa-gauge"
+              label: reading[:label],
+              value: reading[:value],
+              date: reading[:date],
+              icon_class: icon_for_reading(reading)
             ) %>
           <% end %>
         </div>

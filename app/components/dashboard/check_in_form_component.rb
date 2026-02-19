@@ -10,20 +10,28 @@ class Dashboard::CheckInFormComponent < ApplicationComponent
 
   attr_reader :visitors, :last_readings, :meters, :selected_visitor_id
 
-  def main_meter
-    meters.find { |m| m.meter_type == "main" }
+  # Groups meters for form layout. Meters sharing a meter_group render on one row.
+  # Ungrouped meters get their own row.
+  # Returns array of arrays: [[meter], [meter_vt, meter_nt], ...]
+  def meter_rows
+    rows = []
+    grouped = {}
+
+    meters.each do |meter|
+      if meter.meter_group.present?
+        grouped[meter.meter_group] ||= []
+        grouped[meter.meter_group] << meter
+      else
+        rows << [ meter ]
+      end
+    end
+
+    grouped.each_value { |group| rows.unshift(group) }
+    rows
   end
 
-  def secondary_meter
-    meters.find { |m| m.meter_type == "secondary" }
-  end
-
-  def last_main_reading
-    last_readings["main"]
-  end
-
-  def last_secondary_reading
-    last_readings["secondary"]
+  def last_reading_for(meter)
+    last_readings[meter.id]
   end
 
   def last_reading_hint(reading)
@@ -32,5 +40,9 @@ class Dashboard::CheckInFormComponent < ApplicationComponent
     I18n.t("dashboard.check_in_form.last_reading",
            value: helpers.number_with_delimiter(reading[:value]),
            date: I18n.l(reading[:date].to_date, format: :short))
+  end
+
+  def meter_required?(meter)
+    meter.main?
   end
 end

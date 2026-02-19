@@ -9,8 +9,8 @@ RSpec.describe Dashboard::HouseStatusComponent, type: :component do
 
   let(:last_meter_readings) do
     {
-      "main" => { label: "Main meter", value: 12_487, date: Date.parse("2026-02-15") },
-      "secondary" => { label: "Upper floor", value: 3_219, date: Date.parse("2026-02-15") }
+      1 => { label: "Main meter", value: 12_487, date: Date.parse("2026-02-15"), meter_type: "main", meter_group: nil },
+      2 => { label: "Upper floor", value: 3_219, date: Date.parse("2026-02-15"), meter_type: "secondary", meter_group: nil }
     }
   end
 

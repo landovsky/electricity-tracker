@@ -278,7 +278,7 @@ RSpec.describe CheckOutVisitor, type: :service do
 
         expect(outcome).not_to be_valid
         expect(outcome.errors[:base]).to include(
-          match(/Secondary.*475\.0.*500\.0/)
+          match(/Upper floor.*475\.0.*500\.0/)
         )
       end
 
@@ -334,7 +334,7 @@ RSpec.describe CheckOutVisitor, type: :service do
 
         expect(outcome).not_to be_valid
         expect(outcome.errors[:base]).to include(
-          match(/Secondary.*450\.0.*500\.0/)
+          match(/Upper floor.*450\.0.*500\.0/)
         )
       end
 

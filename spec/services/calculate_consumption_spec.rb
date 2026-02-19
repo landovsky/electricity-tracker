@@ -61,24 +61,24 @@ RSpec.describe CalculateConsumption, type: :service do
         expect(outcome).to be_valid
         result = outcome.result
 
-        # Period 1 (Jan 1-5): Alice alone gets 200 kWh
-        # Period 2 (Jan 5-10): Empty house 100 kWh -> split between Alice and Bob (50 each)
-        # Period 3 (Jan 10-15): Bob alone gets 200 kWh
+        # Period 1 (Jan 1-5): Alice alone gets 300 kWh
+        # Period 2 (Jan 5-10): Empty house 150 kWh -> split between Alice and Bob (75 each)
+        # Period 3 (Jan 10-15): Bob alone gets 300 kWh
         alice_result = result[:visitors].find { |v| v[:visitor] == visitor_a }
         bob_result = result[:visitors].find { |v| v[:visitor] == visitor_b }
 
-        expect(alice_result[:period_shares_kwh]).to eq(200.0)
+        expect(alice_result[:period_shares_kwh]).to eq(300.0)
         expect(alice_result[:manual_entries_kwh]).to eq(0.0)
-        expect(alice_result[:empty_house_share_kwh]).to eq(50.0)
-        expect(alice_result[:total_kwh]).to eq(250.0)
+        expect(alice_result[:empty_house_share_kwh]).to eq(75.0)
+        expect(alice_result[:total_kwh]).to eq(375.0)
 
-        expect(bob_result[:period_shares_kwh]).to eq(200.0)
+        expect(bob_result[:period_shares_kwh]).to eq(300.0)
         expect(bob_result[:manual_entries_kwh]).to eq(0.0)
-        expect(bob_result[:empty_house_share_kwh]).to eq(50.0)
-        expect(bob_result[:total_kwh]).to eq(250.0)
+        expect(bob_result[:empty_house_share_kwh]).to eq(75.0)
+        expect(bob_result[:total_kwh]).to eq(375.0)
 
-        expect(result[:total_consumption_kwh]).to eq(500.0)
-        expect(result[:total_meter_delta_kwh]).to eq(500.0)
+        expect(result[:total_consumption_kwh]).to eq(750.0)
+        expect(result[:total_meter_delta_kwh]).to eq(750.0)
       end
     end
 
@@ -90,7 +90,7 @@ RSpec.describe CalculateConsumption, type: :service do
 
         # Timeline:
         # Jan 1: 1000 kWh (Alice, Bob, Charlie check in)
-        # Jan 10: 1300 kWh (All check out) -> Period: 3 visitors, 300 kWh total, 100 kWh each
+        # Jan 10: 1300 kWh (All check out) -> Period: 3 visitors, 450 kWh total, 150 kWh each
 
         event1 = create_event(recorded_at: Date.new(2026, 1, 1).beginning_of_day, main_reading: 1000, secondary_reading: 500)
         stay_a = create(:stay, visitor: visitor_a, property: property, check_in_event: event1)
@@ -112,14 +112,14 @@ RSpec.describe CalculateConsumption, type: :service do
         result = outcome.result
 
         result[:visitors].each do |visitor_result|
-          expect(visitor_result[:period_shares_kwh]).to eq(100.0)
+          expect(visitor_result[:period_shares_kwh]).to eq(150.0)
           expect(visitor_result[:manual_entries_kwh]).to eq(0.0)
           expect(visitor_result[:empty_house_share_kwh]).to eq(0.0)
-          expect(visitor_result[:total_kwh]).to eq(100.0)
+          expect(visitor_result[:total_kwh]).to eq(150.0)
         end
 
-        expect(result[:total_consumption_kwh]).to eq(300.0)
-        expect(result[:total_meter_delta_kwh]).to eq(300.0)
+        expect(result[:total_consumption_kwh]).to eq(450.0)
+        expect(result[:total_meter_delta_kwh]).to eq(450.0)
       end
     end
 
@@ -161,19 +161,19 @@ RSpec.describe CalculateConsumption, type: :service do
         alice_result = result[:visitors].find { |v| v[:visitor] == visitor_a }
         bob_result = result[:visitors].find { |v| v[:visitor] == visitor_b }
 
-        # Period 1: Alice gets 100 kWh
-        # Period 2 & 3: Empty house 200 kWh total -> split 100 each
-        # Period 4: Bob gets 100 kWh
-        expect(alice_result[:period_shares_kwh]).to eq(100.0)
-        expect(alice_result[:empty_house_share_kwh]).to eq(100.0)
-        expect(alice_result[:total_kwh]).to eq(200.0)
+        # Period 1: Alice gets 150 kWh
+        # Period 2 & 3: Empty house 300 kWh total -> split 150 each
+        # Period 4: Bob gets 150 kWh
+        expect(alice_result[:period_shares_kwh]).to eq(150.0)
+        expect(alice_result[:empty_house_share_kwh]).to eq(150.0)
+        expect(alice_result[:total_kwh]).to eq(300.0)
 
-        expect(bob_result[:period_shares_kwh]).to eq(100.0)
-        expect(bob_result[:empty_house_share_kwh]).to eq(100.0)
-        expect(bob_result[:total_kwh]).to eq(200.0)
+        expect(bob_result[:period_shares_kwh]).to eq(150.0)
+        expect(bob_result[:empty_house_share_kwh]).to eq(150.0)
+        expect(bob_result[:total_kwh]).to eq(300.0)
 
-        expect(result[:total_consumption_kwh]).to eq(400.0)
-        expect(result[:total_meter_delta_kwh]).to eq(400.0)
+        expect(result[:total_consumption_kwh]).to eq(600.0)
+        expect(result[:total_meter_delta_kwh]).to eq(600.0)
       end
     end
 
@@ -184,9 +184,9 @@ RSpec.describe CalculateConsumption, type: :service do
         # Timeline:
         # Jan 1: 1000 kWh (reading, no stay)
         # Jan 5: Manual entry by Alice: 30 kWh on Jan 3
-        # Jan 10: 1100 kWh (reading, no stay) -> Period: Empty house 100 kWh, manual 30 kWh
-        # Shared pool: 100 - 30 = 70 kWh -> goes to unattributed, then to Alice
-        # Alice total: 30 (manual) + 70 (empty house share) = 100 kWh
+        # Jan 10: 1100 kWh (reading, no stay) -> Period: Empty house 150 kWh, manual 30 kWh
+        # Shared pool: 150 - 30 = 120 kWh -> goes to unattributed, then to Alice
+        # Alice total: 30 (manual) + 120 (empty house share) = 150 kWh
 
         event1 = create_event(recorded_at: Date.new(2026, 1, 1).beginning_of_day, main_reading: 1000, secondary_reading: 500)
         event2 = create_event(recorded_at: Date.new(2026, 1, 10).beginning_of_day, main_reading: 1100, secondary_reading: 550)
@@ -211,11 +211,11 @@ RSpec.describe CalculateConsumption, type: :service do
 
         expect(alice_result[:period_shares_kwh]).to eq(0.0)
         expect(alice_result[:manual_entries_kwh]).to eq(30.0)
-        expect(alice_result[:empty_house_share_kwh]).to eq(70.0)
-        expect(alice_result[:total_kwh]).to eq(100.0)
+        expect(alice_result[:empty_house_share_kwh]).to eq(120.0)
+        expect(alice_result[:total_kwh]).to eq(150.0)
 
-        expect(result[:total_consumption_kwh]).to eq(100.0)
-        expect(result[:total_meter_delta_kwh]).to eq(100.0)
+        expect(result[:total_consumption_kwh]).to eq(150.0)
+        expect(result[:total_meter_delta_kwh]).to eq(150.0)
       end
     end
 
@@ -227,10 +227,10 @@ RSpec.describe CalculateConsumption, type: :service do
         # Timeline:
         # Jan 1: 1000 kWh (Alice and Bob check in)
         # Jan 3: Manual entry by Alice: 40 kWh
-        # Jan 10: 1200 kWh (Both check out) -> Period: 200 kWh total, manual 40 kWh
-        # Shared pool: 200 - 40 = 160 kWh -> split equally (80 each)
-        # Alice total: 80 (period share) + 40 (manual) = 120 kWh
-        # Bob total: 80 (period share) = 80 kWh
+        # Jan 10: 1200 kWh (Both check out) -> Period: 300 kWh total, manual 40 kWh
+        # Shared pool: 300 - 40 = 260 kWh -> split equally (130 each)
+        # Alice total: 130 (period share) + 40 (manual) = 170 kWh
+        # Bob total: 130 (period share) = 130 kWh
 
         event1 = create_event(recorded_at: Date.new(2026, 1, 1).beginning_of_day, main_reading: 1000, secondary_reading: 500)
         stay_a = create(:stay, visitor: visitor_a, property: property, check_in_event: event1)
@@ -259,18 +259,18 @@ RSpec.describe CalculateConsumption, type: :service do
         alice_result = result[:visitors].find { |v| v[:visitor] == visitor_a }
         bob_result = result[:visitors].find { |v| v[:visitor] == visitor_b }
 
-        expect(alice_result[:period_shares_kwh]).to eq(80.0)
+        expect(alice_result[:period_shares_kwh]).to eq(130.0)
         expect(alice_result[:manual_entries_kwh]).to eq(40.0)
         expect(alice_result[:empty_house_share_kwh]).to eq(0.0)
-        expect(alice_result[:total_kwh]).to eq(120.0)
+        expect(alice_result[:total_kwh]).to eq(170.0)
 
-        expect(bob_result[:period_shares_kwh]).to eq(80.0)
+        expect(bob_result[:period_shares_kwh]).to eq(130.0)
         expect(bob_result[:manual_entries_kwh]).to eq(0.0)
         expect(bob_result[:empty_house_share_kwh]).to eq(0.0)
-        expect(bob_result[:total_kwh]).to eq(80.0)
+        expect(bob_result[:total_kwh]).to eq(130.0)
 
-        expect(result[:total_consumption_kwh]).to eq(200.0)
-        expect(result[:total_meter_delta_kwh]).to eq(200.0)
+        expect(result[:total_consumption_kwh]).to eq(300.0)
+        expect(result[:total_meter_delta_kwh]).to eq(300.0)
       end
     end
 
@@ -297,13 +297,13 @@ RSpec.describe CalculateConsumption, type: :service do
         alice_result = result[:visitors].first
 
         expect(alice_result[:visitor]).to eq(visitor_a)
-        expect(alice_result[:period_shares_kwh]).to eq(500.0)
+        expect(alice_result[:period_shares_kwh]).to eq(750.0)
         expect(alice_result[:manual_entries_kwh]).to eq(0.0)
         expect(alice_result[:empty_house_share_kwh]).to eq(0.0)
-        expect(alice_result[:total_kwh]).to eq(500.0)
+        expect(alice_result[:total_kwh]).to eq(750.0)
 
-        expect(result[:total_consumption_kwh]).to eq(500.0)
-        expect(result[:total_meter_delta_kwh]).to eq(500.0)
+        expect(result[:total_consumption_kwh]).to eq(750.0)
+        expect(result[:total_meter_delta_kwh]).to eq(750.0)
       end
     end
 
@@ -315,10 +315,10 @@ RSpec.describe CalculateConsumption, type: :service do
 
         # Timeline:
         # Jan 1: 1000 kWh (Alice checks in)
-        # Jan 5: 1100 kWh (Bob checks in) -> Period 1: Alice alone, 100 kWh
-        # Jan 10: 1300 kWh (Alice checks out) -> Period 2: Alice + Bob, 200 kWh (100 each)
-        # Jan 15: 1500 kWh (Charlie checks in) -> Period 3: Bob alone, 200 kWh
-        # Jan 20: 1800 kWh (All check out) -> Period 4: Bob + Charlie, 300 kWh (150 each)
+        # Jan 5: 1100 kWh (Bob checks in) -> Period 1: Alice alone, 150 kWh
+        # Jan 10: 1300 kWh (Alice checks out) -> Period 2: Alice + Bob, 300 kWh (150 each)
+        # Jan 15: 1500 kWh (Charlie checks in) -> Period 3: Bob alone, 300 kWh
+        # Jan 20: 1800 kWh (All check out) -> Period 4: Bob + Charlie, 450 kWh (225 each)
 
         event1 = create_event(recorded_at: Date.new(2026, 1, 1).beginning_of_day, main_reading: 1000, secondary_reading: 500)
         stay_a = create(:stay, visitor: visitor_a, property: property, check_in_event: event1)
@@ -349,17 +349,17 @@ RSpec.describe CalculateConsumption, type: :service do
         bob_result = result[:visitors].find { |v| v[:visitor] == visitor_b }
         charlie_result = result[:visitors].find { |v| v[:visitor] == visitor_c }
 
-        # Alice: 100 (period 1) + 100 (period 2) = 200
-        expect(alice_result[:total_kwh]).to eq(200.0)
+        # Alice: 150 (period 1) + 150 (period 2) = 300
+        expect(alice_result[:total_kwh]).to eq(300.0)
 
-        # Bob: 100 (period 2) + 200 (period 3) + 150 (period 4) = 450
-        expect(bob_result[:total_kwh]).to eq(450.0)
+        # Bob: 150 (period 2) + 300 (period 3) + 225 (period 4) = 675
+        expect(bob_result[:total_kwh]).to eq(675.0)
 
-        # Charlie: 150 (period 4) = 150
-        expect(charlie_result[:total_kwh]).to eq(150.0)
+        # Charlie: 225 (period 4) = 225
+        expect(charlie_result[:total_kwh]).to eq(225.0)
 
-        expect(result[:total_consumption_kwh]).to eq(800.0)
-        expect(result[:total_meter_delta_kwh]).to eq(800.0)
+        expect(result[:total_consumption_kwh]).to eq(1200.0)
+        expect(result[:total_meter_delta_kwh]).to eq(1200.0)
       end
     end
 
@@ -380,7 +380,7 @@ RSpec.describe CalculateConsumption, type: :service do
 
         expect(result[:visitors]).to be_empty
         expect(result[:total_consumption_kwh]).to eq(0.0)
-        expect(result[:total_meter_delta_kwh]).to eq(100.0) # Meter did increase, but no attribution
+        expect(result[:total_meter_delta_kwh]).to eq(150.0) # Meter did increase, but no attribution
       end
     end
 
@@ -411,7 +411,7 @@ RSpec.describe CalculateConsumption, type: :service do
         result = outcome.result
 
         expect(result[:total_consumption_kwh]).to eq(result[:total_meter_delta_kwh])
-        expect(result[:total_meter_delta_kwh]).to eq(650.0)
+        expect(result[:total_meter_delta_kwh]).to eq(975.0)
       end
     end
 
@@ -440,7 +440,7 @@ RSpec.describe CalculateConsumption, type: :service do
 
         expect(result[:visitors].size).to eq(1)
         expect(result[:visitors].first[:visitor]).to eq(visitor_active)
-        expect(result[:visitors].first[:total_kwh]).to eq(200.0)
+        expect(result[:visitors].first[:total_kwh]).to eq(300.0)
       end
 
       it "includes archived visitors when flag is true" do
@@ -468,9 +468,9 @@ RSpec.describe CalculateConsumption, type: :service do
         expect(result[:visitors].size).to eq(2)
         expect(result[:visitors].map { |v| v[:visitor] }).to contain_exactly(visitor_active, visitor_archived)
 
-        # Each gets 100 kWh (200 total split equally)
+        # Each gets 150 kWh (300 total split equally)
         result[:visitors].each do |visitor_result|
-          expect(visitor_result[:total_kwh]).to eq(100.0)
+          expect(visitor_result[:total_kwh]).to eq(150.0)
         end
       end
     end

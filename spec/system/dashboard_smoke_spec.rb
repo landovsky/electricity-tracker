@@ -29,7 +29,7 @@ RSpec.describe "Dashboard", type: :system do
     # Forms should be present (using CSS selectors)
     expect(page).to have_css("form[action='/stays']")
     expect(page).to have_selector("select#visitor_id")
-    expect(page).to have_field("main_meter_reading")
+    expect(page).to have_field("meter_readings[#{main_meter.id}]")
   end
 
   scenario "lists visitors in the check-in form" do

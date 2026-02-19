@@ -53,13 +53,12 @@ RSpec.describe "FactoryBot factories" do
       expect(meter.property).to be_present
     end
 
-    it "enforces uniqueness of meter_type per property" do
+    it "allows multiple meters of same type per property" do
       property = create(:property)
       create(:meter, :main, property: property)
 
       duplicate = build(:meter, :main, property: property)
-      expect(duplicate).not_to be_valid
-      expect(duplicate.errors[:meter_type]).to be_present
+      expect(duplicate).to be_valid
     end
   end
 

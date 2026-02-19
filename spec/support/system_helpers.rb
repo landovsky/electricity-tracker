@@ -30,10 +30,15 @@ module SystemHelpers
     within("#check-in-form") do
       select visitor.name, from: "visitor_id"
       fill_in "recorded_at", with: (recorded_at || Time.current).strftime("%Y-%m-%dT%H:%M")
-      fill_in "main_meter_reading", with: main_reading
+
+      # Fill meter reading fields dynamically by meter ID
+      property = Property.kept.first
+      main_meter = property.meters.kept.find_by(meter_type: "main")
+      fill_in "meter_readings[#{main_meter.id}]", with: main_reading if main_meter
 
       if secondary_reading.present?
-        fill_in "secondary_meter_reading", with: secondary_reading
+        secondary_meter = property.meters.kept.find_by(meter_type: "secondary")
+        fill_in "meter_readings[#{secondary_meter.id}]", with: secondary_reading if secondary_meter
       end
 
       fill_in "note", with: note if note.present?
@@ -59,10 +64,15 @@ module SystemHelpers
       select select_option.text, from: "stay_id"
 
       fill_in "recorded_at", with: (recorded_at || Time.current).strftime("%Y-%m-%dT%H:%M")
-      fill_in "main_meter_reading", with: main_reading
+
+      # Fill meter reading fields dynamically by meter ID
+      property = Property.kept.first
+      main_meter = property.meters.kept.find_by(meter_type: "main")
+      fill_in "meter_readings[#{main_meter.id}]", with: main_reading if main_meter
 
       if secondary_reading.present?
-        fill_in "secondary_meter_reading", with: secondary_reading
+        secondary_meter = property.meters.kept.find_by(meter_type: "secondary")
+        fill_in "meter_readings[#{secondary_meter.id}]", with: secondary_reading if secondary_meter
       end
 
       fill_in "note", with: note if note.present?

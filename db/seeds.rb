@@ -17,13 +17,13 @@ property = Property.find_or_create_by!(name: "Family House") do |p|
   puts "✓ Created property: #{p.name}"
 end
 
-main_meter = Meter.find_or_create_by!(property: property, meter_type: "main") do |m|
+main_meter = Meter.find_or_create_by!(property: property, meter_type: "main", meter_group: "main") do |m|
   m.label = "Main Meter"
   m.unit = "kWh"
   puts "✓ Created meter: #{m.label}"
 end
 
-secondary_meter = Meter.find_or_create_by!(property: property, meter_type: "secondary") do |m|
+secondary_meter = Meter.find_or_create_by!(property: property, meter_type: "secondary", meter_group: "upper_floor") do |m|
   m.label = "Secondary Meter"
   m.unit = "kWh"
   puts "✓ Created meter: #{m.label}"

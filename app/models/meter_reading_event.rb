@@ -50,6 +50,7 @@ class MeterReadingEvent < ApplicationRecord
   end
 
   # C4: Main meter reading is required on every event
+  # With multi-tariff support, a reading is required for EACH main-type meter
   def main_meter_reading_required
     return if new_record? && meter_readings.empty?
 

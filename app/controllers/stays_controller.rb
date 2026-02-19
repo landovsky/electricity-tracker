@@ -66,28 +66,42 @@ class StaysController < ApplicationController
 
   # Strong parameters for check-in
   def check_in_params
-    {
+    result = {
       visitor: find_visitor,
       property: find_property,
       recorded_by_user: current_user,
       recorded_at: parse_recorded_at(params[:recorded_at]),
-      main_meter_reading: params[:main_meter_reading],
-      secondary_meter_reading: params[:secondary_meter_reading],
       note: params[:note]
     }
+
+    if params[:meter_readings].present?
+      result[:meter_readings] = params[:meter_readings].to_unsafe_h
+    else
+      result[:main_meter_reading] = params[:main_meter_reading]
+      result[:secondary_meter_reading] = params[:secondary_meter_reading]
+    end
+
+    result
   end
 
   # Strong parameters for check-out
   def check_out_params(stay)
-    {
+    result = {
       stay: stay,
       property: stay.property,
       recorded_by_user: current_user,
       recorded_at: parse_recorded_at(params[:recorded_at]),
-      main_meter_reading: params[:main_meter_reading],
-      secondary_meter_reading: params[:secondary_meter_reading],
       note: params[:note]
     }
+
+    if params[:meter_readings].present?
+      result[:meter_readings] = params[:meter_readings].to_unsafe_h
+    else
+      result[:main_meter_reading] = params[:main_meter_reading]
+      result[:secondary_meter_reading] = params[:secondary_meter_reading]
+    end
+
+    result
   end
 
   def find_visitor
@@ -120,6 +134,21 @@ class StaysController < ApplicationController
     errors.full_messages.join(". ")
   end
 
+  def build_last_meter_readings_hash(property)
+    property.meters.kept.each_with_object({}) do |meter, hash|
+      reading = meter.last_reading
+      next unless reading
+
+      hash[meter.id] = {
+        label: meter.label,
+        value: reading.value_kwh,
+        date: reading.meter_reading_event.recorded_at,
+        meter_type: meter.meter_type,
+        meter_group: meter.meter_group
+      }
+    end
+  end
+
   # Load dashboard data for Turbo Stream responses
   def load_dashboard_data
     property = find_property
@@ -128,17 +157,8 @@ class StaysController < ApplicationController
     @visitors_for_checkin = Visitor.kept.order(:name)
     @visitors_for_checkout = @current_visitors
     @default_visitor_id = current_user&.default_visitor_id
-    @last_meter_readings = property.meters.map do |meter|
-      reading = meter.meter_readings.kept.joins(:meter_reading_event).order("meter_reading_events.recorded_at DESC").first
-      next unless reading
-
-      [ meter.meter_type, {
-        label: meter.label,
-        value: reading.value_kwh,
-        date: reading.meter_reading_event.recorded_at
-      } ]
-    end.compact.to_h
-    @meters = property.meters.kept.order(meter_type: :asc)
+    @last_meter_readings = build_last_meter_readings_hash(property)
+    @meters = property.meters.kept.order(:meter_type, :meter_group, :label)
     @recent_events = MeterReadingEvent.kept
                                       .includes(:meter_readings, :stay_as_check_in, :stay_as_check_out)
                                       .recent

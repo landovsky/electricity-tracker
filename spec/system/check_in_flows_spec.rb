@@ -110,8 +110,8 @@ RSpec.describe "Visitor Check-In Flows", type: :system do
       # Perform check-in without secondary reading
       within("#check-in-form") do
         select visitor1.name, from: "visitor_id"
-        fill_in "main_meter_reading", with: 1000.0
-        # Leave secondary_meter_reading blank
+        fill_in "meter_readings[#{main_meter.id}]", with: 1000.0
+        # Leave secondary meter blank
         click_button I18n.t("dashboard.check_in_form.submit")
       end
 
@@ -281,8 +281,8 @@ RSpec.describe "Visitor Check-In Flows", type: :system do
         # Attempt check-in without main meter
         within("#check-in-form") do
           select visitor1.name, from: "visitor_id"
-          fill_in "secondary_meter_reading", with: 500.0
-          # Leave main_meter_reading blank
+          fill_in "meter_readings[#{secondary_meter.id}]", with: 500.0
+          # Leave main meter blank
           click_button I18n.t("dashboard.check_in_form.submit")
         end
 
@@ -338,8 +338,8 @@ RSpec.describe "Visitor Check-In Flows", type: :system do
       # Attempt check-in without main meter
       within("#check-in-form") do
         select visitor1.name, from: "visitor_id"
-        fill_in "secondary_meter_reading", with: 500.0
-        # Leave main_meter_reading blank
+        fill_in "meter_readings[#{secondary_meter.id}]", with: 500.0
+        # Leave main meter blank
         click_button I18n.t("dashboard.check_in_form.submit")
       end
 
@@ -373,8 +373,8 @@ RSpec.describe "Visitor Check-In Flows", type: :system do
       # Perform check-in without secondary reading
       within("#check-in-form") do
         select visitor1.name, from: "visitor_id"
-        fill_in "main_meter_reading", with: 1000.0
-        # Leave secondary_meter_reading blank
+        fill_in "meter_readings[#{main_meter.id}]", with: 1000.0
+        # Leave secondary meter blank
         click_button I18n.t("dashboard.check_in_form.submit")
       end
 
@@ -456,8 +456,8 @@ RSpec.describe "Visitor Check-In Flows", type: :system do
       # Perform check-in without note
       within("#check-in-form") do
         select visitor1.name, from: "visitor_id"
-        fill_in "main_meter_reading", with: 1000.0
-        fill_in "secondary_meter_reading", with: 500.0
+        fill_in "meter_readings[#{main_meter.id}]", with: 1000.0
+        fill_in "meter_readings[#{secondary_meter.id}]", with: 500.0
         # Leave note blank
         click_button I18n.t("dashboard.check_in_form.submit")
       end
