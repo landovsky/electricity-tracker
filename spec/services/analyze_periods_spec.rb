@@ -601,7 +601,7 @@ RSpec.describe AnalyzePeriods do
         create(:manual_consumption_entry,
           visitor: visitor_a,
           property: property,
-          date: 1.5.days.ago.to_date,
+          date: 2.days.ago.to_date, # Must fall within period (event2 -> event3), i.e. >= start_date and < end_date
           kwh: 10.0,
           note: "EV charging during empty house"
         )
@@ -656,7 +656,7 @@ RSpec.describe AnalyzePeriods do
         )
       end
 
-      it "only includes events within the specified date range" do
+      it "includes boundary event from before the date range plus in-range events" do
         outcome = described_class.run(
           property: property,
           date_range: { start_date: 1.week.ago.to_date, end_date: Date.current }
@@ -664,12 +664,71 @@ RSpec.describe AnalyzePeriods do
 
         expect(outcome).to be_valid
         periods = outcome.result
-        expect(periods.size).to eq(1)
+        # 2 periods: boundary (old checkout) -> recent check_in, then recent check_in -> recent check_out
+        expect(periods.size).to eq(2)
 
-        # Should only include the recent stay
-        period = periods.first
-        expect(period[:start_event]).to eq(stay_recent.check_in_event)
-        expect(period[:end_event]).to eq(stay_recent.check_out_event)
+        # Period 1: boundary event (old checkout) to recent check_in — empty house gap
+        expect(periods[0][:start_event]).to eq(stay_old.check_out_event)
+        expect(periods[0][:end_event]).to eq(stay_recent.check_in_event)
+        expect(periods[0][:present_visitors]).to be_empty
+
+        # Period 2: recent stay
+        expect(periods[1][:start_event]).to eq(stay_recent.check_in_event)
+        expect(periods[1][:end_event]).to eq(stay_recent.check_out_event)
+      end
+    end
+
+    context "boundary event: last event before date range creates leading period" do
+      let(:visitor_a) { create(:visitor, name: "Alice") }
+
+      # Simulates: previous year's last event, then a gap, then new year's events.
+      # The consumption between the boundary event and the first in-range event
+      # is empty-house consumption that must be captured.
+
+      let!(:boundary_event) do
+        create(:meter_reading_event,
+          recorded_at: 30.days.ago, # before the date range
+          property: property,
+          main_reading: 1000.0,
+          secondary_reading: 500.0
+        )
+      end
+
+      let!(:stay_a) do
+        create(:stay, :closed,
+          visitor: visitor_a,
+          property: property,
+          check_in_at: 5.days.ago,
+          check_out_at: 3.days.ago,
+          main_reading_in: 1005.0, # 5 kWh empty house gap
+          secondary_reading_in: 500.0,
+          main_reading_out: 1015.0,
+          secondary_reading_out: 500.0
+        )
+      end
+
+      it "includes the boundary event to capture empty-house consumption before the first in-range event" do
+        outcome = described_class.run(
+          property: property,
+          date_range: { start_date: 1.week.ago.to_date, end_date: Date.current }
+        )
+
+        expect(outcome).to be_valid
+        periods = outcome.result
+
+        # Should have 2 periods:
+        # 1. boundary_event -> check_in (5 kWh empty house)
+        # 2. check_in -> check_out (10 kWh, Alice present)
+        expect(periods.size).to eq(2)
+
+        # Period 1: empty house gap from boundary event to check-in
+        expect(periods[0][:start_event]).to eq(boundary_event)
+        expect(periods[0][:present_visitors]).to be_empty
+        expect(periods[0][:total_kwh]).to eq(BigDecimal("5.0"))
+
+        # Period 2: Alice's stay
+        expect(periods[1][:present_visitors]).to contain_exactly(visitor_a)
+        expect(periods[1][:total_kwh]).to eq(BigDecimal("10.0"))
       end
     end
 

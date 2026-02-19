@@ -52,12 +52,26 @@ class AnalyzePeriods < ApplicationService
   private
 
   def fetch_meter_reading_events
-    MeterReadingEvent.kept
+    in_range = MeterReadingEvent.kept
                      .joins(meter_readings: :meter)
                      .where(meters: { property_id: property.id })
                      .where(recorded_at: date_range[:start_date].beginning_of_day..date_range[:end_date].end_of_day)
                      .distinct
-                     .chronological
+
+    # Include the last event before the date range as a boundary event.
+    # This captures consumption (e.g. empty-house) between the previous
+    # period's last reading and the first event in the current range.
+    boundary_event = MeterReadingEvent.kept
+                       .joins(meter_readings: :meter)
+                       .where(meters: { property_id: property.id })
+                       .where("meter_reading_events.recorded_at < ?", date_range[:start_date].beginning_of_day)
+                       .distinct
+                       .order(recorded_at: :desc)
+                       .first
+
+    events = in_range.chronological.to_a
+    events.unshift(boundary_event) if boundary_event && !events.any? { |e| e.id == boundary_event.id }
+    events
   end
 
   def build_periods(events)

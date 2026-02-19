@@ -28,6 +28,22 @@ Each artifact entry contains:
 - **`always`** - Must be read before any work (e.g., project overview, core conventions)
 - **`decide`** - Read when the artifact is relevant to your current task (e.g., testing conventions when writing tests, API patterns when building endpoints)
 
+## Debug Endpoints (development only)
+
+**Consumption report debug JSON**: `GET /consumption_reports.json`
+
+Use this to inspect the allocation algorithm output, period breakdown, and raw data when debugging consumption report issues. No auth required in development.
+
+Query params (same as HTML report):
+- `?year=2025` — specific year
+- `?year=all` — all time
+- `?start_date=2025-01-01&end_date=2025-06-30` — custom range
+- (no params) — current year
+
+Response includes: `date_range`, `report` (per-visitor breakdown), `periods` (with present_visitors, manual_entries, total_kwh), `meter_reading_events` (all events with readings), `stays`, `manual_consumption_entries`.
+
+Example: `curl -s http://localhost:3333/consumption_reports.json?year=2026 | python3 -m json.tool`
+
 ## Completeness Rules
 
 **No placeholders.** Every committed handler, controller, or service must contain real logic — not stubs that log and return. If you can't implement something fully, flag it as blocked. Do not ship code that looks done but does nothing.
