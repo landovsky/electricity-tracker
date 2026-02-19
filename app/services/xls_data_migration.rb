@@ -474,17 +474,21 @@ class XlsDataMigration
 
     return unless first_visit && last_visit
 
-    # Opening readings: from the actual XLS check-in row readings captured during parsing
-    # Fall back to the first visit's synthetic vt_in if not captured (should not happen)
-    opening_vt = @opening_vt || first_visit[:vt_in]
-    opening_nt = @opening_nt || first_visit[:nt_in]
-
     # Closing readings: last chronological checkout with both VT and NT readings
     # All three visitor sections track the same physical meters, so the last checkout
     # across all sections gives the final global meter state.
     closing_visit = visits.select { |v| v[:vt_out] && v[:nt_out] }.max_by { |v| v[:check_out_date] }
     closing_vt = closing_visit&.dig(:vt_out)
     closing_nt = closing_visit&.dig(:nt_out)
+
+    # Opening readings: derived from closing minus total per-visitor consumption.
+    # This ensures boundary delta exactly equals sum of ManualConsumptionEntry records,
+    # avoiding the sanity-check mismatch. The XLS check-in row readings don't perfectly
+    # reconcile with per-visitor consumption totals (6 kWh gap due to rounding/gaps).
+    total_vt_cons = visits.sum { |v| v[:vt_cons] || 0 }
+    total_nt_cons = visits.sum { |v| v[:nt_cons] || 0 }
+    opening_vt = closing_vt - total_vt_cons if closing_vt
+    opening_nt = closing_nt - total_nt_cons if closing_nt
 
     unless opening_vt && opening_nt && closing_vt && closing_nt
       puts "  WARNING: Missing opening or closing readings — boundary events not created!"
