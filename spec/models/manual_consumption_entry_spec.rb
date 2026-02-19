@@ -145,7 +145,7 @@ RSpec.describe ManualConsumptionEntry, type: :model do
         note: "Large entry"
       )
       allow(entry).to receive(:exceeds_period_consumption?).and_return(true)
-      expect(entry.consumption_warning).to include("Upozornění")
+      expect(entry.consumption_warning).to include("Warning")
       expect(entry.consumption_warning).to include("100")
     end
   end

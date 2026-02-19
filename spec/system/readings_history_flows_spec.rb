@@ -13,7 +13,7 @@ require 'rails_helper'
 # - Empty states
 #
 # Testing approach: Verify both UI state (what user sees) and database state (correct data fetched)
-RSpec.describe "Readings History Flows", type: :system do
+RSpec.describe "Readings history Flows", type: :system do
   let!(:property) { create(:property) }
   let!(:main_meter) { create(:meter, :main, property: property) }
   let!(:secondary_meter) { create(:meter, :secondary, property: property) }
@@ -69,7 +69,7 @@ RSpec.describe "Readings History Flows", type: :system do
     visit_readings_history
 
     # UI State: Verify page loaded and shows all events
-    expect(page).to have_content("Readings History")
+    expect(page).to have_content("Readings history")
     expect(page).to have_content("Meter Reading Events")
     expect(page).to have_content("Manual Consumption Entries")
 
@@ -368,7 +368,7 @@ RSpec.describe "Readings History Flows", type: :system do
     visit_readings_history
 
     # UI State: Verify empty state message
-    expect(page).to have_content("Readings History")
+    expect(page).to have_content("Readings history")
     expect(page).to have_content("No readings history found for the selected filters")
 
     # Database State: Verify no events exist

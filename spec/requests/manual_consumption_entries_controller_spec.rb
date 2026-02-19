@@ -41,7 +41,7 @@ RSpec.describe "ManualConsumptionEntries", type: :request do
         post manual_consumption_entries_path, params: valid_params
 
         expect(response).to redirect_to(root_path)
-        expect(flash[:success]).to match(/Manual consumption entry recorded/)
+        expect(flash[:success]).to match(/Manual entry recorded/)
         expect(flash[:success]).to match(/15.5 kWh/)
         expect(flash[:success]).to match(/#{visitor.name}/)
       end

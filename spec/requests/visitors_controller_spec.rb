@@ -96,7 +96,7 @@ RSpec.describe VisitorsController, type: :request do
       it "redirects to visitors index with success notice" do
         post visitors_path, params: valid_params
         expect(response).to redirect_to(visitors_path)
-        expect(flash[:notice]).to include("Charlie was successfully created")
+        expect(flash[:notice]).to include("Visitor Charlie created successfully")
       end
 
       it "sets visitor attributes correctly" do
@@ -152,7 +152,7 @@ RSpec.describe VisitorsController, type: :request do
       it "redirects to visitors index with alert" do
         get edit_visitor_path(visitor)
         expect(response).to redirect_to(visitors_path)
-        expect(flash[:alert]).to include("must be an administrator")
+        expect(flash[:alert]).to include("Only admins can perform this action")
       end
     end
   end
@@ -183,7 +183,7 @@ RSpec.describe VisitorsController, type: :request do
         it "redirects to visitor show with success notice" do
           patch visitor_path(visitor), params: update_params
           expect(response).to redirect_to(visitor_path(visitor))
-          expect(flash[:notice]).to include("Alice Updated was successfully updated")
+          expect(flash[:notice]).to include("Visitor Alice Updated updated successfully")
         end
       end
 
@@ -218,7 +218,7 @@ RSpec.describe VisitorsController, type: :request do
       it "redirects to visitors index with alert" do
         patch visitor_path(visitor), params: update_params
         expect(response).to redirect_to(visitors_path)
-        expect(flash[:alert]).to include("must be an administrator")
+        expect(flash[:alert]).to include("Only admins can perform this action")
       end
 
       it "does not update the visitor" do
@@ -245,7 +245,7 @@ RSpec.describe VisitorsController, type: :request do
       it "redirects to visitors index with success notice" do
         patch archive_visitor_path(visitor)
         expect(response).to redirect_to(visitors_path)
-        expect(flash[:notice]).to include("Alice was successfully archived")
+        expect(flash[:notice]).to include("Visitor Alice archived successfully")
       end
 
       it "removes visitor from default scope" do
@@ -263,7 +263,7 @@ RSpec.describe VisitorsController, type: :request do
       it "redirects to visitors index with alert" do
         patch archive_visitor_path(visitor)
         expect(response).to redirect_to(visitors_path)
-        expect(flash[:alert]).to include("must be an administrator")
+        expect(flash[:alert]).to include("Only admins can perform this action")
       end
 
       it "does not archive the visitor" do

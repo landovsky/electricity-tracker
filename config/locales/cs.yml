@@ -241,6 +241,7 @@ cs:
   # Service error messages
   services:
     check_in_visitor:
+      visitor_has_open_stay: "má otevřený pobyt"
       not_chronological: "musí být po předchozí události nebo roven (%{timestamp})"
 
   # Stays controller

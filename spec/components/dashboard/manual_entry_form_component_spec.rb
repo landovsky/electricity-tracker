@@ -12,7 +12,7 @@ RSpec.describe Dashboard::ManualEntryFormComponent, type: :component do
     expect(page).to have_field("date")
     expect(page).to have_field("kwh")
     expect(page).to have_field("note")
-    expect(page).to have_button("Log Consumption")
+    expect(page).to have_button("Log Entry")
   end
 
   it "renders required field indicators" do

@@ -57,7 +57,7 @@ class CheckInVisitor < ApplicationService
     return unless visitor.present?
 
     if visitor.stays.kept.open.exists?
-      errors.add(:visitor, "already has an open stay")
+      errors.add(:visitor, I18n.t("services.check_in_visitor.visitor_has_open_stay"))
     end
   end
 

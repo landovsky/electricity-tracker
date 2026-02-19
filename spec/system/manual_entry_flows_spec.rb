@@ -20,8 +20,8 @@ RSpec.describe "Manual Entry Flows", type: :system do
 
   before do
     visit root_path
-    # Switch to manual entry tab
-    click_button I18n.t("dashboard.actions.log_entry")
+    # Switch to manual entry tab by clicking the tab button (not the submit button)
+    find('button[data-tab="manual"]').click
   end
 
   describe "happy path scenarios" do
@@ -162,7 +162,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
 
       # When creating a manual entry during empty period
       visit root_path
-      click_button I18n.t("dashboard.actions.log_entry")
+      find('button[data-tab="manual"]').click
 
       create_manual_entry(
         visitor: alice,
@@ -200,7 +200,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
 
       # When creating a manual entry during active stay period
       visit root_path
-      click_button I18n.t("dashboard.actions.log_entry")
+      find('button[data-tab="manual"]').click
 
       create_manual_entry(
         visitor: alice,
@@ -233,7 +233,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
       )
 
       visit root_path
-      click_button I18n.t("dashboard.actions.log_entry")
+      find('button[data-tab="manual"]').click
 
       # Second entry on same day, different visitor
       within("#manual-entry-form") do
@@ -241,7 +241,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
         fill_in "date", with: entry_date.strftime("%Y-%m-%d")
         fill_in "kwh", with: 20.0
         fill_in "note", with: "Evening EV charge"
-        click_button "Log Consumption"
+        click_button I18n.t("dashboard.manual_entry_form.submit")
       end
 
       wait_for_turbo
@@ -270,7 +270,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
 
       # When creating a manual entry for the same day
       visit root_path
-      click_button I18n.t("dashboard.actions.log_entry")
+      find('button[data-tab="manual"]').click
 
       create_manual_entry(
         visitor: alice,
@@ -301,7 +301,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
 
       # When creating a manual entry for the check-out day
       visit root_path
-      click_button I18n.t("dashboard.actions.log_entry")
+      find('button[data-tab="manual"]').click
 
       create_manual_entry(
         visitor: alice,
@@ -327,7 +327,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
         fill_in "date", with: Date.current.strftime("%Y-%m-%d")
         fill_in "kwh", with: 10.0
         fill_in "note", with: "Missing visitor"
-        click_button "Log Consumption"
+        click_button I18n.t("dashboard.manual_entry_form.submit")
       end
 
       wait_for_turbo
@@ -343,7 +343,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
         fill_in "date", with: Date.current.strftime("%Y-%m-%d")
         fill_in "kwh", with: 10.0
         # Don't fill in note
-        click_button "Log Consumption"
+        click_button I18n.t("dashboard.manual_entry_form.submit")
       end
 
       wait_for_turbo
@@ -360,7 +360,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
         fill_in "date", with: Date.current.strftime("%Y-%m-%d")
         # Don't fill in kwh
         fill_in "note", with: "Missing kWh"
-        click_button "Log Consumption"
+        click_button I18n.t("dashboard.manual_entry_form.submit")
       end
 
       wait_for_turbo
@@ -385,7 +385,7 @@ RSpec.describe "Manual Entry Flows", type: :system do
         fill_in "date", with: entry_date.strftime("%Y-%m-%d")
         fill_in "kwh", with: consumption
         fill_in "note", with: note_text
-        click_button "Log Consumption"
+        click_button I18n.t("dashboard.manual_entry_form.submit")
       end
 
       wait_for_turbo
