@@ -33,7 +33,7 @@
 #
 # Usage: bundle exec rails runner "XlsDataMigration.run"
 class XlsDataMigration
-  XLS_PATH = Rails.root.join("tmp/ELEKTRIKA-SUCHA-2025.xls")
+  XLS_PATH = Rails.root.join("data/ELEKTRIKA-SUCHA-2025.xls")
   DATA_ROWS = (6..89) # XLS rows 6-89 (0-indexed) contain visit data
 
   # XLS column indices (0-indexed into our read_row array)
