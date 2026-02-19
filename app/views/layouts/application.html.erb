@@ -42,6 +42,7 @@
           <%= link_to t("layout.admin_nav.users"), users_path, class: "cursor-pointer text-sm font-medium leading-none #{request.path.start_with?('/users') ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}" %>
         </div>
         <div class="flex items-center gap-3">
+          <%= button_to t("admin.migrations.xls_button"), admin_xls_migration_path, method: :post, data: { turbo_confirm: t("admin.migrations.xls_confirm") }, class: "cursor-pointer text-sm text-orange-500 hover:text-orange-700 font-medium leading-none" %>
           <span class="text-sm text-gray-400 leading-none"><%= current_user.name %></span>
           <%= link_to t("layout.log_out"), logout_path, data: { turbo_method: :delete }, class: "cursor-pointer text-sm text-gray-400 hover:text-gray-600 leading-none" %>
         </div>

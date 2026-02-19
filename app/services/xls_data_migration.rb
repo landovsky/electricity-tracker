@@ -96,9 +96,11 @@ class XlsDataMigration
     conn = ActiveRecord::Base.connection
     conn.execute("PRAGMA foreign_keys = OFF")
     %w[audits meter_readings stays meter_reading_events manual_consumption_entries
-       meters visitors users properties].each do |table|
+       meters visitors properties].each do |table|
       conn.execute("DELETE FROM #{table}")
     end
+    # Preserve admin users, delete the rest
+    conn.execute("DELETE FROM users WHERE role != 'admin'")
     conn.execute("PRAGMA foreign_keys = ON")
     puts "  Done."
   end
@@ -144,7 +146,7 @@ class XlsDataMigration
   end
 
   def create_admin_user!
-    @admin = User.create!(
+    @admin = User.find_by(role: "admin") || User.create!(
       name: "Migration",
       email: "migration@sucha.local",
       role: "admin"

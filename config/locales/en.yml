@@ -170,6 +170,13 @@ en:
   # Authentication (application controller)
   auth:
     login_required: "Please sign in to continue."
+    not_authorized: "You are not authorized to perform this action."
+
+  admin:
+    migrations:
+      xls_button: "Import XLS"
+      xls_confirm: "This will reset all data and re-import from XLS. Continue?"
+      xls_success: "XLS migration completed successfully."
 
   # Magic link mailer
   mailer:
@@ -354,6 +361,7 @@ en:
   reports:
     title: "Consumption report"
     history: "History"
+    all_time: "All time"
     this_year: "This year"
     last_year: "Last year"
     period_totals: "Period totals"

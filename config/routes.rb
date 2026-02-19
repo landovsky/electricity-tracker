@@ -104,16 +104,9 @@ Rails.application.routes.draw do
   end
 
   # =============================================================================
-  # ADMIN NAMESPACE (Future Extension Point)
+  # ADMIN
   # =============================================================================
-  # Admin operations (corrections, validation overrides, audit trail review)
-  # v1: JSON API endpoints and Rails console only
-  # Future: Admin UI for corrections, user management, etc.
-  #
-  # namespace :admin do
-  #   resources :meter_reading_events, only: [:edit, :update, :destroy]
-  #   resources :stays, only: [:edit, :update]
-  #   resources :manual_consumption_entries, only: [:edit, :update, :destroy]
-  #   resources :users
-  # end
+  namespace :admin do
+    post "migrations/xls", to: "migrations#xls", as: :xls_migration
+  end
 end

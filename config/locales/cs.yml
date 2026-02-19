@@ -170,6 +170,13 @@ cs:
   # Authentication (application controller)
   auth:
     login_required: "Pro pokračování se prosím přihlaste."
+    not_authorized: "K této akci nemáte oprávnění."
+
+  admin:
+    migrations:
+      xls_button: "Import XLS"
+      xls_confirm: "Tímto se smažou všechna data a znovu naimportují z XLS. Pokračovat?"
+      xls_success: "XLS migrace proběhla úspěšně."
 
   # Magic link mailer
   mailer:
@@ -354,6 +361,7 @@ cs:
   reports:
     title: "Přehled spotřeby"
     history: "Historie"
+    all_time: "Celkem"
     this_year: "Tento rok"
     last_year: "Loňský rok"
     period_totals: "Celkem za období"
