@@ -69,9 +69,24 @@
       <!-- Table header -->
       <div class="grid grid-cols-12 gap-1 px-4 py-2 border-b border-gray-100 text-xs text-gray-400 font-medium">
         <div class="col-span-3"><%= t("reports.visitor") %></div>
-        <div class="col-span-2 text-right"><%= t("reports.shared") %></div>
-        <div class="col-span-2 text-right"><%= t("reports.manual") %></div>
-        <div class="col-span-3 text-right"><%= t("reports.empty_house") %></div>
+        <div class="col-span-2 text-right">
+          <span data-controller="hint" data-action="mouseenter->hint#show mouseleave->hint#hide" class="relative inline-block">
+            <%= t("reports.shared") %> <i class="fa-solid fa-circle-info cursor-pointer text-blue-400" data-action="click->hint#toggle"></i>
+            <div data-hint-target="bubble" class="hidden absolute z-50 right-0 top-full mt-1 w-48 p-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg leading-relaxed font-normal"><%= t("reports.shared_hint") %></div>
+          </span>
+        </div>
+        <div class="col-span-2 text-right">
+          <span data-controller="hint" data-action="mouseenter->hint#show mouseleave->hint#hide" class="relative inline-block">
+            <%= t("reports.manual") %> <i class="fa-solid fa-circle-info cursor-pointer text-blue-400" data-action="click->hint#toggle"></i>
+            <div data-hint-target="bubble" class="hidden absolute z-50 right-0 top-full mt-1 w-48 p-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg leading-relaxed font-normal"><%= t("reports.manual_hint") %></div>
+          </span>
+        </div>
+        <div class="col-span-3 text-right">
+          <span data-controller="hint" data-action="mouseenter->hint#show mouseleave->hint#hide" class="relative inline-block">
+            <%= t("reports.empty_house") %> <i class="fa-solid fa-circle-info cursor-pointer text-blue-400" data-action="click->hint#toggle"></i>
+            <div data-hint-target="bubble" class="hidden absolute z-50 right-0 top-full mt-1 w-48 p-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg leading-relaxed font-normal"><%= t("reports.empty_house_hint") %></div>
+          </span>
+        </div>
         <div class="col-span-2 text-right font-semibold"><%= t("reports.total") %></div>
       </div>
 
@@ -80,9 +95,9 @@
         <% @report[:visitors].each do |visitor_data| %>
           <div class="grid grid-cols-12 gap-1 px-4 py-3 text-sm items-center">
             <div class="col-span-3 font-medium text-gray-900 truncate"><%= visitor_data[:visitor].name %></div>
-            <div class="col-span-2 text-right text-gray-600"><%= number_with_precision(visitor_data[:period_shares].to_f, precision: 0) %></div>
-            <div class="col-span-2 text-right text-gray-600"><%= number_with_precision(visitor_data[:manual_entries].to_f, precision: 0) %></div>
-            <div class="col-span-3 text-right text-gray-600"><%= number_with_precision(visitor_data[:empty_house_share].to_f, precision: 0) %></div>
+            <div class="col-span-2 text-right text-gray-600"><%= number_with_precision(visitor_data[:period_shares_kwh].to_f, precision: 0) %></div>
+            <div class="col-span-2 text-right text-gray-600"><%= number_with_precision(visitor_data[:manual_entries_kwh].to_f, precision: 0) %></div>
+            <div class="col-span-3 text-right text-gray-600"><%= number_with_precision(visitor_data[:empty_house_share_kwh].to_f, precision: 0) %></div>
             <div class="col-span-2 text-right font-bold text-gray-900"><%= number_with_precision(visitor_data[:total_kwh].to_f, precision: 0) %></div>
           </div>
         <% end %>
