@@ -61,7 +61,7 @@ gem "thruster", require: false
 gem "image_processing", "~> 1.2"
 
 # S3-compatible storage (DigitalOcean Spaces)
-gem "aws-sdk-s3", require: false
+gem "aws-sdk-s3"
 
 # LLM integration (Gemini for meter photo classification)
 gem "ruby_llm", "~> 1.0"
