@@ -136,7 +136,7 @@ cs:
       about_headline: "Spravedlivé dělení elektřiny na chalupě"
       about_problem: "Sdílíte chalupu s rodinou nebo přáteli? Pak řešíte, kdo kolik spotřeboval."
       about_bullets:
-        - "Zapíšete stav elektroměru při příjezdu a odjezdu"
+        - "Vyfotíte elektroměr — AI odečte stav automaticky"
         - "Aplikace spočítá spotřebu každého návštěvníka"
         - "Prázdná chalupa se rozpočítá rovným dílem"
         - "Ruční zápisy pro nabíjení elektromobilu apod."
