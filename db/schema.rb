@@ -10,7 +10,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_20_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_20_141052) do
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
   create_table "audits", force: :cascade do |t|
     t.string "action"
     t.integer "associated_id"
@@ -48,6 +76,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_20_120000) do
     t.index ["property_id"], name: "index_manual_consumption_entries_on_property_id"
     t.index ["recorded_by_user_id"], name: "index_manual_consumption_entries_on_recorded_by_user_id"
     t.index ["visitor_id"], name: "index_manual_consumption_entries_on_visitor_id"
+  end
+
+  create_table "meter_photo_detections", force: :cascade do |t|
+    t.float "confidence"
+    t.datetime "created_at", null: false
+    t.decimal "detected_value", precision: 10, scale: 2
+    t.text "error_message"
+    t.json "llm_response"
+    t.integer "meter_id"
+    t.integer "property_id", null: false
+    t.text "raw_ocr_text"
+    t.string "session_id", null: false
+    t.string "status", default: "processing", null: false
+    t.datetime "updated_at", null: false
+    t.index ["meter_id"], name: "index_meter_photo_detections_on_meter_id"
+    t.index ["property_id"], name: "index_meter_photo_detections_on_property_id"
+    t.index ["session_id"], name: "index_meter_photo_detections_on_session_id"
   end
 
   create_table "meter_reading_events", force: :cascade do |t|
@@ -152,8 +197,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_20_120000) do
     t.index ["deleted_at"], name: "index_visitors_on_deleted_at"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "manual_consumption_entries", "properties"
   add_foreign_key "manual_consumption_entries", "visitors"
+  add_foreign_key "meter_photo_detections", "meters"
+  add_foreign_key "meter_photo_detections", "properties"
   add_foreign_key "meter_readings", "meter_reading_events"
   add_foreign_key "meter_readings", "meters"
   add_foreign_key "meters", "properties"
