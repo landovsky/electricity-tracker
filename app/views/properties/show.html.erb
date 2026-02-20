@@ -31,6 +31,46 @@
     </div>
   </section>
 
+  <%# Meters section %>
+  <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("meters.section.title") %></h2>
+      <%= link_to new_property_meter_path(@property), class: "text-sm text-brand-600 font-medium hover:text-brand-700" do %>
+        <i class="fa-solid fa-plus mr-1"></i><%= t("meters.section.add") %>
+      <% end %>
+    </div>
+    <div class="px-4 py-4">
+      <% meters = @property.meters.kept.order(:label) %>
+      <% if meters.any? %>
+        <div class="space-y-2">
+          <% meters.each do |meter| %>
+            <div class="flex items-center justify-between text-sm">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-gauge text-gray-400 w-4 text-center"></i>
+                <span class="text-gray-700"><%= meter.label %></span>
+                <% if meter.secondary? %>
+                  <span class="text-xs font-medium text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full"><%= t("meters.section.secondary") %></span>
+                <% end %>
+                <% if meter.meter_group.present? %>
+                  <span class="text-xs font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full"><%= meter.meter_group %></span>
+                <% end %>
+              </div>
+              <span class="text-gray-400 text-xs">
+                <% if meter.last_reading %>
+                  <%= meter.last_reading.value_kwh %> <%= meter.unit %>
+                <% else %>
+                  <%= t("meters.section.no_readings") %>
+                <% end %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-400 italic"><%= t("meters.section.no_meters") %></p>
+      <% end %>
+    </div>
+  </section>
+
   <%# Allowed users — inline checkboxes, TODO: replace with scalable search/select when user count grows %>
   <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">

@@ -375,6 +375,28 @@ cs:
       failure: "Archivace nemovitosti se nezdařila."
     not_found: "Nemovitost nebyla nalezena."
 
+  # Meters
+  meters:
+    section:
+      title: "Měřiče"
+      add: "Přidat měřič"
+      secondary: "vedlejší"
+      no_meters: "Žádné měřiče. Přidejte měřič pro sledování spotřeby."
+      no_readings: "bez odečtu"
+    new:
+      title: "Nový měřič"
+      label_placeholder: "např. Hlavní elektroměr"
+      meter_type_main: "Hlavní"
+      meter_type_secondary: "Vedlejší"
+      meter_group: "Skupina měřičů"
+      meter_group_placeholder: "např. VT/NT"
+      meter_group_hint: "Volitelné. Pro seskupení souvisejících měřičů (např. dvoutarifní měření)."
+      initial_reading: "Počáteční stav"
+      initial_reading_hint: "Aktuální stav měřiče v kWh."
+      submit: "Přidat měřič"
+    create:
+      success: "Měřič %{label} byl úspěšně přidán."
+
   # Consumption reports
   reports:
     title: "Přehled spotřeby"

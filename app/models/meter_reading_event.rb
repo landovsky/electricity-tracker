@@ -4,7 +4,7 @@ class MeterReadingEvent < ApplicationRecord
   audited
 
   # Enums
-  enum :event_type, { check_in: "check_in", check_out: "check_out" }, validate: true
+  enum :event_type, { check_in: "check_in", check_out: "check_out", initial: "initial" }, validate: true
 
   # Associations
   belongs_to :recorded_by_user, class_name: "User", optional: true
@@ -51,7 +51,9 @@ class MeterReadingEvent < ApplicationRecord
 
   # C4: Main meter reading is required on every event
   # With multi-tariff support, a reading is required for EACH main-type meter
+  # Initial events (meter setup) are exempt — they record a single meter's starting value
   def main_meter_reading_required
+    return if initial?
     return if new_record? && meter_readings.empty?
 
     main_reading = meter_readings.find { |mr| mr.meter&.main? }
