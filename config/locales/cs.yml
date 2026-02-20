@@ -255,6 +255,30 @@ cs:
       recently: "nedávno"
       since: "od %{date}"
 
+  # Camera sessions
+  camera_sessions:
+    badge_check_in: "Příjezd"
+    badge_check_out: "Odjezd"
+    tap_to_photo: "Klepnutím vyfotíte"
+    snap_meter: "Vyfoťte displej elektroměru"
+    take_another: "Vyfotit další"
+    more_meters: "Další měřiče? Foťte dál"
+    detections_label: "Detekce"
+    no_readings_yet: "Zatím žádné odečty"
+    continue_to_form:
+      one: "Pokračovat do formuláře (1 odečet) →"
+      other: "Pokračovat do formuláře (%{count} odečty) →"
+    review_before_save: "Před uložením zkontrolujete"
+    skip_manual: "Přeskočit — zadat ručně"
+    detection:
+      processing: "Zpracovávám snímek..."
+      confidence: "spolehlivost"
+      not_meter: "Není fotka měřiče"
+      error: "Chyba zpracování"
+      unknown_meter: "Neznámý měřič"
+      replaced: "Nahrazeno novějším odečtem"
+      select_meter: "Měřič nebyl přiřazen — vyberte..."
+
   # Service error messages
   services:
     check_in_visitor:

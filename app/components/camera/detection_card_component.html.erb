@@ -1,0 +1,67 @@
+<div id="<%= dom_id %>" class="<%= card_classes %>">
+  <%# Thumbnail %>
+  <div class="<%= thumb_classes %>">
+    IMG&nbsp;<%= position %>
+  </div>
+
+  <%# Result info %>
+  <div class="flex-1 min-w-0">
+    <% if detection.processing? %>
+      <div class="flex items-center gap-2 text-sm text-blue-600">
+        <span class="inline-block w-3.5 h-3.5 border-2 border-blue-300 border-t-blue-600 rounded-full animate-spin"></span>
+        <%= t("camera_sessions.detection.processing") %>
+      </div>
+      <div class="text-xs font-mono text-blue-300 mt-1">OCR &rarr; matching meter</div>
+    <% else %>
+      <%# Meter name + status icon %>
+      <div class="text-sm flex items-center gap-1.5">
+        <%= meter_label %>
+        <%= status_icon&.html_safe %>
+      </div>
+
+      <%# Reading value %>
+      <% if reading_display %>
+        <div class="text-xl mt-0.5 <%= 'line-through' if detection.replaced? %>">
+          <%= reading_display %> kWh
+        </div>
+      <% end %>
+
+      <%# Confidence %>
+      <% if confidence_display %>
+        <div class="text-xs font-mono <%= confidence_classes %>">
+          <%= t("camera_sessions.detection.confidence") %>: <%= confidence_display %>
+        </div>
+      <% end %>
+
+      <%# Error message %>
+      <% if detection.not_meter? && error_message.present? %>
+        <div class="text-xs font-mono text-red-500 mt-0.5"><%= error_message %></div>
+      <% end %>
+
+      <%# Replaced badge %>
+      <% if detection.replaced? %>
+        <div class="inline-block text-xs font-mono bg-gray-100 text-gray-500 px-2 py-0.5 rounded mt-1">
+          <%= t("camera_sessions.detection.replaced") %>
+        </div>
+      <% end %>
+
+      <%# Updated badge %>
+      <% if detection.detected? && detection.confidence.to_f >= 0.9 %>
+      <% end %>
+
+      <%# Meter select dropdown %>
+      <% if show_meter_select? %>
+        <select class="mt-1.5 w-full text-xs font-mono px-2 py-1.5 border rounded-md <%= meter_select_classes %>"
+                data-action="change->camera-session#reassignMeter"
+                data-detection-id="<%= detection.id %>">
+          <% if detection.meter_id.blank? %>
+            <option value="" selected><%= t("camera_sessions.detection.select_meter") %></option>
+          <% end %>
+          <% meters.each do |m| %>
+            <option value="<%= m.id %>" <%= 'selected' if m.id == detection.meter_id %>><%= m.label %></option>
+          <% end %>
+        </select>
+      <% end %>
+    <% end %>
+  </div>
+</div>

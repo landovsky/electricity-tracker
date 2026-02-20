@@ -1,0 +1,21 @@
+<%# Append the new detection card %>
+<%= turbo_stream.append "detections" do %>
+  <%= render Camera::DetectionCardComponent.new(detection: @detection, meters: @meters, position: @position) %>
+<% end %>
+
+<%# Replace any cards that were marked as "replaced" (duplicate meter, lower confidence) %>
+<% @replaced_ids.each do |replaced_id| %>
+  <% replaced = MeterPhotoDetection.find(replaced_id) %>
+  <% replaced_position = MeterPhotoDetection.for_session(@session_id).where("id <= ?", replaced_id).count %>
+  <%= turbo_stream.replace "detection-#{replaced_id}" do %>
+    <%= render Camera::DetectionCardComponent.new(detection: replaced, meters: @meters, position: replaced_position) %>
+  <% end %>
+<% end %>
+
+<%# Remove empty state if present %>
+<%= turbo_stream.remove "empty-state" %>
+
+<%# Update usable count and continue button area %>
+<%= turbo_stream.replace "usable-count" do %>
+  <span class="hidden" id="usable-count" data-camera-session-target="readingCount"><%= @usable_count %></span>
+<% end %>

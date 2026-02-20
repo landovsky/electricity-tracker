@@ -38,6 +38,14 @@ Rails.application.routes.draw do
   # Root / Dashboard (S1 - Main Screen)
   root "dashboard#index"
 
+  # Camera meter reading sessions
+  resources :foceni, controller: "camera_sessions", only: [ :show ], as: :camera_sessions do
+    member do
+      post :upload
+      patch :reassign
+    end
+  end
+
   # Stays (Check-in / Check-out)
   resources :pobyty, controller: "stays", only: [ :create ], as: :stays do
     member do

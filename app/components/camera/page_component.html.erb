@@ -1,0 +1,79 @@
+<div class="max-w-lg mx-auto min-h-screen flex flex-col" data-controller="camera-session" data-camera-session-upload-url-value="<%= upload_url %>" data-camera-session-reassign-url-value="<%= reassign_url %>" data-camera-session-session-id-value="<%= session_id %>">
+
+  <%# Header bar %>
+  <div class="flex items-center px-4 py-3 border-b border-gray-200 bg-gray-50">
+    <%= link_to root_path, class: "text-gray-500 mr-3" do %>
+      <i class="fa-solid fa-arrow-left"></i>
+    <% end %>
+    <span class="text-xs font-mono px-2 py-0.5 rounded-md mr-2 <%= action_badge_classes %>">
+      <%= action_label %>
+    </span>
+    <span class="text-sm flex-1 truncate"><%= visitor_name %></span>
+  </div>
+
+  <%# Camera capture area %>
+  <div class="mx-4 mt-4 border-2 border-dashed border-gray-300 rounded-2xl p-7 text-center bg-gray-50 cursor-pointer hover:border-gray-400 hover:bg-gray-100 transition-all"
+       data-action="click->camera-session#openCamera">
+    <div class="text-4xl mb-2 opacity-50">
+      <i class="fa-solid fa-camera"></i>
+    </div>
+    <div class="text-sm text-gray-600">
+      <%= has_detections? ? t("camera_sessions.take_another") : t("camera_sessions.tap_to_photo") %>
+    </div>
+    <div class="text-xs text-gray-400 font-mono mt-1">
+      <%= has_detections? ? t("camera_sessions.more_meters") : t("camera_sessions.snap_meter") %>
+    </div>
+  </div>
+
+  <%# Hidden file input for native camera %>
+  <input type="file"
+         accept="image/*"
+         capture="environment"
+         class="hidden"
+         data-camera-session-target="fileInput"
+         data-action="change->camera-session#photoSelected">
+
+  <%# Results area %>
+  <div class="flex-1 px-4 pt-4">
+    <% if has_detections? %>
+      <div class="text-xs font-mono text-gray-400 uppercase tracking-wider mb-2">
+        <%= t("camera_sessions.detections_label") %>
+      </div>
+    <% end %>
+
+    <div id="detections">
+      <% detections.each_with_index do |detection, index| %>
+        <%= render Camera::DetectionCardComponent.new(detection: detection, meters: meters, position: index + 1) %>
+      <% end %>
+    </div>
+
+    <% unless has_detections? %>
+      <div id="empty-state" class="text-center py-8 text-gray-300" data-camera-session-target="emptyState">
+        <div class="text-2xl tracking-widest mb-2">&middot; &middot; &middot;</div>
+        <div class="text-sm"><%= t("camera_sessions.no_readings_yet") %></div>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Bottom action bar %>
+  <div class="px-4 py-3 border-t border-gray-200 bg-gray-50 mt-auto">
+    <% if usable_count > 0 %>
+      <%= link_to root_path(camera_session_id: session_id),
+            class: "block w-full text-center py-3.5 rounded-xl bg-white text-blue-600 border-2 border-blue-600 font-medium text-sm hover:bg-blue-50 transition-colors",
+            data: { camera_session_target: "continueBtn" } do %>
+        <%= t("camera_sessions.continue_to_form", count: usable_count) %> &rarr;
+      <% end %>
+      <div class="text-center text-xs font-mono text-gray-400 mt-1.5">
+        <%= t("camera_sessions.review_before_save") %>
+      </div>
+    <% else %>
+      <%= link_to root_path,
+            class: "block w-full text-center py-3.5 rounded-xl bg-white text-gray-500 border border-gray-300 text-sm hover:bg-gray-50 transition-colors" do %>
+        <%= t("camera_sessions.skip_manual") %>
+      <% end %>
+    <% end %>
+
+    <span class="hidden" id="usable-count" data-camera-session-target="readingCount"><%= usable_count %></span>
+  </div>
+
+</div>

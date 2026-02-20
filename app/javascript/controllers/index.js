@@ -10,6 +10,9 @@ application.register("action-forms", ActionFormsController)
 import AutoSubmitController from "controllers/auto_submit_controller"
 application.register("auto-submit", AutoSubmitController)
 
+import CameraSessionController from "controllers/camera_session_controller"
+application.register("camera-session", CameraSessionController)
+
 import CheckoutFormController from "controllers/checkout_form_controller"
 application.register("checkout-form", CheckoutFormController)
 

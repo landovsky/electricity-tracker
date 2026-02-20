@@ -56,10 +56,17 @@
       %>
     </div>
 
-    <%= button_tag type: "submit", class: "w-full bg-amber-600 text-white py-3 rounded-lg font-medium text-sm hover:bg-amber-700 active:bg-amber-800 transition-colors" do %>
-      <%= render Shared::IconComponent.new(icon_class: "fa-right-from-bracket", color: "mr-1.5") %>
-      <%= t("dashboard.check_out_form.submit") %>
-    <% end %>
+    <div class="flex gap-2">
+      <%= link_to camera_session_path(SecureRandom.uuid, event_type: "check_out", visitor_name: current_visitors.first&.name || ""),
+            class: "px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-500 text-sm hover:bg-gray-50 transition-colors flex items-center",
+            data: { turbo_frame: "_top" } do %>
+        <i class="fa-solid fa-camera"></i>
+      <% end %>
+      <%= button_tag type: "submit", class: "flex-1 bg-amber-600 text-white py-3 rounded-lg font-medium text-sm hover:bg-amber-700 active:bg-amber-800 transition-colors" do %>
+        <%= render Shared::IconComponent.new(icon_class: "fa-right-from-bracket", color: "mr-1.5") %>
+        <%= t("dashboard.check_out_form.submit") %>
+      <% end %>
+    </div>
   <% end %>
 <% else %>
   <%= render Shared::EmptyStateComponent.new(message: t("dashboard.check_out_form.no_visitors")) %>
