@@ -29,9 +29,9 @@
 
       <%# Login panel %>
       <div data-login-method-target="loginPanel" class="p-8 transition-opacity duration-200">
-        <div class="text-center mb-6">
+        <div class="text-center mb-8">
           <h1 class="text-2xl font-bold text-gray-900"><%= t("sessions.new.heading") %></h1>
-          <p class="text-sm text-gray-500 mt-1"><%= t("sessions.new.subtitle") %></p>
+          <p class="text-sm text-gray-500 mt-2"><%= t("sessions.new.subtitle") %></p>
         </div>
 
         <% if flash[:notice] %>
@@ -47,7 +47,7 @@
         <% end %>
 
         <%# Method selector buttons %>
-        <div class="grid grid-cols-2 gap-3 mb-6">
+        <div class="grid grid-cols-2 gap-3 mb-8">
           <button
             type="button"
             data-login-method-target="emailButton"
@@ -71,7 +71,7 @@
 
         <%# Email form %>
         <div data-login-method-target="emailPanel">
-          <%= form_with url: login_path, method: :post, class: "space-y-4" do |f| %>
+          <%= form_with url: login_path, method: :post, class: "space-y-5" do |f| %>
             <div>
               <label for="email" class="block text-sm font-medium text-gray-700 mb-1"><%= t("sessions.new.email_label") %></label>
               <input
@@ -93,14 +93,14 @@
             </button>
           <% end %>
 
-          <p class="mt-3 text-xs text-gray-400 text-center">
+          <p class="mt-5 text-xs text-gray-400 text-center">
             <%= t("sessions.new.help_text_email") %>
           </p>
         </div>
 
         <%# SMS form %>
         <div data-login-method-target="smsPanel" class="hidden">
-          <%= form_with url: login_sms_path, method: :post, class: "space-y-4" do |f| %>
+          <%= form_with url: login_sms_path, method: :post, class: "space-y-5" do |f| %>
             <div>
               <label for="phone_number" class="block text-sm font-medium text-gray-700 mb-1"><%= t("sessions.new.phone_label") %></label>
               <input
@@ -123,7 +123,7 @@
             </button>
           <% end %>
 
-          <p class="mt-3 text-xs text-gray-400 text-center">
+          <p class="mt-5 text-xs text-gray-400 text-center">
             <%= t("sessions.new.help_text_sms") %>
           </p>
         </div>
