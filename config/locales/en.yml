@@ -131,6 +131,16 @@ en:
       submit_sms: "Send verification code"
       help_text_email: "We'll send you a login link via email — no password needed."
       help_text_sms: "We'll send you a 6-digit verification code via SMS."
+      tab_login: "Sign in"
+      tab_about: "About"
+      about_headline: "Fair electricity splitting for shared houses"
+      about_problem: "Sharing a cottage with family or friends? Then you need to know who used how much."
+      about_bullets:
+        - "Record meter readings at check-in and check-out"
+        - "The app calculates each visitor's consumption"
+        - "Empty-house usage is split equally"
+        - "Manual entries for EV charging etc."
+      about_cta: "Sign in and start tracking →"
     email_sent:
       title: "Link sent — Electricity Tracker"
       heading: "Link sent!"

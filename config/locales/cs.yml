@@ -131,6 +131,16 @@ cs:
       submit_sms: "Odeslat ověřovací kód"
       help_text_email: "Na e-mail vám pošleme odkaz pro přihlášení — heslo nepotřebujete."
       help_text_sms: "Na telefon vám pošleme 6místný ověřovací kód."
+      tab_login: "Přihlášení"
+      tab_about: "O aplikaci"
+      about_headline: "Spravedlivé dělení elektřiny na chalupě"
+      about_problem: "Sdílíte chalupu s rodinou nebo přáteli? Pak řešíte, kdo kolik spotřeboval."
+      about_bullets:
+        - "Zapíšete stav elektroměru při příjezdu a odjezdu"
+        - "Aplikace spočítá spotřebu každého návštěvníka"
+        - "Prázdná chalupa se rozpočítá rovným dílem"
+        - "Ruční zápisy pro nabíjení elektromobilu apod."
+      about_cta: "Přihlaste se a začněte měřit →"
     email_sent:
       title: "Odkaz odeslán — Měřič spotřeby"
       heading: "Odkaz odeslán!"
