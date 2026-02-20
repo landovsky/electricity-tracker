@@ -45,6 +45,25 @@ class Camera::DetectionCardComponent < ApplicationComponent
     end
   end
 
+  def has_photo?
+    detection.photo.attached?
+  end
+
+  def photo_url
+    return nil unless has_photo?
+
+    Rails.application.routes.url_helpers.rails_blob_path(detection.photo, only_path: true)
+  end
+
+  def thumb_url
+    return nil unless has_photo?
+
+    Rails.application.routes.url_helpers.rails_blob_path(
+      detection.photo.variant(resize_to_fill: [112, 112]),
+      only_path: true
+    )
+  end
+
   def status_icon
     case status
     when "detected" then '<span class="text-emerald-500">&#10003;</span>'

@@ -1,8 +1,14 @@
 <div id="<%= dom_id %>" class="<%= card_classes %>">
   <%# Thumbnail %>
-  <div class="<%= thumb_classes %>">
-    IMG&nbsp;<%= position %>
-  </div>
+  <% if has_photo? %>
+    <a href="<%= photo_url %>" target="_blank" class="w-14 h-14 rounded-lg flex-shrink-0 overflow-hidden block">
+      <img src="<%= thumb_url %>" alt="IMG <%= position %>" class="w-full h-full object-cover <%= 'opacity-50' if detection.replaced? %>" loading="lazy" />
+    </a>
+  <% else %>
+    <div class="<%= thumb_classes %>">
+      IMG&nbsp;<%= position %>
+    </div>
+  <% end %>
 
   <%# Result info %>
   <div class="flex-1 min-w-0">

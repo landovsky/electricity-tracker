@@ -56,7 +56,7 @@
   </div>
 
   <%# Bottom action bar %>
-  <div class="px-4 py-3 border-t border-gray-200 bg-gray-50 mt-auto">
+  <div class="px-4 py-3 border-t border-gray-200 bg-gray-50 mt-auto" data-camera-session-target="bottomBar">
     <% if usable_count > 0 %>
       <%= link_to root_path(camera_session_id: session_id, event_type: event_type),
             class: "block w-full text-center py-3.5 rounded-xl bg-white text-blue-600 border-2 border-blue-600 font-medium text-sm hover:bg-blue-50 transition-colors",

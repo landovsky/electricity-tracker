@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
 class Dashboard::CheckInFormComponent < ApplicationComponent
-  def initialize(visitors:, last_readings:, meters:, selected_visitor_id: nil, prefilled_readings: {})
+  def initialize(visitors:, last_readings:, meters:, selected_visitor_id: nil, prefilled_readings: {}, camera_detections: [])
     @visitors = visitors
     @last_readings = last_readings
     @meters = meters
     @selected_visitor_id = selected_visitor_id
     @prefilled_readings = prefilled_readings
+    @camera_detections = camera_detections
   end
 
-  attr_reader :visitors, :last_readings, :meters, :selected_visitor_id, :prefilled_readings
+  attr_reader :visitors, :last_readings, :meters, :selected_visitor_id, :prefilled_readings, :camera_detections
 
   # Groups meters for form layout. Meters sharing a meter_group render on one row.
   # Ungrouped meters get their own row.

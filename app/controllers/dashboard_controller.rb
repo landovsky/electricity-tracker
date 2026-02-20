@@ -38,6 +38,7 @@ class DashboardController < ApplicationController
 
     # Prefill meter readings from camera session
     @prefilled_readings = build_prefilled_readings(params[:camera_session_id])
+    @camera_detections = load_camera_detections(params[:camera_session_id])
 
     # Auto-select tab based on event_type from camera
     @default_tab = params[:event_type] == "check_out" ? "checkout" : "checkin"
@@ -58,6 +59,17 @@ class DashboardController < ApplicationController
   end
 
   private
+
+  def load_camera_detections(camera_session_id)
+    return [] unless camera_session_id.present?
+
+    MeterPhotoDetection
+      .for_session(camera_session_id)
+      .usable
+      .where.not(meter_id: nil)
+      .includes(:meter, photo_attachment: :blob)
+      .order(:created_at)
+  end
 
   def build_prefilled_readings(camera_session_id)
     return {} unless camera_session_id.present?

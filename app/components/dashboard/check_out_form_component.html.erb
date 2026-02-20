@@ -32,13 +32,20 @@
                   <span class="text-gray-400"><%= t("dashboard.check_out_form.optional") %></span>
                 <% end %>
               </label>
-              <%= number_field_tag "meter_readings[#{meter.id}]",
-                prefilled || reading&.dig(:value),
-                placeholder: "kWh",
-                step: "any",
-                class: "w-full border rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 #{prefilled ? 'border-emerald-300 bg-emerald-50/30' : 'border-gray-300'}",
-                **(meter_required?(meter) ? number_validation : {})
-              %>
+              <div class="relative">
+                <%= number_field_tag "meter_readings[#{meter.id}]",
+                  prefilled || reading&.dig(:value),
+                  placeholder: "kWh",
+                  step: "any",
+                  class: "w-full rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 #{prefilled ? 'border-2 border-emerald-400 bg-emerald-50/50 pr-9' : 'border border-gray-300'}",
+                  **(meter_required?(meter) ? number_validation : {})
+                %>
+                <% if prefilled %>
+                  <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-emerald-500">
+                    <i class="fa-solid fa-circle-check"></i>
+                  </span>
+                <% end %>
+              </div>
               <% if prefilled %>
                 <p class="text-xs text-emerald-600 mt-0.5"><%= t("dashboard.check_out_form.from_camera") %></p>
               <% elsif reading %>
@@ -58,6 +65,21 @@
         class: "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
       %>
     </div>
+
+    <% if camera_detections.any? %>
+      <div class="flex gap-2 overflow-x-auto pb-1">
+        <% camera_detections.each do |detection| %>
+          <% if detection.photo.attached? %>
+            <a href="<%= rails_blob_path(detection.photo, only_path: true) %>" target="_blank" class="flex-shrink-0">
+              <div class="w-16 h-16 rounded-lg overflow-hidden border-2 border-emerald-300 relative">
+                <%= image_tag detection.photo.variant(resize_to_fill: [128, 128]), class: "w-full h-full object-cover", loading: "lazy" %>
+                <span class="absolute bottom-0 right-0 bg-emerald-500 text-white text-[9px] px-1 rounded-tl"><%= detection.meter&.label&.truncate(8) %></span>
+              </div>
+            </a>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
 
     <div class="flex gap-2">
       <%= link_to camera_session_path(SecureRandom.uuid, event_type: "check_out", visitor_name: current_visitors.first&.name || ""),

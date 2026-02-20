@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
 class Dashboard::CheckOutFormComponent < ApplicationComponent
-  def initialize(current_visitors:, last_readings:, meters:, selected_visitor_id: nil, prefilled_readings: {})
+  def initialize(current_visitors:, last_readings:, meters:, selected_visitor_id: nil, prefilled_readings: {}, camera_detections: [])
     @current_visitors = current_visitors
     @last_readings = last_readings
     @meters = meters
     @selected_visitor_id = selected_visitor_id
     @prefilled_readings = prefilled_readings
+    @camera_detections = camera_detections
   end
 
-  attr_reader :current_visitors, :last_readings, :meters, :selected_visitor_id, :prefilled_readings
+  attr_reader :current_visitors, :last_readings, :meters, :selected_visitor_id, :prefilled_readings, :camera_detections
 
   # Groups meters for form layout. Meters sharing a meter_group render on one row.
   def meter_rows
