@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   # =============================================================================
   get "prihlaseni", to: "sessions#new", as: :login
   post "prihlaseni", to: "sessions#create"
-  get "prihlaseni/email_odeslan", to: "sessions#email_sent", as: :email_sent
+  get "prihlaseni/email-odeslan", to: "sessions#email_sent", as: :email_sent
   post "prihlaseni/sms", to: "sessions#create_sms", as: :login_sms
   get "prihlaseni/overeni", to: "sessions#otp_form", as: :otp_form
   post "prihlaseni/overeni", to: "sessions#verify_otp", as: :verify_otp
@@ -43,7 +43,7 @@ Rails.application.routes.draw do
   end
 
   # Manual Consumption Entries
-  resources :rucni_spotreba, controller: "manual_consumption_entries", only: [ :create ], as: :manual_consumption_entries
+  resources :"rucni-spotreba", controller: "manual_consumption_entries", only: [ :create ], as: :manual_consumption_entries
 
   # Consumption Report (S2)
   get "prehled-spotreby", to: "consumption_reports#index", as: :consumption_reports
