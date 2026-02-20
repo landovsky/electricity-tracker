@@ -3,6 +3,9 @@
     <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
       <p class="text-yellow-800"><%= t("dashboard.no_property") %></p>
     </div>
+    <div class="mt-4 text-center">
+      <%= link_to t("layout.log_out"), logout_path, data: { turbo_method: :delete }, class: "text-sm text-gray-500 hover:text-gray-700 underline" %>
+    </div>
   <% else %>
     <%= render Dashboard::HouseStatusComponent.new(
       current_visitors: @current_visitors,
