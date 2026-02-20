@@ -4,6 +4,8 @@ FactoryBot.define do
     status { "active" }
     note { FFaker::Lorem.sentence }
 
+    association :property, factory: :property
+
     trait :active do
       status { "active" }
     end
