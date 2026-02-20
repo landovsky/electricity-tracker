@@ -398,6 +398,8 @@ en:
       meter_group_hint: "Optional. For grouping related meters (e.g. dual-tariff metering)."
       initial_reading: "Initial reading"
       initial_reading_hint: "Current meter reading in kWh."
+      initial_reading_at: "Reading date"
+      initial_reading_at_hint: "When the reading was taken. Defaults to now."
     new:
       title: "New meter"
       submit: "Add meter"

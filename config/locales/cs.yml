@@ -259,7 +259,7 @@ cs:
       meter_reading: "Odečet měřiče"
       main_reading: "Hlavní: %{value} %{unit}"
     periodic_reading_form:
-      title: "Zaznamenat odečet"
+      title: "Odečet"
       date_time: "Datum a čas"
       note: "Poznámka"
       optional: "(nepovinné)"
@@ -450,6 +450,8 @@ cs:
       identifier_hint: "Volitelné. Číslo nebo označení na fyzickém měřiči pro přesnější AI detekci."
       initial_reading: "Počáteční stav"
       initial_reading_hint: "Aktuální stav měřiče v kWh."
+      initial_reading_at: "Datum odečtu"
+      initial_reading_at_hint: "Kdy byl odečet pořízen. Výchozí je teď."
     new:
       title: "Nový měřič"
       submit: "Přidat měřič"

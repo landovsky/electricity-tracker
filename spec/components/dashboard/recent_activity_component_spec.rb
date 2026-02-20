@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Dashboard::RecentActivityComponent, type: :component do
   let(:visitor) { instance_double("Visitor", name: "Alice") }
-  let(:meter) { instance_double("Meter", meter_type: "main", label: "Main meter") }
+  let(:meter) { instance_double("Meter", meter_type: "main", label: "Main meter", unit: "kWh") }
   let(:meter_reading) { instance_double("MeterReading", meter: meter, value_kwh: 12_487) }
   let(:stay) { instance_double("Stay", visitor: visitor) }
   let(:event) do
@@ -63,6 +63,6 @@ RSpec.describe Dashboard::RecentActivityComponent, type: :component do
       recent_manual_entries: []
     ))
 
-    expect(page).to have_text("Main: 12,487")
+    expect(page).to have_text("Main: 12,487 kWh")
   end
 end

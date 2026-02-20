@@ -16,9 +16,10 @@ class MetersController < ApplicationController
       @meter.save!
 
       if params[:initial_reading].present?
+        recorded_at = parse_initial_reading_at(params[:initial_reading_at])
         event = MeterReadingEvent.create!(
           event_type: "initial",
-          recorded_at: Time.current,
+          recorded_at: recorded_at,
           recorded_by_user: current_user
         )
         event.meter_readings.create!(
@@ -57,6 +58,14 @@ class MetersController < ApplicationController
     @meter = @property.meters.kept.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to property_path(@property), alert: t("meters.not_found")
+  end
+
+  def parse_initial_reading_at(timestamp)
+    return Time.current if timestamp.blank?
+
+    Time.zone.parse(timestamp) || Time.current
+  rescue ArgumentError
+    Time.current
   end
 
   def meter_params

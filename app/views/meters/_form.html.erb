@@ -51,6 +51,13 @@
       <%= number_field_tag :initial_reading, nil, class: "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-colors", placeholder: "0", step: "any", min: "0", **number_validation %>
       <p class="mt-1 text-xs text-gray-400"><%= t("meters.form.initial_reading_hint") %></p>
     </div>
+
+    <%# Initial reading date %>
+    <div>
+      <%= label_tag :initial_reading_at, t("meters.form.initial_reading_at"), class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= datetime_field_tag :initial_reading_at, Time.current.strftime("%Y-%m-%dT%H:%M"), class: "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-colors" %>
+      <p class="mt-1 text-xs text-gray-400"><%= t("meters.form.initial_reading_at_hint") %></p>
+    </div>
   <% end %>
 
   <%# Submit %>
