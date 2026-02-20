@@ -82,16 +82,15 @@
     <% end %>
 
     <div class="flex gap-2">
-      <%= button_tag type: "submit", class: "flex-1 bg-amber-600 text-white py-3 rounded-lg font-medium text-sm hover:bg-amber-700 active:bg-amber-800 transition-colors" do %>
+      <%= link_to camera_session_path(SecureRandom.uuid, event_type: "check_out", visitor_name: current_visitors.first&.name || ""),
+            class: "flex-1 py-3 rounded-lg font-medium text-sm text-center text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 hover:from-blue-600 hover:via-indigo-600 hover:to-violet-600 active:from-blue-700 active:via-indigo-700 active:to-violet-700 shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-1.5",
+            data: { turbo_frame: "_top" } do %>
+        <i class="fa-solid fa-camera"></i>
+        AI
+      <% end %>
+      <%= button_tag type: "submit", class: "flex-1 py-3 rounded-lg font-medium text-sm border-2 border-amber-600 text-amber-700 bg-white hover:bg-amber-50 active:bg-amber-100 transition-colors" do %>
         <%= render Shared::IconComponent.new(icon_class: "fa-right-from-bracket", color: "mr-1.5") %>
         <%= t("dashboard.check_out_form.submit") %>
-      <% end %>
-      <%= link_to camera_session_path(SecureRandom.uuid, event_type: "check_out", visitor_name: current_visitors.first&.name || ""),
-            class: "relative px-4 py-3 rounded-lg text-sm flex items-center gap-1.5 font-medium text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 border border-blue-200 hover:border-blue-300 hover:shadow-md hover:shadow-blue-100 transition-all overflow-hidden group",
-            data: { turbo_frame: "_top" } do %>
-        <span class="absolute inset-0 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 opacity-50 group-hover:opacity-80 transition-opacity"></span>
-        <i class="fa-solid fa-wand-magic-sparkles relative text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500"></i>
-        <span class="relative">AI</span>
       <% end %>
     </div>
   <% end %>
