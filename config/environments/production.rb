@@ -4,7 +4,9 @@ Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Keep users logged in for 1 year (default session cookie expires on browser close)
-  config.session_store :cookie_store, expire_after: 1.year
+  # Share session cookie across all subdomains (sucha.kopernici.cz, sepot.kopernici.cz, etc.)
+  # Custom key avoids collisions with other Rails apps on the same domain.
+  config.session_store :cookie_store, key: "electricity_meter", expire_after: 1.year, domain: :all
 
   # Code is not reloaded between requests.
   config.enable_reloading = false

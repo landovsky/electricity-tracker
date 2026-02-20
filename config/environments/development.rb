@@ -91,6 +91,9 @@ Rails.application.configure do
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
 
+  # Share session cookie across subdomains (matches production config)
+  config.session_store :cookie_store, key: "electricity_meter", domain: :all
+
   # Allow ngrok hosts in development
   config.hosts << /.*\.ngrok-free\.app/
 

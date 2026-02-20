@@ -33,7 +33,7 @@ class SessionsController < ApplicationController
 
     if user.valid? && user.result
       token = GenerateMagicLinkToken.run!(user: user.result)
-      MagicLinkMailer.login_link(user: user.result, token: token).deliver_now
+      MagicLinkMailer.login_link(user: user.result, token: token, origin_host: request.host).deliver_now
     end
 
     # Always redirect to email_sent page to prevent user enumeration
