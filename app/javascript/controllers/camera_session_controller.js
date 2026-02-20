@@ -128,6 +128,7 @@ export default class extends Controller {
           ${label}
         </a>
         <div class="text-center text-xs font-mono text-gray-400 mt-1.5">Před uložením zkontrolujete</div>
+        <span class="hidden" id="usable-count" data-camera-session-target="readingCount">${count}</span>
       `
     }
   }
