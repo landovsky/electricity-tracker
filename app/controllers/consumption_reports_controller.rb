@@ -32,6 +32,8 @@ class ConsumptionReportsController < ApplicationController
       @report = empty_report
     end
 
+    @past_years = past_years_with_data
+
     respond_to do |format|
       format.html
       format.json { render json: build_debug_json } if Rails.env.development?
@@ -77,6 +79,20 @@ class ConsumptionReportsController < ApplicationController
     # Invalid date format
     flash[:alert] = t("invalid_date", error: e.message)
     redirect_to root_path
+  end
+
+  # Up to 3 past years (before current) that have meter reading events
+  def past_years_with_data
+    current_year = Date.today.year
+    MeterReadingEvent.kept
+      .joins(meter_readings: :meter)
+      .where(meters: { property_id: @property.id })
+      .where("meter_reading_events.recorded_at < ?", Date.new(current_year, 1, 1))
+      .select("DISTINCT strftime('%Y', recorded_at) AS yr")
+      .map { |e| e.yr.to_i }
+      .sort
+      .last(3)
+      .reverse
   end
 
   def include_archived?
