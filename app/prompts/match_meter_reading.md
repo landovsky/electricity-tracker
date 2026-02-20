@@ -20,6 +20,22 @@ Each meter entry: { id, label, meter_type, meter_group, unit, last_reading_kwh }
 5. A single image shows ONE meter reading (one tariff). If the OCR contains
    multiple numbers, pick the one that looks like the main display reading
 
+## Decimal Point Rule (CRITICAL)
+
+Electricity meter displays show readings with **1 decimal place** — the last
+digit on the display is tenths of kWh. OCR often loses the decimal point.
+
+**You MUST insert a decimal point before the last digit of the main reading.**
+
+Examples:
+- OCR reads `0089602` → actual reading is `8960.2`
+- OCR reads `0097530` → actual reading is `9753.0`
+- OCR reads `123456` → actual reading is `12345.6`
+
+Use the last known reading to sanity-check: the new reading should be
+slightly higher than the last (typical daily increase is 1–50 kWh).
+If your result is ~10x the last reading, you probably forgot the decimal point.
+
 ## Input
 
 OCR text:
