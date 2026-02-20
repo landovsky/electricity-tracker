@@ -31,7 +31,7 @@ export default class extends Controller {
       p.style.visibility = savedStyles[i].visibility
       p.style.opacity = savedStyles[i].opacity
     })
-    container.style.minHeight = `${maxHeight}px`
+    container.style.minHeight = `${Math.ceil(maxHeight * 1.2)}px`
   }
 
   showLogin() {
