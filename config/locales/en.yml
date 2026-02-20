@@ -241,6 +241,15 @@ en:
       note: "Note"
       note_placeholder: "e.g. car charging"
       submit: "Log Entry"
+    periodic_reading_form:
+      title: "Record meter reading"
+      date_time: "Date and time"
+      note: "Note"
+      note_placeholder: "e.g. monthly reading"
+      optional: "(optional)"
+      submit: "Record reading"
+      last_reading: "Last: %{value} kWh (%{date})"
+      from_camera: "Pre-filled from camera"
     recent_activity:
       title: "Recent activity"
       view_all: "View all"
@@ -248,8 +257,9 @@ en:
       checked_in: "checked in"
       checked_out: "checked out"
       logged_kwh: "logged %{kwh} kWh"
+      meter_reading: "Meter reading recorded"
       unknown: "Unknown"
-      main_reading: "Main: %{value}"
+      main_reading: "Main: %{value} %{unit}"
     visitor_card:
       check_out: "Check out"
       recently: "recently"
@@ -266,6 +276,10 @@ en:
     check_in_success: "%{name} — check-in recorded."
     check_out_success: "%{name} — check-out recorded."
     not_found: "Stay not found."
+
+  # Periodic readings controller
+  periodic_readings:
+    success: "Meter reading recorded successfully."
 
   # Manual consumption entries controller
   manual_entries:
@@ -435,6 +449,7 @@ en:
     logged: "logged %{kwh} kWh"
     checked_in: "check-in"
     checked_out: "check-out"
+    periodic_reading: "Meter reading"
     amount: "Amount:"
     note: "Note:"
     recorded_by: "Recorded by: %{name}"

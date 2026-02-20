@@ -110,6 +110,48 @@
                 <div class="text-xs text-gray-400 mt-2"><%= t("history.recorded_by", name: entry.recorded_by_user&.name || t("history.unknown")) %></div>
               </div>
             </div>
+          <% elsif event_data[:type] == 'periodic' %>
+            <% event = event_data[:event] %>
+            <!-- Periodic Meter Reading Event -->
+            <div id="<%= dom_id(event) %>" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" data-controller="expandable-card">
+              <button type="button" data-action="click->expandable-card#toggle" class="w-full px-4 py-3 text-left">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-start gap-3">
+                    <span class="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 flex-shrink-0">
+                      <i class="fa-solid fa-gauge text-xs"></i>
+                    </span>
+                    <div>
+                      <div class="text-sm font-medium text-gray-900">
+                        <span class="text-gray-500"><%= t("history.periodic_reading") %></span>
+                      </div>
+                      <div class="text-xs text-gray-400 mt-0.5"><%= l(event.recorded_at, format: :default) %></div>
+                    </div>
+                  </div>
+                  <i class="fa-solid fa-chevron-down text-xs text-gray-300 mt-1.5 transition-transform" data-expandable-card-target="arrow"></i>
+                </div>
+              </button>
+              <div class="hidden px-4 pb-3 pt-0 ml-10 border-t border-gray-50" data-expandable-card-target="detail">
+                <div class="grid grid-cols-2 gap-3 mt-3">
+                  <% event.meter_readings.each do |reading| %>
+                    <div class="text-xs">
+                      <span class="text-gray-400"><%= reading.meter.label %><% if reading.meter.identifier.present? %> <span class="font-mono"><%= reading.meter.identifier %></span><% end %>:</span>
+                      <span class="font-medium text-gray-700"><%= number_with_delimiter(reading.value_kwh.to_i) %> kWh</span>
+                    </div>
+                  <% end %>
+                </div>
+                <% if event.note.present? %>
+                  <div class="text-xs text-gray-500 mt-2"><%= event.note %></div>
+                <% end %>
+                <div class="flex items-center justify-between mt-2">
+                  <div class="text-xs text-gray-400"><%= t("history.recorded_by", name: event.recorded_by_user&.name || t("history.unknown")) %></div>
+                  <%= button_to meter_reading_event_path(event), method: :delete,
+                        form: { data: { turbo_confirm: t("meter_reading_events.destroy.confirm") } },
+                        class: "inline-flex items-center justify-center w-7 h-7 rounded-lg border border-red-200 text-red-400 hover:text-red-600 hover:border-red-300 hover:bg-red-50 transition-colors cursor-pointer" do %>
+                    <i class="fa-solid fa-trash-can text-[10px]"></i>
+                  <% end %>
+                </div>
+              </div>
+            </div>
           <% else %>
             <% event = event_data[:event] %>
             <%

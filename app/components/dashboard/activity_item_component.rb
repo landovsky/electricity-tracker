@@ -19,6 +19,8 @@ class Dashboard::ActivityItemComponent < ApplicationComponent
       "fa-right-from-bracket"
     when "manual_entry"
       "fa-bolt"
+    when "periodic"
+      "fa-gauge"
     else
       "fa-circle"
     end
@@ -32,6 +34,8 @@ class Dashboard::ActivityItemComponent < ApplicationComponent
       "text-red-400"
     when "manual_entry"
       "text-yellow-500"
+    when "periodic"
+      "text-indigo-500"
     else
       "text-gray-400"
     end

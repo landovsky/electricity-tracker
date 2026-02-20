@@ -43,9 +43,9 @@ class PeriodicReadingsController < ApplicationController
   end
 
   def load_dashboard_data
-    property = current_property
-    @property_name = property.name
-    @last_meter_readings = property.meters.kept.each_with_object({}) do |meter, hash|
+    @property = current_property
+    @property_name = @property.name
+    @last_meter_readings = @property.meters.kept.each_with_object({}) do |meter, hash|
       reading = meter.last_reading
       next unless reading
 
@@ -57,10 +57,10 @@ class PeriodicReadingsController < ApplicationController
         meter_group: meter.meter_group
       }
     end
-    @meters = property.meters.kept.order(:meter_type, :meter_group, :label)
+    @meters = @property.meters.kept.order(:meter_type, :meter_group, :label)
     @recent_events = MeterReadingEvent.kept
                                       .joins(meter_readings: :meter)
-                                      .where(meters: { property_id: property.id })
+                                      .where(meters: { property_id: @property.id })
                                       .includes(:meter_readings, :stay_as_check_in, :stay_as_check_out)
                                       .distinct
                                       .recent

@@ -13,7 +13,8 @@ class PropertyUser < ApplicationRecord
   private
 
   def create_visitor_for_user
-    visitor = property.visitors.create!(name: user.name, status: :active)
+    visitor_name = user.name.presence || user.email.presence || "User ##{user.id}"
+    visitor = property.visitors.create!(name: visitor_name, status: :active)
     user.update_column(:default_visitor_id, visitor.id) if user.default_visitor_id.nil?
   end
 end

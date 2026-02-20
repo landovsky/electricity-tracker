@@ -3,7 +3,7 @@
     <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("dashboard.periodic_reading_form.title") %></h2>
   </div>
   <div class="p-4">
-    <%= form_with url: periodic_readings_path, method: :post, class: "space-y-4", data: { turbo_frame: "_top" } do |f| %>
+    <%= form_with url: periodic_readings_path, method: :post, class: "space-y-4" do |f| %>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("dashboard.periodic_reading_form.date_time") %></label>
         <%= datetime_field_tag :recorded_at,

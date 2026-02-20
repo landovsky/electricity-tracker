@@ -14,7 +14,7 @@ RSpec.describe MeterReadingEvent, type: :model do
   end
 
   describe "enums" do
-    it { should define_enum_for(:event_type).backed_by_column_of_type(:string).with_values(check_in: "check_in", check_out: "check_out", initial: "initial") }
+    it { should define_enum_for(:event_type).backed_by_column_of_type(:string).with_values(check_in: "check_in", check_out: "check_out", initial: "initial", periodic: "periodic") }
   end
 
   describe "scopes" do

@@ -256,7 +256,8 @@ cs:
       checked_out: "odjel/a"
       logged_kwh: "zaznamenal/a %{kwh} kWh"
       unknown: "Neznámý"
-      main_reading: "Hlavní: %{value}"
+      meter_reading: "Odečet měřiče"
+      main_reading: "Hlavní: %{value} %{unit}"
     periodic_reading_form:
       title: "Zaznamenat odečet"
       date_time: "Datum a čas"

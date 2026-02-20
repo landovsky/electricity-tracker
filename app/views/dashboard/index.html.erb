@@ -6,6 +6,27 @@
     <div class="mt-4 text-center">
       <%= link_to t("layout.log_out"), logout_path, data: { turbo_method: :delete }, class: "text-sm text-gray-500 hover:text-gray-700 underline" %>
     </div>
+  <% elsif @property.meter_only? %>
+    <%= render Dashboard::HouseStatusComponent.new(
+      current_visitors: [],
+      last_meter_readings: @last_meter_readings,
+      property_name: @property.name,
+      tracking_mode: "meter_only"
+    ) %>
+
+    <turbo-frame id="periodic-reading-form" class="block">
+      <%= render Dashboard::PeriodicReadingFormComponent.new(
+        meters: @meters,
+        last_readings: @last_meter_readings,
+        prefilled_readings: @prefilled_readings,
+        camera_detections: @camera_detections
+      ) %>
+    </turbo-frame>
+
+    <%= render Dashboard::RecentActivityComponent.new(
+      recent_events: @recent_events,
+      recent_manual_entries: []
+    ) %>
   <% else %>
     <%= render Dashboard::HouseStatusComponent.new(
       current_visitors: @current_visitors,

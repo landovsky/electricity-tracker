@@ -5,18 +5,9 @@ class DashboardController < ApplicationController
     # Return early if no property exists (empty state)
     return unless @property
 
-    # Current visitors (those with open stays)
-    @current_visitors = @property.visitors.kept
-                               .joins(:stays)
-                               .where(stays: { check_out_event_id: nil })
-                               .includes(stays: [ :check_in_event ])
-                               .distinct
-                               .order(:name)
-
-    # Last meter readings keyed by meter ID
+    # Common data for both modes
     @last_meter_readings = build_last_meter_readings
-
-    # Recent activity - last 5 meter reading events scoped to property meters
+    @meters = @property.meters.kept.order(:meter_type, :meter_group, :label)
     @recent_events = MeterReadingEvent.kept
                                       .joins(meter_readings: :meter)
                                       .where(meters: { property_id: @property.id })
@@ -24,40 +15,43 @@ class DashboardController < ApplicationController
                                       .distinct
                                       .recent
                                       .limit(5)
+    @prefilled_readings = build_prefilled_readings(params[:camera_session_id])
+    @camera_detections = load_camera_detections(params[:camera_session_id])
 
-    # Recent manual entries - last 5 manual consumption entries
+    if @property.meter_only?
+      @current_visitors = []
+      @recent_manual_entries = []
+    else
+      load_visitors_data
+    end
+  end
+
+  private
+
+  def load_visitors_data
+    @current_visitors = @property.visitors.kept
+                               .joins(:stays)
+                               .where(stays: { check_out_event_id: nil })
+                               .includes(stays: [ :check_in_event ])
+                               .distinct
+                               .order(:name)
+
     @recent_manual_entries = ManualConsumptionEntry.kept
                                                    .where(property_id: @property.id)
                                                    .includes(:visitor)
                                                    .recent
                                                    .limit(5)
 
-    # Default visitor for pre-selecting in forms
     @default_visitor_id = current_user&.default_visitor_id
-
-    # Prefill meter readings from camera session
-    @prefilled_readings = build_prefilled_readings(params[:camera_session_id])
-    @camera_detections = load_camera_detections(params[:camera_session_id])
-
-    # Auto-select tab based on event_type from camera
     @default_tab = params[:event_type] == "check_out" ? "checkout" : "checkin"
 
-    # Data for inline forms
-
-    # Visitors available for check-in (active visitors without open stays)
     @visitors_for_checkin = @property.visitors.kept
                                    .active
                                    .where.not(id: @current_visitors.pluck(:id))
                                    .order(:name)
 
-    # Visitors available for check-out (visitors with open stays)
     @visitors_for_checkout = @current_visitors
-
-    # Meters for the property (for form fields)
-    @meters = @property.meters.kept.order(:meter_type, :meter_group, :label)
   end
-
-  private
 
   def load_camera_detections(camera_session_id)
     return [] unless camera_session_id.present?
