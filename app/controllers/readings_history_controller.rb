@@ -26,7 +26,7 @@ class ReadingsHistoryController < ApplicationController
   private
 
   def set_property
-    @property = Property.kept.first
+    @property = current_property
 
     unless @property
       redirect_to root_path, alert: t("no_property")
@@ -51,7 +51,12 @@ class ReadingsHistoryController < ApplicationController
   end
 
   def fetch_meter_reading_events
-    events = MeterReadingEvent.includes(:stay_as_check_in, :stay_as_check_out, :meter_readings, :recorded_by_user)
+    # Scope to current property via meters
+    events = MeterReadingEvent.kept
+                               .joins(meter_readings: :meter)
+                               .where(meters: { property_id: @property.id })
+                               .includes(:stay_as_check_in, :stay_as_check_out, :meter_readings, :recorded_by_user)
+                               .distinct
                                .order(recorded_at: :desc)
 
     # Filter by visitor if specified (through stays)
@@ -74,7 +79,9 @@ class ReadingsHistoryController < ApplicationController
   end
 
   def fetch_manual_consumption_entries
-    entries = ManualConsumptionEntry.includes(:visitor, :recorded_by_user)
+    entries = ManualConsumptionEntry.kept
+                                    .where(property_id: @property.id)
+                                    .includes(:visitor, :recorded_by_user)
                                     .order(date: :desc)
 
     entries = entries.where(visitor_id: params[:visitor_id]) if params[:visitor_id].present?

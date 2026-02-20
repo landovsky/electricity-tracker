@@ -356,8 +356,12 @@ cs:
       address: "Adresa"
       meters_count: "Počet měřičů"
       current_visitors: "Aktuální návštěvníci"
+      allowed_users: "Povolení uživatelé"
+      no_users: "Žádní přiřazení uživatelé."
       archive: "Archivovat"
       archive_confirm: "Opravdu chcete archivovat tuto nemovitost?"
+    form:
+      allowed_users: "Povolení uživatelé"
     create:
       success: "Nemovitost %{name} byla úspěšně vytvořena."
     update:

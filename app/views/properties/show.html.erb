@@ -31,6 +31,30 @@
     </div>
   </section>
 
+  <%# Allowed users %>
+  <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("properties.show.allowed_users") %></h2>
+    </div>
+    <div class="px-4 py-4">
+      <% if @property.users.any? %>
+        <div class="space-y-2">
+          <% @property.users.kept.order(:name).each do |user| %>
+            <div class="flex items-center gap-2 text-sm">
+              <i class="fa-solid fa-user text-gray-400 w-4 text-center"></i>
+              <span class="text-gray-700"><%= user.name.presence || user.email || user.phone_number %></span>
+              <% if user.admin? %>
+                <span class="text-xs font-medium text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded-full"><%= t("users.index.role_admin") %></span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-400 italic"><%= t("properties.show.no_users") %></p>
+      <% end %>
+    </div>
+  </section>
+
   <%# Archive button %>
   <div class="flex justify-end">
     <%= button_to t("properties.show.archive"), archive_property_path(@property), method: :patch, class: "text-sm text-red-600 font-medium hover:text-red-700 cursor-pointer", data: { turbo_confirm: t("properties.show.archive_confirm") } %>

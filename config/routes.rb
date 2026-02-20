@@ -32,6 +32,9 @@ Rails.application.routes.draw do
   # MAIN APPLICATION
   # =============================================================================
 
+  # Property switcher (persists selected property in session)
+  patch "prepnout-nemovitost", to: "property_switch#update", as: :switch_property
+
   # Root / Dashboard (S1 - Main Screen)
   root "dashboard#index"
 

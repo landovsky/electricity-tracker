@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_19_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_20_120000) do
   create_table "audits", force: :cascade do |t|
     t.string "action"
     t.integer "associated_id"
@@ -98,6 +98,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_19_120000) do
     t.index ["deleted_at"], name: "index_properties_on_deleted_at"
   end
 
+  create_table "property_users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "property_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["property_id", "user_id"], name: "index_property_users_on_property_id_and_user_id", unique: true
+    t.index ["property_id"], name: "index_property_users_on_property_id"
+    t.index ["user_id"], name: "index_property_users_on_user_id"
+  end
+
   create_table "stays", force: :cascade do |t|
     t.bigint "check_in_event_id"
     t.bigint "check_out_event_id"
@@ -147,6 +157,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_19_120000) do
   add_foreign_key "meter_readings", "meter_reading_events"
   add_foreign_key "meter_readings", "meters"
   add_foreign_key "meters", "properties"
+  add_foreign_key "property_users", "properties"
+  add_foreign_key "property_users", "users"
   add_foreign_key "stays", "properties"
   add_foreign_key "stays", "visitors"
   add_foreign_key "users", "visitors", column: "default_visitor_id"

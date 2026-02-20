@@ -22,6 +22,26 @@
     <%= form.text_area :address, rows: 3, class: "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-colors" %>
   </div>
 
+  <%# User access checkboxes — TODO: replace with scalable search/select when user count grows %>
+  <% if defined?(users) && users.present? %>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2"><%= t("properties.form.allowed_users") %></label>
+      <div class="space-y-2 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
+        <% users.each do |user| %>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <%= check_box_tag "property[user_ids][]", user.id, property.user_ids.include?(user.id), class: "rounded border-gray-300 text-brand-600 focus:ring-brand-500", id: "property_user_ids_#{user.id}" %>
+            <span class="text-sm text-gray-700"><%= user.name.presence || user.email || user.phone_number %></span>
+            <% if user.admin? %>
+              <span class="text-xs font-medium text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded-full"><%= t("users.index.role_admin") %></span>
+            <% end %>
+          </label>
+        <% end %>
+      </div>
+      <%# Hidden field to ensure empty selection sends an empty array %>
+      <%= hidden_field_tag "property[user_ids][]", "" %>
+    </div>
+  <% end %>
+
   <div>
     <%= form.submit class: "w-full bg-brand-600 text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-brand-700 transition-colors cursor-pointer" %>
   </div>
