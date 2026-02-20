@@ -11,6 +11,9 @@
     <span class="text-sm flex-1 truncate"><%= visitor_name %></span>
   </div>
 
+  <%# Intro %>
+  <p class="px-4 pt-3 text-sm text-gray-500"><%= t("camera_sessions.intro") %></p>
+
   <%# Camera capture area %>
   <div class="mx-4 mt-4 border-2 border-dashed border-gray-300 rounded-2xl p-7 text-center bg-gray-50 cursor-pointer hover:border-gray-400 hover:bg-gray-100 transition-all"
        data-action="click->camera-session#openCamera">

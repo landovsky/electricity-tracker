@@ -259,6 +259,7 @@ cs:
 
   # Camera sessions
   camera_sessions:
+    intro: "Vyfoťte elektroměr a AI odečte hodnotu za vás"
     badge_check_in: "Příjezd"
     badge_check_out: "Odjezd"
     tap_to_photo: "Klepnutím vyfotíte"
