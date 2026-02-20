@@ -20,7 +20,7 @@ class ReadingsHistoryController < ApplicationController
   def index
     @meter_reading_events = fetch_meter_reading_events
     @manual_consumption_entries = fetch_manual_consumption_entries
-    @visitors = Visitor.kept.order(name: :asc)  # For filter dropdown
+    @visitors = @property.visitors.kept.order(name: :asc)  # For filter dropdown
   end
 
   private

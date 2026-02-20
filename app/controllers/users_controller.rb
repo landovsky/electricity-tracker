@@ -16,7 +16,7 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
-    @visitors = Visitor.kept.active.order(name: :asc)
+    @visitors = current_property.visitors.kept.active.order(name: :asc)
   end
 
   def create
@@ -25,20 +25,20 @@ class UsersController < ApplicationController
     if @user.save
       redirect_to users_path, notice: t("users.create.success", name: @user.name)
     else
-      @visitors = Visitor.kept.active.order(name: :asc)
+      @visitors = current_property.visitors.kept.active.order(name: :asc)
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @visitors = Visitor.kept.active.order(name: :asc)
+    @visitors = current_property.visitors.kept.active.order(name: :asc)
   end
 
   def update
     if @user.update(user_params)
       redirect_to user_path(@user), notice: t("users.update.success", name: @user.name)
     else
-      @visitors = Visitor.kept.active.order(name: :asc)
+      @visitors = current_property.visitors.kept.active.order(name: :asc)
       render :edit, status: :unprocessable_entity
     end
   end

@@ -87,6 +87,8 @@ class CheckInVisitor < ApplicationService
     return unless recorded_at.present?
 
     last_event = MeterReadingEvent.kept
+                                   .joins(meter_readings: :meter)
+                                   .where(meters: { property_id: property.id })
                                    .order(recorded_at: :desc)
                                    .first
 

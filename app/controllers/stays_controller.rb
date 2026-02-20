@@ -105,7 +105,7 @@ class StaysController < ApplicationController
   end
 
   def find_visitor
-    Visitor.kept.find(params[:visitor_id])
+    current_property.visitors.kept.find(params[:visitor_id])
   rescue ActiveRecord::RecordNotFound
     nil
   end
@@ -152,7 +152,7 @@ class StaysController < ApplicationController
     property = find_property
     @property_name = property.name
     @current_visitors = property.current_visitors.includes(:stays)
-    @visitors_for_checkin = Visitor.kept.order(:name)
+    @visitors_for_checkin = property.visitors.kept.order(:name)
     @visitors_for_checkout = @current_visitors
     @default_visitor_id = current_user&.default_visitor_id
     @last_meter_readings = build_last_meter_readings_hash(property)

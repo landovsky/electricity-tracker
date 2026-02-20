@@ -15,7 +15,6 @@ class MeterReadingEvent < ApplicationRecord
   # Validations
   validates :recorded_at, presence: true
   validates :event_type, presence: true
-  validate :chronological_consistency
   validate :main_meter_reading_required
 
   # Scopes
@@ -32,22 +31,6 @@ class MeterReadingEvent < ApplicationRecord
   end
 
   private
-
-  # C6: Event timestamps must be chronologically consistent with prior events
-  def chronological_consistency
-    return unless recorded_at.present?
-
-    # Find the most recently created event (by ID, not timestamp)
-    # to ensure new events are not backdated before existing events
-    previous_event = MeterReadingEvent.kept
-                                      .where.not(id: id)
-                                      .order(id: :desc)
-                                      .first
-
-    if previous_event && recorded_at < previous_event.recorded_at
-      errors.add(:recorded_at, :not_chronological, timestamp: previous_event.recorded_at)
-    end
-  end
 
   # C4: Main meter reading is required on every event
   # With multi-tariff support, a reading is required for EACH main-type meter

@@ -6,10 +6,9 @@ class DashboardController < ApplicationController
     return unless @property
 
     # Current visitors (those with open stays)
-    @current_visitors = Visitor.kept
+    @current_visitors = @property.visitors.kept
                                .joins(:stays)
                                .where(stays: { check_out_event_id: nil })
-                               .where(stays: { property_id: @property.id })
                                .includes(stays: [ :check_in_event ])
                                .distinct
                                .order(:name)
@@ -46,7 +45,7 @@ class DashboardController < ApplicationController
     # Data for inline forms
 
     # Visitors available for check-in (active visitors without open stays)
-    @visitors_for_checkin = Visitor.kept
+    @visitors_for_checkin = @property.visitors.kept
                                    .active
                                    .where.not(id: @current_visitors.pluck(:id))
                                    .order(:name)

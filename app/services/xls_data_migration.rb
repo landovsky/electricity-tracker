@@ -140,7 +140,7 @@ class XlsDataMigration
     puts "\nCreating visitors..."
     @visitors = {}
     %w[Jirka Petr Kristína Landovští Bára].each do |name|
-      @visitors[name] = Visitor.create!(name: name, status: "active")
+      @visitors[name] = Visitor.create!(name: name, status: "active", property: @property)
       puts "  #{name}"
     end
   end

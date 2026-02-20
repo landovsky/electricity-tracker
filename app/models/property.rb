@@ -9,6 +9,7 @@ class Property < ApplicationRecord
   has_many :meter_photo_detections, dependent: :destroy
   has_many :property_users, dependent: :destroy
   has_many :users, through: :property_users
+  has_many :visitors, dependent: :destroy
 
   # Validations
   validates :name, presence: true
@@ -18,10 +19,10 @@ class Property < ApplicationRecord
 
   # Visitors with open stays at this property
   def current_visitors
-    Visitor.kept
-           .joins(:stays)
-           .where(stays: { check_out_event_id: nil, property_id: id })
-           .distinct
-           .order(:name)
+    visitors.kept
+            .joins(:stays)
+            .where(stays: { check_out_event_id: nil, property_id: id })
+            .distinct
+            .order(:name)
   end
 end

@@ -74,7 +74,7 @@ class ManualConsumptionEntriesController < ApplicationController
   private
 
   def find_visitor
-    Visitor.find(params[:visitor_id])
+    current_property.visitors.kept.find(params[:visitor_id])
   rescue ActiveRecord::RecordNotFound
     nil
   end
@@ -108,9 +108,9 @@ class ManualConsumptionEntriesController < ApplicationController
   def load_dashboard_data
     property = find_property
     @current_visitors = property.current_visitors.includes(:stays)
-    @visitors_for_checkin = Visitor.kept.order(:name)
+    @visitors_for_checkin = property.visitors.kept.order(:name)
     @visitors_for_checkout = @current_visitors
-    @all_visitors = Visitor.kept.order(:name)
+    @all_visitors = property.visitors.kept.order(:name)
     @default_visitor_id = current_user&.default_visitor_id
     @last_meter_readings = property.meters.map do |meter|
       reading = meter.meter_readings.kept.joins(:meter_reading_event).order("meter_reading_events.recorded_at DESC").first

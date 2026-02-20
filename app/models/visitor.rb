@@ -6,6 +6,7 @@ class Visitor < ApplicationRecord
   enum :status, { active: "active", archived: "archived" }, validate: true
 
   # Associations
+  belongs_to :property
   has_many :stays, dependent: :destroy
   has_many :manual_consumption_entries, dependent: :destroy
 

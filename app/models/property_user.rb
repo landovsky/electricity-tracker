@@ -7,4 +7,13 @@ class PropertyUser < ApplicationRecord
   belongs_to :user
 
   validates :property_id, uniqueness: { scope: :user_id }
+
+  after_create :create_visitor_for_user
+
+  private
+
+  def create_visitor_for_user
+    visitor = property.visitors.create!(name: user.name, status: :active)
+    user.update_column(:default_visitor_id, visitor.id) if user.default_visitor_id.nil?
+  end
 end

@@ -19,11 +19,11 @@ class VisitorsController < ApplicationController
   # GET /visitors
   # Lists all visitors with optional archived filter
   def index
-    @visitors = Visitor.kept.order(name: :asc)
+    @visitors = current_property.visitors.kept.order(name: :asc)
 
     # Include archived visitors if requested
     if params[:include_archived] == "true"
-      @visitors = Visitor.with_discarded.order(name: :asc)
+      @visitors = current_property.visitors.with_discarded.order(name: :asc)
     end
   end
 
@@ -43,7 +43,7 @@ class VisitorsController < ApplicationController
   # POST /visitors
   # Creates a new visitor
   def create
-    @visitor = Visitor.new(visitor_params)
+    @visitor = current_property.visitors.new(visitor_params)
 
     if @visitor.save
       redirect_to visitors_path, notice: t("visitors.create.success", name: @visitor.name)
@@ -81,7 +81,7 @@ class VisitorsController < ApplicationController
   private
 
   def set_visitor
-    @visitor = Visitor.kept.find(params[:id])
+    @visitor = current_property.visitors.kept.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to visitors_path, alert: t("visitors.not_found")
   end
