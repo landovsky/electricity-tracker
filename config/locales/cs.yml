@@ -62,6 +62,7 @@ cs:
       property:
         name: "Název"
         address: "Adresa"
+        tracking_mode: "Režim sledování"
     models:
       visitor: "Návštěvník"
       stay: "Pobyt"
@@ -76,6 +77,10 @@ cs:
         status:
           active: "Aktivní"
           archived: "Archivovaný"
+      property:
+        tracking_mode:
+          visitors: "Návštěvníci"
+          meter_only: "Pouze odečty"
 
   # ActiveInteraction error translations
   active_interaction:
@@ -252,6 +257,15 @@ cs:
       logged_kwh: "zaznamenal/a %{kwh} kWh"
       unknown: "Neznámý"
       main_reading: "Hlavní: %{value}"
+    periodic_reading_form:
+      title: "Zaznamenat odečet"
+      date_time: "Datum a čas"
+      note: "Poznámka"
+      optional: "(nepovinné)"
+      note_placeholder: "např. měsíční odečet"
+      submit: "Zaznamenat odečet"
+      last_reading: "Poslední odečet: %{value} %{date}"
+      from_camera: "z fotoaparátu"
     visitor_card:
       check_out: "Odjezd"
       recently: "nedávno"
@@ -287,12 +301,24 @@ cs:
     check_in_visitor:
       visitor_has_open_stay: "má otevřený pobyt"
       not_chronological: "musí být po předchozí události nebo roven (%{timestamp})"
+      not_visitors_mode: "Tato nemovitost nepoužívá sledování návštěvníků"
+    check_out_visitor:
+      not_visitors_mode: "Tato nemovitost nepoužívá sledování návštěvníků"
+    record_meter_reading:
+      not_meter_only: "Tato nemovitost nepoužívá režim pouze odečtů"
+      no_readings: "Musí být zadán alespoň jeden odečet"
+      not_chronological: "musí být po předchozí události (%{timestamp})"
+      not_monotonic: "Odečet %{label} (%{new_value}) musí být >= předchozí odečet (%{last_value})"
 
   # Stays controller
   stays:
     check_in_success: "%{name} — příjezd zaznamenán."
     check_out_success: "%{name} — odjezd zaznamenán."
     not_found: "Pobyt nebyl nalezen."
+
+  # Periodic readings controller
+  periodic_readings:
+    success: "Odečet byl úspěšně zaznamenán."
 
   # Manual consumption entries controller
   manual_entries:
@@ -390,6 +416,7 @@ cs:
       archive: "Archivovat"
       archive_confirm: "Opravdu chcete archivovat tuto nemovitost?"
     form:
+      tracking_mode_hint: "Návštěvníci = příjezdy/odjezdy a dělení spotřeby. Pouze odečty = jen záznam stavu měřičů."
       allowed_users: "Povolení uživatelé"
     create:
       success: "Nemovitost %{name} byla úspěšně vytvořena."

@@ -4,7 +4,7 @@ class MeterReadingEvent < ApplicationRecord
   audited
 
   # Enums
-  enum :event_type, { check_in: "check_in", check_out: "check_out", initial: "initial" }, validate: true
+  enum :event_type, { check_in: "check_in", check_out: "check_out", initial: "initial", periodic: "periodic" }, validate: true
 
   # Associations
   belongs_to :recorded_by_user, class_name: "User", optional: true

@@ -53,6 +53,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # Periodic Meter Readings (meter_only properties)
+  resources :"odecty-mericu", controller: "periodic_readings", only: [ :create ], as: :periodic_readings
+
   # Manual Consumption Entries
   resources :"rucni-spotreba", controller: "manual_consumption_entries", only: [ :create ], as: :manual_consumption_entries
 

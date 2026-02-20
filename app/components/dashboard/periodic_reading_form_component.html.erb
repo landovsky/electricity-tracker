@@ -1,0 +1,74 @@
+<section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+  <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("dashboard.periodic_reading_form.title") %></h2>
+  </div>
+  <div class="p-4">
+    <%= form_with url: periodic_readings_path, method: :post, class: "space-y-4", data: { turbo_frame: "_top" } do |f| %>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("dashboard.periodic_reading_form.date_time") %></label>
+        <%= datetime_field_tag :recorded_at,
+          Time.current.strftime("%Y-%m-%dT%H:%M"),
+          class: "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+        %>
+      </div>
+
+      <div class="space-y-3">
+        <% meter_rows.each do |row| %>
+          <div class="<%= 'flex gap-3' if row.size > 1 %>">
+            <% row.each do |meter| %>
+              <% reading = last_reading_for(meter) %>
+              <% prefilled = prefilled_value_for(meter) %>
+              <div class="<%= 'flex-1' if row.size > 1 %>">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  <%= meter.label %><% if meter.identifier.present? %> <span class="font-normal text-gray-400">· <%= meter.identifier %></span><% end %>
+                  <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                  <%= number_field_tag "meter_readings[#{meter.id}]",
+                    prefilled || reading&.dig(:value),
+                    placeholder: meter.unit,
+                    step: "any",
+                    class: "w-full rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 #{prefilled ? 'border-2 border-emerald-400 bg-emerald-50/50 pr-9' : 'border border-gray-300'}",
+                    **number_validation
+                  %>
+                  <% if prefilled %>
+                    <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-emerald-500">
+                      <i class="fa-solid fa-circle-check"></i>
+                    </span>
+                  <% end %>
+                </div>
+                <% if prefilled %>
+                  <p class="text-xs text-emerald-600 mt-0.5"><%= t("dashboard.periodic_reading_form.from_camera") %></p>
+                <% elsif reading %>
+                  <p class="text-xs text-gray-400 mt-1"><%= last_reading_hint(reading) %></p>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"><%= t("dashboard.periodic_reading_form.note") %> <span class="text-gray-400"><%= t("dashboard.periodic_reading_form.optional") %></span></label>
+        <%= text_field_tag :note,
+          nil,
+          placeholder: t("dashboard.periodic_reading_form.note_placeholder"),
+          class: "w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
+        %>
+      </div>
+
+      <div class="flex gap-2">
+        <%= link_to camera_session_path(SecureRandom.uuid),
+              class: "px-4 py-3 rounded-lg font-medium text-sm text-center text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 hover:from-blue-600 hover:via-indigo-600 hover:to-violet-600 active:from-blue-700 active:via-indigo-700 active:to-violet-700 shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-1.5",
+              data: { turbo_frame: "_top" } do %>
+          <i class="fa-solid fa-camera"></i>
+          AI
+        <% end %>
+        <%= button_tag type: "submit", class: "flex-1 py-3 rounded-lg font-medium text-sm border-2 border-brand-600 text-brand-700 bg-white hover:bg-brand-50 active:bg-brand-100 transition-colors" do %>
+          <i class="fa-solid fa-gauge mr-1.5"></i>
+          <%= t("dashboard.periodic_reading_form.submit") %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</section>

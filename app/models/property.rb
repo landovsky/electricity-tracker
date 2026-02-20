@@ -2,6 +2,9 @@ class Property < ApplicationRecord
   include Discard::Model
   self.discard_column = :deleted_at
 
+  # Enums
+  enum :tracking_mode, { visitors: "visitors", meter_only: "meter_only" }, validate: true
+
   # Associations
   has_many :meters, dependent: :destroy
   has_many :stays, dependent: :destroy

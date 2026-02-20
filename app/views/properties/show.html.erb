@@ -27,6 +27,10 @@
         </div>
       <% end %>
       <div class="flex items-center gap-2 text-sm">
+        <i class="fa-solid fa-sliders text-gray-400 w-4 text-center"></i>
+        <span class="text-gray-700"><%= I18n.t("activerecord.enums.property.tracking_mode.#{@property.tracking_mode}") %></span>
+      </div>
+      <div class="flex items-center gap-2 text-sm">
         <i class="fa-solid fa-gauge text-gray-400 w-4 text-center"></i>
         <span class="text-gray-700"><%= t("properties.show.meters_count") %>: <%= @property.meters.count %></span>
       </div>

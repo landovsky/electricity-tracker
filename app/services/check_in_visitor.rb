@@ -28,6 +28,7 @@ class CheckInVisitor < ApplicationService
   string :note, default: nil
 
   # Custom validations
+  validate :validate_visitors_tracking_mode
   validate :validate_main_reading_provided
   validate :validate_no_open_stay
   validate :validate_chronological_consistency
@@ -156,6 +157,12 @@ class CheckInVisitor < ApplicationService
     end
 
     readings
+  end
+
+  def validate_visitors_tracking_mode
+    return if property&.visitors?
+
+    errors.add(:base, I18n.t("services.check_in_visitor.not_visitors_mode"))
   end
 
   def create_stay!(event)

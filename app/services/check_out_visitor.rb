@@ -23,6 +23,7 @@ class CheckOutVisitor < ApplicationService
 
   validates :property, presence: true
   validates :recorded_by_user, presence: true
+  validate :validate_visitors_tracking_mode
   validate :validate_main_reading_provided
   validate :visitor_or_stay_provided
   validate :stay_exists_and_is_open
@@ -74,6 +75,12 @@ class CheckOutVisitor < ApplicationService
   end
 
   private
+
+  def validate_visitors_tracking_mode
+    return if property&.visitors?
+
+    errors.add(:base, I18n.t("services.check_out_visitor.not_visitors_mode"))
+  end
 
   def validate_main_reading_provided
     # At least one main reading must be provided via either path
