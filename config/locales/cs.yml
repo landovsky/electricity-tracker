@@ -362,8 +362,6 @@ cs:
     title: "Přehled spotřeby"
     history: "Historie"
     all_time: "Celkem"
-    this_year: "Tento rok"
-    last_year: "Loňský rok"
     period_totals: "Celkem za období"
     main_meter_delta: "Změna měřičů"
     total_consumption: "Celková spotřeba"
