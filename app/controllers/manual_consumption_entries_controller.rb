@@ -80,11 +80,10 @@ class ManualConsumptionEntriesController < ApplicationController
   end
 
   def find_property
-    # Default to first property if not provided
     if params[:property_id].present?
       Property.find(params[:property_id])
     else
-      Property.first
+      current_property
     end
   rescue ActiveRecord::RecordNotFound
     nil
@@ -125,7 +124,10 @@ class ManualConsumptionEntriesController < ApplicationController
     end.compact.to_h
     @meters = property.meters.kept.order(meter_type: :asc)
     @recent_events = MeterReadingEvent.kept
+                                      .joins(meter_readings: :meter)
+                                      .where(meters: { property_id: property.id })
                                       .includes(:meter_readings, :stay_as_check_in, :stay_as_check_out)
+                                      .distinct
                                       .recent
                                       .limit(10)
     @recent_manual_entries = ManualConsumptionEntry.kept

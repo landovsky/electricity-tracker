@@ -32,11 +32,12 @@ RSpec.configure do |config|
   config.include RequestAuthenticationHelpers, type: :request
   config.include AuthenticationHelpers, type: :system
 
-  # Auto-sign in for all request specs with a default user.
+  # Auto-sign in for all request specs with a default admin user.
+  # Admin users can access all properties without explicit assignment.
   # Individual specs can override with sign_in_as(other_user).
   # SessionsController specs override with and_call_original.
   config.before(:each, type: :request) do
-    default_user = User.kept.first || FactoryBot.create(:user)
+    default_user = User.kept.where(role: "admin").first || FactoryBot.create(:user, :admin)
     sign_in_as(default_user)
     ActionMailer::Base.deliveries.clear
   end
@@ -46,6 +47,8 @@ RSpec.configure do |config|
     # Auto-authenticate system specs by disabling auth.
     # Individual specs can test the auth flow by re-enabling it.
     ENV["DISABLE_AUTH"] = "true"
+    # Ensure an admin user exists so DISABLE_AUTH (User.kept.first) can access all properties
+    FactoryBot.create(:user, :admin) unless User.kept.where(role: "admin").exists?
   end
 
   config.after(:each, type: :system) do

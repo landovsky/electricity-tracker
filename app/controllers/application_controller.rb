@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   before_action :require_authentication
   before_action :require_onboarding
 
-  helper_method :current_user, :logged_in?
+  helper_method :current_user, :logged_in?, :current_property, :available_properties
 
   private
 
@@ -23,6 +23,30 @@ class ApplicationController < ActionController::Base
 
   def logged_in?
     current_user.present?
+  end
+
+  # Returns the currently selected property for the logged-in user.
+  # Falls back to first accessible property if session value is stale or missing.
+  def current_property
+    return @current_property if defined?(@current_property)
+
+    props = available_properties
+    @current_property = if session[:property_id].present?
+      props.find_by(id: session[:property_id]) || props.first
+    else
+      props.first
+    end
+
+    # Keep session in sync
+    session[:property_id] = @current_property&.id
+    @current_property
+  end
+
+  # Properties available to the current user
+  def available_properties
+    return Property.none unless current_user
+
+    @available_properties ||= current_user.accessible_properties
   end
 
   def require_authentication

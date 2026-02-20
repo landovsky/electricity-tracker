@@ -32,6 +32,9 @@ Rails.application.routes.draw do
   # MAIN APPLICATION
   # =============================================================================
 
+  # Property switcher (persists selected property in session)
+  patch "prepnout-nemovitost", to: "property_switch#update", as: :switch_property
+
   # Root / Dashboard (S1 - Main Screen)
   root "dashboard#index"
 
@@ -65,7 +68,9 @@ Rails.application.routes.draw do
   resources :nemovitosti, controller: "properties", except: [ :destroy ], as: :properties do
     member do
       patch :archive
+      patch :update_users
     end
+    resources :merice, controller: "meters", only: [ :new, :create, :edit, :update ], as: :meters
   end
 
   # Users (admin-only management)

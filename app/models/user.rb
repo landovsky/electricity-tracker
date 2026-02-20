@@ -9,6 +9,17 @@ class User < ApplicationRecord
   has_many :meter_reading_events, foreign_key: :recorded_by_user_id, dependent: :nullify
   has_many :manual_consumption_entries, foreign_key: :recorded_by_user_id, dependent: :nullify
   belongs_to :default_visitor, class_name: "Visitor", optional: true
+  has_many :property_users, dependent: :destroy
+  has_many :properties, through: :property_users
+
+  # Properties accessible to this user. Admins can access all properties.
+  def accessible_properties
+    if admin?
+      Property.kept.order(:name)
+    else
+      properties.kept.order(:name)
+    end
+  end
 
   # Validations
   validates :email, uniqueness: true, allow_nil: true

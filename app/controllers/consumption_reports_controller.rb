@@ -43,7 +43,7 @@ class ConsumptionReportsController < ApplicationController
   private
 
   def set_property
-    @property = Property.kept.first
+    @property = current_property
 
     unless @property
       if request.format.json? && Rails.env.development?

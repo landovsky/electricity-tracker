@@ -111,12 +111,10 @@ class StaysController < ApplicationController
   end
 
   def find_property
-    # For now, default to Property.first as per requirements
-    # In the future, this could come from params[:property_id]
     if params[:property_id].present?
       Property.kept.find(params[:property_id])
     else
-      Property.kept.first
+      current_property
     end
   rescue ActiveRecord::RecordNotFound
     nil
@@ -160,7 +158,10 @@ class StaysController < ApplicationController
     @last_meter_readings = build_last_meter_readings_hash(property)
     @meters = property.meters.kept.order(:meter_type, :meter_group, :label)
     @recent_events = MeterReadingEvent.kept
+                                      .joins(meter_readings: :meter)
+                                      .where(meters: { property_id: property.id })
                                       .includes(:meter_readings, :stay_as_check_in, :stay_as_check_out)
+                                      .distinct
                                       .recent
                                       .limit(10)
     @recent_manual_entries = ManualConsumptionEntry.kept

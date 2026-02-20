@@ -356,16 +356,53 @@ cs:
       address: "Adresa"
       meters_count: "Počet měřičů"
       current_visitors: "Aktuální návštěvníci"
+      allowed_users: "Povolení uživatelé"
+      no_users: "Žádní přiřazení uživatelé."
+      no_users_available: "Žádní uživatelé k dispozici."
+      save_users: "Uložit"
       archive: "Archivovat"
       archive_confirm: "Opravdu chcete archivovat tuto nemovitost?"
+    form:
+      allowed_users: "Povolení uživatelé"
     create:
       success: "Nemovitost %{name} byla úspěšně vytvořena."
     update:
       success: "Nemovitost %{name} byla úspěšně upravena."
+    update_users:
+      success: "Uživatelé byli úspěšně aktualizováni."
     archive:
       success: "Nemovitost %{name} byla úspěšně archivována."
       failure: "Archivace nemovitosti se nezdařila."
     not_found: "Nemovitost nebyla nalezena."
+
+  # Meters
+  meters:
+    section:
+      title: "Měřiče"
+      add: "Přidat měřič"
+      secondary: "vedlejší"
+      no_meters: "Žádné měřiče. Přidejte měřič pro sledování spotřeby."
+      no_readings: "bez odečtu"
+    form:
+      label_placeholder: "např. Hlavní elektroměr"
+      meter_type_main: "Hlavní"
+      meter_type_secondary: "Vedlejší"
+      meter_group: "Skupina měřičů"
+      meter_group_placeholder: "např. VT/NT"
+      meter_group_hint: "Volitelné. Pro seskupení souvisejících měřičů (např. dvoutarifní měření)."
+      initial_reading: "Počáteční stav"
+      initial_reading_hint: "Aktuální stav měřiče v kWh."
+    new:
+      title: "Nový měřič"
+      submit: "Přidat měřič"
+    edit:
+      title: "Upravit měřič"
+      submit: "Uložit měřič"
+    create:
+      success: "Měřič %{label} byl úspěšně přidán."
+    update:
+      success: "Měřič %{label} byl úspěšně upraven."
+    not_found: "Měřič nebyl nalezen."
 
   # Consumption reports
   reports:

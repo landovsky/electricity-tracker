@@ -1,7 +1,6 @@
 class DashboardController < ApplicationController
   def index
-    # Single property for now (future: multi-property support)
-    @property = Property.kept.first
+    @property = current_property
 
     # Return early if no property exists (empty state)
     return unless @property
@@ -18,9 +17,12 @@ class DashboardController < ApplicationController
     # Last meter readings keyed by meter ID
     @last_meter_readings = build_last_meter_readings
 
-    # Recent activity - last 5 meter reading events
+    # Recent activity - last 5 meter reading events scoped to property meters
     @recent_events = MeterReadingEvent.kept
+                                      .joins(meter_readings: :meter)
+                                      .where(meters: { property_id: @property.id })
                                       .includes(:meter_readings, :stay_as_check_in, :stay_as_check_out)
+                                      .distinct
                                       .recent
                                       .limit(5)
 
