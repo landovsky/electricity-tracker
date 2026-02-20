@@ -235,8 +235,8 @@ cs:
       title: "Poslední aktivita"
       view_all: "Zobrazit vše"
       no_activity: "Žádná nedávná aktivita."
-      checked_in: "se přihlásil/a"
-      checked_out: "se odhlásil/a"
+      checked_in: "přijel/a"
+      checked_out: "odjel/a"
       logged_kwh: "zaznamenal/a %{kwh} kWh"
       unknown: "Neznámý"
       main_reading: "Hlavní: %{value}"
@@ -414,9 +414,40 @@ cs:
       default: "%d.%m.%Y"
       short: "%d. %b"
       long: "%d. %B %Y"
-    month_names: [~, "leden", "únor", "březen", "duben", "květen", "červen", "červenec", "srpen", "září", "říjen", "listopad", "prosinec"]
-    abbr_month_names: [~, "led", "úno", "bře", "dub", "kvě", "čvn", "čvc", "srp", "zář", "říj", "lis", "pro"]
-    day_names: ["neděle", "pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota"]
+    month_names:
+      [
+        ~,
+        "leden",
+        "únor",
+        "březen",
+        "duben",
+        "květen",
+        "červen",
+        "červenec",
+        "srpen",
+        "září",
+        "říjen",
+        "listopad",
+        "prosinec",
+      ]
+    abbr_month_names:
+      [
+        ~,
+        "led",
+        "úno",
+        "bře",
+        "dub",
+        "kvě",
+        "čvn",
+        "čvc",
+        "srp",
+        "zář",
+        "říj",
+        "lis",
+        "pro",
+      ]
+    day_names:
+      ["neděle", "pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota"]
     abbr_day_names: ["ne", "po", "út", "st", "čt", "pá", "so"]
   time:
     formats:
