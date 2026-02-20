@@ -2,7 +2,7 @@
 
 class PropertiesController < ApplicationController
   before_action :require_admin
-  before_action :set_property, only: %i[show edit update archive]
+  before_action :set_property, only: %i[show edit update archive update_users]
 
   def index
     @properties = if params[:include_archived] == "true"
@@ -12,7 +12,9 @@ class PropertiesController < ApplicationController
     end
   end
 
-  def show; end
+  def show
+    @users = User.kept.order(name: :asc)
+  end
 
   def new
     @property = Property.new
@@ -43,6 +45,13 @@ class PropertiesController < ApplicationController
       @users = User.kept.order(name: :asc)
       render :edit, status: :unprocessable_entity
     end
+  end
+
+  # PATCH /properties/:id/update_users
+  # Inline update of user assignments from the show page
+  def update_users
+    sync_user_ids(@property, params[:property][:user_ids])
+    redirect_to property_path(@property), notice: t("properties.update_users.success")
   end
 
   def archive

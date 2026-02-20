@@ -31,26 +31,33 @@
     </div>
   </section>
 
-  <%# Allowed users %>
+  <%# Allowed users — inline checkboxes, TODO: replace with scalable search/select when user count grows %>
   <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
       <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("properties.show.allowed_users") %></h2>
     </div>
     <div class="px-4 py-4">
-      <% if @property.users.any? %>
-        <div class="space-y-2">
-          <% @property.users.kept.order(:name).each do |user| %>
-            <div class="flex items-center gap-2 text-sm">
-              <i class="fa-solid fa-user text-gray-400 w-4 text-center"></i>
-              <span class="text-gray-700"><%= user.name.presence || user.email || user.phone_number %></span>
-              <% if user.admin? %>
-                <span class="text-xs font-medium text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded-full"><%= t("users.index.role_admin") %></span>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-      <% else %>
-        <p class="text-sm text-gray-400 italic"><%= t("properties.show.no_users") %></p>
+      <%= form_with url: update_users_property_path(@property), method: :patch, class: "space-y-3" do |f| %>
+        <% if @users.any? %>
+          <div class="space-y-2 max-h-60 overflow-y-auto">
+            <% @users.each do |user| %>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <%= check_box_tag "property[user_ids][]", user.id, @property.user_ids.include?(user.id), class: "rounded border-gray-300 text-brand-600 focus:ring-brand-500", id: "property_user_ids_#{user.id}" %>
+                <span class="text-sm text-gray-700"><%= user.name.presence || user.email || user.phone_number %></span>
+                <% if user.admin? %>
+                  <span class="text-xs font-medium text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded-full"><%= t("users.index.role_admin") %></span>
+                <% end %>
+              </label>
+            <% end %>
+          </div>
+          <%# Hidden field to ensure empty selection sends an empty array %>
+          <%= hidden_field_tag "property[user_ids][]", "" %>
+          <div>
+            <%= f.submit t("properties.show.save_users"), class: "bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-brand-700 transition-colors cursor-pointer" %>
+          </div>
+        <% else %>
+          <p class="text-sm text-gray-400 italic"><%= t("properties.show.no_users_available") %></p>
+        <% end %>
       <% end %>
     </div>
   </section>

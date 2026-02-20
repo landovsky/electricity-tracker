@@ -50,16 +50,19 @@
     <% end %>
     <% if logged_in? && available_properties.size > 1 %>
       <div class="px-4 py-2 bg-gray-50 border-b border-gray-200">
-        <%= form_with url: switch_property_path, method: :patch, data: { controller: "auto-submit" } do |f| %>
-          <div class="max-w-lg mx-auto flex items-center gap-2">
+        <div class="max-w-lg mx-auto flex items-center gap-2">
+          <%= form_with url: switch_property_path, method: :patch, data: { controller: "auto-submit" }, class: "flex items-center gap-2 flex-1" do |f| %>
             <i class="fa-solid fa-building text-gray-400 text-sm"></i>
             <%= f.select :property_id,
               options_for_select(available_properties.map { |p| [p.name, p.id] }, current_property&.id),
               {},
               class: "text-sm border border-gray-300 rounded-lg px-2 py-1 text-gray-700 bg-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none flex-1",
               data: { action: "change->auto-submit#submit" } %>
-          </div>
-        <% end %>
+          <% end %>
+          <%= link_to logout_path, data: { turbo_method: :delete }, class: "cursor-pointer text-gray-400 hover:text-gray-600 leading-none" do %>
+            <i class="fa-solid fa-right-from-bracket text-sm"></i>
+          <% end %>
+        </div>
       </div>
     <% end %>
     <div id="toast-container" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 space-y-2">

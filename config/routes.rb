@@ -68,6 +68,7 @@ Rails.application.routes.draw do
   resources :nemovitosti, controller: "properties", except: [ :destroy ], as: :properties do
     member do
       patch :archive
+      patch :update_users
     end
   end
 

@@ -358,6 +358,8 @@ cs:
       current_visitors: "Aktuální návštěvníci"
       allowed_users: "Povolení uživatelé"
       no_users: "Žádní přiřazení uživatelé."
+      no_users_available: "Žádní uživatelé k dispozici."
+      save_users: "Uložit"
       archive: "Archivovat"
       archive_confirm: "Opravdu chcete archivovat tuto nemovitost?"
     form:
@@ -366,6 +368,8 @@ cs:
       success: "Nemovitost %{name} byla úspěšně vytvořena."
     update:
       success: "Nemovitost %{name} byla úspěšně upravena."
+    update_users:
+      success: "Uživatelé byli úspěšně aktualizováni."
     archive:
       success: "Nemovitost %{name} byla úspěšně archivována."
       failure: "Archivace nemovitosti se nezdařila."
