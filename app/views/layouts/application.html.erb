@@ -37,9 +37,9 @@
       <nav class="px-4 py-2 flex items-center justify-between">
         <div class="flex items-center gap-6">
           <%= link_to root_path, class: "cursor-pointer text-blue-600 hover:text-blue-700 leading-none" do %><i class="fa-solid fa-house text-sm"></i><% end %>
-          <%= link_to t("layout.admin_nav.properties"), properties_path, class: "cursor-pointer text-sm font-medium leading-none #{request.path.start_with?('/properties') ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}" %>
-          <%= link_to t("layout.admin_nav.visitors"), visitors_path, class: "cursor-pointer text-sm font-medium leading-none #{request.path.start_with?('/visitors') ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}" %>
-          <%= link_to t("layout.admin_nav.users"), users_path, class: "cursor-pointer text-sm font-medium leading-none #{request.path.start_with?('/users') ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}" %>
+          <%= link_to t("layout.admin_nav.properties"), properties_path, class: "cursor-pointer text-sm font-medium leading-none #{request.path.start_with?(properties_path) ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}" %>
+          <%= link_to t("layout.admin_nav.visitors"), visitors_path, class: "cursor-pointer text-sm font-medium leading-none #{request.path.start_with?(visitors_path) ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}" %>
+          <%= link_to t("layout.admin_nav.users"), users_path, class: "cursor-pointer text-sm font-medium leading-none #{request.path.start_with?(users_path) ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}" %>
         </div>
         <div class="flex items-center gap-3">
           <%= button_to t("admin.migrations.xls_button"), admin_xls_migration_path, method: :post, data: { turbo_confirm: t("admin.migrations.xls_confirm") }, class: "cursor-pointer text-sm text-orange-500 hover:text-orange-700 font-medium leading-none" %>
