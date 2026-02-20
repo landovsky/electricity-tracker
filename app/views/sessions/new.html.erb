@@ -24,8 +24,8 @@
         </button>
       </div>
 
-      <%# Tab content — both panels stacked so the container matches the taller one %>
-      <div class="relative">
+      <%# Tab content — JS sets min-height to the taller panel %>
+      <div class="relative" data-login-method-target="panelContainer">
 
       <%# Login panel %>
       <div data-login-method-target="loginPanel" class="p-8 transition-opacity duration-200">
