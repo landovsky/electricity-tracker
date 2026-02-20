@@ -10,15 +10,25 @@ export default class extends Controller {
   showLogin() {
     this.activateTab(this.loginTabTarget)
     this.deactivateTab(this.aboutTabTarget)
-    this.loginPanelTarget.classList.remove("hidden")
-    this.aboutPanelTarget.classList.add("hidden")
+    this.showPanel(this.loginPanelTarget)
+    this.hidePanel(this.aboutPanelTarget)
   }
 
   showAbout() {
     this.activateTab(this.aboutTabTarget)
     this.deactivateTab(this.loginTabTarget)
-    this.aboutPanelTarget.classList.remove("hidden")
-    this.loginPanelTarget.classList.add("hidden")
+    this.showPanel(this.aboutPanelTarget)
+    this.hidePanel(this.loginPanelTarget)
+  }
+
+  showPanel(panel) {
+    panel.classList.remove("opacity-0", "pointer-events-none")
+    panel.classList.add("opacity-100")
+  }
+
+  hidePanel(panel) {
+    panel.classList.add("opacity-0", "pointer-events-none")
+    panel.classList.remove("opacity-100")
   }
 
   selectEmail() {
