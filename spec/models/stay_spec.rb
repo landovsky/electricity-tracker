@@ -15,8 +15,8 @@ RSpec.describe Stay, type: :model do
 
   describe "scopes" do
     let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor1) { Visitor.create!(name: "Test Visitor 1", status: "active") }
-    let(:visitor2) { Visitor.create!(name: "Test Visitor 2", status: "active") }
+    let(:visitor1) { create(:visitor, name: "Test Visitor 1", property: property) }
+    let(:visitor2) { create(:visitor, name: "Test Visitor 2", property: property) }
 
     before do
       check_in1 = MeterReadingEvent.create!(recorded_at: 2.days.ago, event_type: "check_in")
@@ -56,7 +56,7 @@ RSpec.describe Stay, type: :model do
 
   describe "#status" do
     let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
+    let(:visitor) { create(:visitor, name: "Test Visitor", property: property) }
 
     it "returns 'open' when check_out_event_id is nil" do
       check_in = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")
@@ -74,7 +74,7 @@ RSpec.describe Stay, type: :model do
 
   describe "#open?" do
     let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
+    let(:visitor) { create(:visitor, name: "Test Visitor", property: property) }
 
     it "returns true when stay is open" do
       check_in = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")
@@ -92,7 +92,7 @@ RSpec.describe Stay, type: :model do
 
   describe "#closed?" do
     let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
+    let(:visitor) { create(:visitor, name: "Test Visitor", property: property) }
 
     it "returns false when stay is open" do
       check_in = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")
@@ -110,7 +110,7 @@ RSpec.describe Stay, type: :model do
 
   describe "C2: visitor can have at most one open stay" do
     let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
+    let(:visitor) { create(:visitor, name: "Test Visitor", property: property) }
 
     context "when visitor has no open stays" do
       it "allows creating an open stay" do
@@ -171,7 +171,7 @@ RSpec.describe Stay, type: :model do
 
   describe "C3: check-out reading >= check-in reading" do
     let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
+    let(:visitor) { create(:visitor, name: "Test Visitor", property: property) }
     let(:main_meter) { Meter.create!(property: property, meter_type: "main", label: "Main", unit: "kWh") }
     let(:secondary_meter) { Meter.create!(property: property, meter_type: "secondary", label: "Secondary", unit: "kWh") }
 
@@ -247,9 +247,9 @@ RSpec.describe Stay, type: :model do
 
   describe "edge case: multiple overlapping stays (E1)" do
     let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor1) { Visitor.create!(name: "Visitor 1", status: "active") }
-    let(:visitor2) { Visitor.create!(name: "Visitor 2", status: "active") }
-    let(:visitor3) { Visitor.create!(name: "Visitor 3", status: "active") }
+    let(:visitor1) { create(:visitor, name: "Visitor 1", property: property) }
+    let(:visitor2) { create(:visitor, name: "Visitor 2", property: property) }
+    let(:visitor3) { create(:visitor, name: "Visitor 3", property: property) }
 
     it "allows multiple different visitors to have overlapping stays" do
       check_in1 = MeterReadingEvent.create!(recorded_at: 3.days.ago, event_type: "check_in")

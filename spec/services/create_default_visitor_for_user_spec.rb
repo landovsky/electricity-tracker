@@ -3,7 +3,12 @@
 require "rails_helper"
 
 RSpec.describe CreateDefaultVisitorForUser, type: :service do
+  let(:property) { create(:property) }
   let(:user) { create(:user, name: "Jan Novak") }
+
+  before do
+    create(:property_user, user: user, property: property)
+  end
 
   describe "happy path" do
     it "creates a Visitor with the user's name and active status" do
@@ -55,11 +60,10 @@ RSpec.describe CreateDefaultVisitorForUser, type: :service do
 
   describe "error handling" do
     it "adds an error if Visitor creation fails" do
-      allow(Visitor).to receive(:create!).and_raise(
-        ActiveRecord::RecordInvalid.new(Visitor.new.tap { |v| v.errors.add(:name, "is invalid") })
-      )
+      error_user = create(:user, name: nil)
 
-      outcome = described_class.run(user: user)
+      # Pass property directly to avoid PropertyUser callback
+      outcome = described_class.run(user: error_user, property: property)
 
       expect(outcome).not_to be_valid
       expect(outcome.errors[:base]).to be_present

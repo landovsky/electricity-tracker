@@ -6,11 +6,11 @@ RSpec.describe ConsumptionReportsController, type: :request do
   let(:user) { create(:user) }
   let(:property) { create(:property) }
   let!(:main_meter) { create(:meter, property: property, meter_type: :main) }
-  let!(:visitor) { create(:visitor) }
+  let!(:visitor) { create(:visitor, property: property) }
 
   before do
+    property # ensure property exists
     user
-    property
   end
 
   describe "GET /consumption_reports (index)" do

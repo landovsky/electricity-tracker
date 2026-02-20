@@ -3,9 +3,13 @@
 require "rails_helper"
 
 RSpec.describe OnboardingController, type: :request do
+  let(:property) { create(:property) }
   let(:user) { create(:user, :not_onboarded) }
 
   before do
+    property # ensure property exists
+    # Link user to property without triggering visitor-creation callback (user has no name yet)
+    PropertyUser.insert!({ user_id: user.id, property_id: property.id, created_at: Time.current, updated_at: Time.current })
     sign_in_as(user)
   end
 

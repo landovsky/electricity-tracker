@@ -7,12 +7,10 @@ RSpec.describe StaysController, type: :request do
   let(:property) { create(:property) }
   let!(:main_meter) { create(:meter, property: property, meter_type: :main, label: "Main meter") }
   let!(:secondary_meter) { create(:meter, property: property, meter_type: :secondary, label: "Upper floor meter") }
-  let(:visitor) { create(:visitor) }
+  let(:visitor) { create(:visitor, property: property) }
 
-  # Stub authentication for all tests
   before do
-    # The controller's require_authentication method creates a user automatically
-    # but we'll ensure one exists for consistency
+    property # ensure property exists
     user
   end
 
@@ -180,11 +178,13 @@ RSpec.describe StaysController, type: :request do
 
     context "constraint validation - C6: chronological consistency" do
       before do
-        # Create a previous reading event in the future
+        # Create a previous reading event in the future with meter readings for this property
         create(:meter_reading_event,
           event_type: :check_in,
           recorded_at: 1.day.from_now,
-          recorded_by_user: user
+          recorded_by_user: user,
+          property: property,
+          main_reading: 2000.0
         )
       end
 

@@ -3,15 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe VisitorsController, type: :request do
+  let(:property) { create(:property) }
   let(:member_user) { create(:user, role: :member) }
   let(:admin_user) { create(:user, role: :admin) }
-  let(:visitor) { create(:visitor, name: "Alice", status: :active) }
-  let(:archived_visitor) { create(:visitor, :discarded, name: "Bob") }
+  let(:visitor) { create(:visitor, name: "Alice", status: :active, property: property) }
+  let(:archived_visitor) { create(:visitor, :discarded, name: "Bob", property: property) }
 
-  # Stub authentication for all tests
   before do
-    # The controller's require_authentication method creates a user automatically
-    # but we'll ensure one exists for consistency
+    property # ensure property exists before admin auto-login
+    create(:property_user, user: member_user, property: property)
     member_user
     admin_user
   end

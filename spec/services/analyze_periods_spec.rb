@@ -522,7 +522,7 @@ RSpec.describe AnalyzePeriods do
         create(:manual_consumption_entry,
           visitor: visitor_b,
           property: property,
-          date: 1.8.days.ago.to_date, # Within Bob's stay (2 to 1 days ago), avoiding boundary
+          date: 2.days.ago.to_date, # Within Bob's stay (2 to 1 days ago), uses start date
           kwh: 20.0,
           note: "EV charging during Bob's stay"
         )

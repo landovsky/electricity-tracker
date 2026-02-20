@@ -28,7 +28,7 @@ RSpec.describe ManualConsumptionEntry, type: :model do
 
   describe "scopes" do
     let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
+    let(:visitor) { create(:visitor, name: "Test Visitor", property: property) }
 
     before do
       ManualConsumptionEntry.create!(visitor: visitor, property: property, date: 3.days.ago, kwh: 10, note: "Entry 1")
@@ -60,7 +60,7 @@ RSpec.describe ManualConsumptionEntry, type: :model do
 
   describe "C7: positive kWh values" do
     let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
+    let(:visitor) { create(:visitor, name: "Test Visitor", property: property) }
 
     it "is valid with positive kWh" do
       entry = ManualConsumptionEntry.new(
@@ -100,7 +100,7 @@ RSpec.describe ManualConsumptionEntry, type: :model do
 
   describe "C8: soft validation for exceeding period consumption" do
     let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
+    let(:visitor) { create(:visitor, name: "Test Visitor", property: property) }
 
     it "has exceeds_period_consumption? method" do
       entry = ManualConsumptionEntry.new(
@@ -152,7 +152,7 @@ RSpec.describe ManualConsumptionEntry, type: :model do
 
   describe "edge case: manual entry during empty house (E4)" do
     let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
+    let(:visitor) { create(:visitor, name: "Test Visitor", property: property) }
 
     it "allows manual entry when no stays are active" do
       # No stays exist
@@ -169,7 +169,7 @@ RSpec.describe ManualConsumptionEntry, type: :model do
 
   describe "edge case: manual entry during active stay (E5)" do
     let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor) { Visitor.create!(name: "Test Visitor", status: "active") }
+    let(:visitor) { create(:visitor, name: "Test Visitor", property: property) }
 
     it "allows manual entry when visitor has an active stay" do
       check_in = MeterReadingEvent.create!(recorded_at: 1.day.ago, event_type: "check_in")

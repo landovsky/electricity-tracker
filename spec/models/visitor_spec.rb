@@ -23,8 +23,9 @@ RSpec.describe Visitor, type: :model do
 
   describe "scopes" do
     before do
-      Visitor.create!(name: "Active Visitor", status: "active")
-      Visitor.create!(name: "Archived Visitor", status: "archived")
+      property = create(:property)
+      property.visitors.create!(name: "Active Visitor", status: "active")
+      property.visitors.create!(name: "Archived Visitor", status: "archived")
     end
 
     describe ".active" do

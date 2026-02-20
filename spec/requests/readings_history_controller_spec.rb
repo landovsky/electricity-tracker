@@ -6,8 +6,8 @@ RSpec.describe ReadingsHistoryController, type: :request do
   let(:user) { create(:user) }
   let(:property) { create(:property) }
   let!(:main_meter) { create(:meter, property: property, meter_type: :main) }
-  let(:visitor1) { create(:visitor, name: "Alice") }
-  let(:visitor2) { create(:visitor, name: "Bob") }
+  let(:visitor1) { create(:visitor, name: "Alice", property: property) }
+  let(:visitor2) { create(:visitor, name: "Bob", property: property) }
 
   # Create stays which automatically create meter reading events
   let!(:stay1) do

@@ -3,9 +3,11 @@
 require "rails_helper"
 
 RSpec.describe "ManualConsumptionEntries", type: :request do
-  let(:visitor) { create(:visitor) }
   let(:property) { create(:property) }
+  let(:visitor) { create(:visitor, property: property) }
   let(:user) { create(:user) }
+
+  before { property } # ensure property exists
 
   let(:valid_params) do
     {
@@ -297,7 +299,7 @@ RSpec.describe "ManualConsumptionEntries", type: :request do
 
     context "edge cases" do
       it "handles visitor with special characters in name" do
-        visitor_with_special_chars = create(:visitor, name: "O'Brien & Sons")
+        visitor_with_special_chars = create(:visitor, name: "O'Brien & Sons", property: property)
         params = valid_params.merge(visitor_id: visitor_with_special_chars.id)
 
         expect {
@@ -332,7 +334,7 @@ RSpec.describe "ManualConsumptionEntries", type: :request do
       end
 
       it "handles archived visitor" do
-        archived_visitor = create(:visitor, :archived)
+        archived_visitor = create(:visitor, :archived, property: property)
         params = valid_params.merge(visitor_id: archived_visitor.id)
 
         expect {
@@ -361,7 +363,7 @@ RSpec.describe "ManualConsumptionEntries", type: :request do
       end
 
       it "allows entries for different visitors on the same day" do
-        other_visitor = create(:visitor)
+        other_visitor = create(:visitor, property: property)
 
         post manual_consumption_entries_path, params: valid_params
 

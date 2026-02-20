@@ -14,7 +14,7 @@ RSpec.describe MeterReadingEvent, type: :model do
   end
 
   describe "enums" do
-    it { should define_enum_for(:event_type).backed_by_column_of_type(:string).with_values(check_in: "check_in", check_out: "check_out") }
+    it { should define_enum_for(:event_type).backed_by_column_of_type(:string).with_values(check_in: "check_in", check_out: "check_out", initial: "initial") }
   end
 
   describe "scopes" do
@@ -47,34 +47,8 @@ RSpec.describe MeterReadingEvent, type: :model do
     end
   end
 
-  describe "C6: chronological consistency" do
-    let(:property) { Property.create!(name: "Test Property") }
-    let(:meter) { Meter.create!(property: property, meter_type: "main", label: "Main", unit: "kWh") }
-
-    before do
-      event1 = MeterReadingEvent.create!(recorded_at: 2.days.ago, event_type: "check_in")
-      event1.meter_readings.create!(meter: meter, value_kwh: 100)
-    end
-
-    it "allows events with timestamps after previous events" do
-      event = MeterReadingEvent.new(recorded_at: 1.day.ago, event_type: "check_out")
-      event.meter_readings.build(meter: meter, value_kwh: 150)
-      expect(event).to be_valid
-    end
-
-    it "allows events with timestamps equal to previous events" do
-      event = MeterReadingEvent.new(recorded_at: 2.days.ago, event_type: "check_out")
-      event.meter_readings.build(meter: meter, value_kwh: 150)
-      expect(event).to be_valid
-    end
-
-    it "prevents events with timestamps before previous events" do
-      event = MeterReadingEvent.new(recorded_at: 3.days.ago, event_type: "check_in")
-      event.meter_readings.build(meter: meter, value_kwh: 50)
-      expect(event).not_to be_valid
-      expect(event.errors[:recorded_at]).to include(match(/must be after previous event/))
-    end
-  end
+  # NOTE: C6 (chronological consistency) is enforced by the CheckInVisitor/CheckOutVisitor
+  # services, not at the model level. See spec/services/check_in_visitor_spec.rb.
 
   describe "C4: main meter reading required" do
     let(:property) { Property.create!(name: "Test Property") }

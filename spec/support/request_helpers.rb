@@ -22,7 +22,7 @@ RSpec.configure do |config|
   # Rails 8 blocks requests by default unless from allowed hosts
   config.before(:each, type: :request) do
     # Set the host for URL helpers
-    host! "www.example.com"
+    host! "example.com"
 
     # IMPORTANT: Rails 8 has aggressive HostAuthorization middleware
     # Despite config.host_authorization = { exclude: ->(_request) { true } } in test.rb,
