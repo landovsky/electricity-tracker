@@ -59,7 +59,7 @@ class Camera::DetectionCardComponent < ApplicationComponent
     return nil unless has_photo?
 
     Rails.application.routes.url_helpers.rails_blob_path(
-      detection.photo.variant(resize_to_fill: [112, 112]),
+      detection.photo.variant(resize_to_fill: [ 112, 112 ]),
       only_path: true
     )
   end
@@ -73,19 +73,21 @@ class Camera::DetectionCardComponent < ApplicationComponent
   end
 
   def meter_label
-    case status
-    when "detected"
-      meter&.label || t("camera_sessions.detection.unknown_meter")
-    when "low_confidence"
+    base = case status
+    when "detected", "low_confidence", "replaced"
       meter&.label || t("camera_sessions.detection.unknown_meter")
     when "not_meter"
       t("camera_sessions.detection.not_meter")
     when "error"
       t("camera_sessions.detection.error")
-    when "replaced"
-      meter&.label || t("camera_sessions.detection.unknown_meter")
     else
       ""
+    end
+
+    if meter&.identifier.present? && status.in?(%w[ detected low_confidence replaced ])
+      "#{base} · #{meter.identifier}"
+    else
+      base
     end
   end
 

@@ -44,6 +44,7 @@ class MatchMeterReading < ApplicationService
       {
         id: meter.id,
         label: meter.label,
+        identifier: meter.identifier,
         meter_type: meter.meter_type,
         meter_group: meter.meter_group,
         unit: meter.unit,

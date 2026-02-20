@@ -155,7 +155,7 @@ class ConsumptionReportsController < ApplicationController
           id: e.id,
           recorded_at: e.recorded_at.iso8601,
           event_type: e.event_type,
-          readings: e.meter_readings.includes(:meter).map { |r| { meter: r.meter.label, value_kwh: r.value_kwh.to_f } }
+          readings: e.meter_readings.includes(:meter).map { |r| { meter: r.meter.label, identifier: r.meter.identifier, value_kwh: r.value_kwh.to_f } }
         }
       end,
       stays: Stay.kept.where(property_id: @property.id).includes(:visitor, :check_in_event, :check_out_event)

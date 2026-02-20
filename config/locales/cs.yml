@@ -417,6 +417,9 @@ cs:
       meter_group: "Skupina měřičů"
       meter_group_placeholder: "např. VT/NT"
       meter_group_hint: "Volitelné. Pro seskupení souvisejících měřičů (např. dvoutarifní měření)."
+      identifier: "Číslo měřiče"
+      identifier_placeholder: "např. 0040587"
+      identifier_hint: "Volitelné. Číslo nebo označení na fyzickém měřiči pro přesnější AI detekci."
       initial_reading: "Počáteční stav"
       initial_reading_hint: "Aktuální stav měřiče v kWh."
     new:

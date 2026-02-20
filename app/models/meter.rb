@@ -13,6 +13,7 @@ class Meter < ApplicationRecord
   validates :meter_type, presence: true
   validates :label, presence: true
   validates :unit, presence: true
+  validates :identifier, uniqueness: { scope: :property_id }, allow_blank: true
 
   # Scopes
   scope :main, -> { where(meter_type: "main") }

@@ -140,7 +140,7 @@
                 <div class="grid grid-cols-2 gap-3 mt-3">
                   <% event.meter_readings.each do |reading| %>
                     <div class="text-xs">
-                      <span class="text-gray-400"><%= reading.meter.label %>:</span>
+                      <span class="text-gray-400"><%= reading.meter.label %><% if reading.meter.identifier.present? %> <span class="font-mono"><%= reading.meter.identifier %></span><% end %>:</span>
                       <span class="font-medium text-gray-700"><%= number_with_delimiter(reading.value_kwh.to_i) %> kWh</span>
                     </div>
                   <% end %>

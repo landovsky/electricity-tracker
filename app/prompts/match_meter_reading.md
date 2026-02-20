@@ -7,7 +7,9 @@ You are extracting an electricity meter reading from OCR text.
 The property has these electricity meters:
 %{meters_json}
 
-Each meter entry: { id, label, meter_type, meter_group, unit, last_reading_kwh }
+Each meter entry: { id, label, identifier, meter_type, meter_group, unit, last_reading_kwh }
+
+The `identifier` field is the physical serial number or label printed on the meter device. If the OCR text contains a serial number or device identifier, use it to match to the correct meter.
 
 ## Task
 

@@ -60,7 +60,7 @@ class MetersController < ApplicationController
   end
 
   def meter_params
-    params.require(:meter).permit(:label, :meter_type, :unit, :meter_group)
+    params.require(:meter).permit(:label, :identifier, :meter_type, :unit, :meter_group)
   end
 
   def require_admin
