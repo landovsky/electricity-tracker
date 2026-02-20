@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_20_142540) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_20_162924) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -140,8 +140,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_20_142540) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.string "name"
+    t.string "subdomain"
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_properties_on_deleted_at"
+    t.index ["subdomain"], name: "index_properties_on_subdomain"
   end
 
   create_table "property_users", force: :cascade do |t|

@@ -107,7 +107,7 @@ class XlsDataMigration
 
   def setup_property_and_meters!
     puts "\nCreating property and meters..."
-    @property = Property.create!(name: "Suchá")
+    @property = Property.create!(name: "Suchá", subdomain: "sucha")
 
     @meter_vt = Meter.create!(
       property: @property,

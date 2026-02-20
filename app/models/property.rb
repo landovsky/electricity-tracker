@@ -12,6 +12,9 @@ class Property < ApplicationRecord
 
   # Validations
   validates :name, presence: true
+  validates :subdomain, allow_blank: true,
+            format: { with: /\A[a-z0-9]([a-z0-9-]*[a-z0-9])?\z/, message: "only lowercase alphanumeric and hyphens" },
+            if: :subdomain_changed?
 
   # Visitors with open stays at this property
   def current_visitors

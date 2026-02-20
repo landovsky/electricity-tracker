@@ -71,7 +71,7 @@ class PropertiesController < ApplicationController
   end
 
   def property_params
-    params.require(:property).permit(:name, :address)
+    params.require(:property).permit(:name, :address, :subdomain)
   end
 
   # Sync the allowed users for a property from checkbox form input.

@@ -42,11 +42,17 @@ class ApplicationController < ActionController::Base
     @current_property
   end
 
-  # Properties available to the current user
+  # Properties available to the current user, filtered by subdomain when present.
+  # When accessing sucha.kopernici.cz, only properties with subdomain "sucha" are shown.
+  # When accessing bare kopernici.cz (no subdomain), all user's properties are available.
   def available_properties
     return Property.none unless current_user
 
-    @available_properties ||= current_user.accessible_properties
+    @available_properties ||= begin
+      props = current_user.accessible_properties
+      sub = request.subdomain.presence
+      sub ? props.where(subdomain: sub) : props
+    end
   end
 
   def require_authentication
