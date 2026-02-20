@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# Uses Gemini LLM to determine if OCR text comes from an electricity meter photo.
+# Uses Gemini LLM to determine if OCR text comes from a utility meter photo
+# (electricity, gas, or water).
 #
 # Usage:
 #   outcome = ClassifyMeterImage.run(ocr_text: "12345.6 kWh NT")
@@ -11,7 +12,7 @@ class ClassifyMeterImage < ApplicationService
   SCHEMA = {
     type: "object",
     properties: {
-      is_meter:    { type: "boolean", description: "Whether the OCR text is from an electricity meter" },
+      is_meter:    { type: "boolean", description: "Whether the OCR text is from a utility meter (electricity, gas, or water)" },
       confidence:  { type: "number", description: "Confidence score 0.0-1.0" },
       explanation: { type: "string", description: "Brief reason if not a meter, or null" }
     },
