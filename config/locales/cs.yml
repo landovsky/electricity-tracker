@@ -383,8 +383,7 @@ cs:
       secondary: "vedlejší"
       no_meters: "Žádné měřiče. Přidejte měřič pro sledování spotřeby."
       no_readings: "bez odečtu"
-    new:
-      title: "Nový měřič"
+    form:
       label_placeholder: "např. Hlavní elektroměr"
       meter_type_main: "Hlavní"
       meter_type_secondary: "Vedlejší"
@@ -393,9 +392,17 @@ cs:
       meter_group_hint: "Volitelné. Pro seskupení souvisejících měřičů (např. dvoutarifní měření)."
       initial_reading: "Počáteční stav"
       initial_reading_hint: "Aktuální stav měřiče v kWh."
+    new:
+      title: "Nový měřič"
       submit: "Přidat měřič"
+    edit:
+      title: "Upravit měřič"
+      submit: "Uložit měřič"
     create:
       success: "Měřič %{label} byl úspěšně přidán."
+    update:
+      success: "Měřič %{label} byl úspěšně upraven."
+    not_found: "Měřič nebyl nalezen."
 
   # Consumption reports
   reports:

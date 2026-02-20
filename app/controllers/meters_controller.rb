@@ -3,6 +3,7 @@
 class MetersController < ApplicationController
   before_action :require_admin
   before_action :set_property
+  before_action :set_meter, only: %i[edit update]
 
   def new
     @meter = @property.meters.build(meter_type: "main", unit: "kWh")
@@ -33,12 +34,29 @@ class MetersController < ApplicationController
     render :new, status: :unprocessable_entity
   end
 
+  def edit
+  end
+
+  def update
+    if @meter.update(meter_params)
+      redirect_to property_path(@property), notice: t("meters.update.success", label: @meter.label)
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_property
     @property = Property.kept.find(params[:property_id])
   rescue ActiveRecord::RecordNotFound
     redirect_to properties_path, alert: t("properties.not_found")
+  end
+
+  def set_meter
+    @meter = @property.meters.kept.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to property_path(@property), alert: t("meters.not_found")
   end
 
   def meter_params

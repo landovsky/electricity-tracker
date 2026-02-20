@@ -47,7 +47,7 @@
             <div class="flex items-center justify-between text-sm">
               <div class="flex items-center gap-2">
                 <i class="fa-solid fa-gauge text-gray-400 w-4 text-center"></i>
-                <span class="text-gray-700"><%= meter.label %></span>
+                <%= link_to meter.label, edit_property_meter_path(@property, meter), class: "text-gray-700 hover:text-brand-600 transition-colors" %>
                 <% if meter.secondary? %>
                   <span class="text-xs font-medium text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full"><%= t("meters.section.secondary") %></span>
                 <% end %>

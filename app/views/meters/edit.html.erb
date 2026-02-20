@@ -3,12 +3,12 @@
     <%= link_to property_path(@property), class: "text-gray-400 hover:text-gray-600 transition-colors" do %>
       <i class="fa-solid fa-arrow-left"></i>
     <% end %>
-    <h1 class="text-lg font-bold text-gray-900"><%= t("meters.new.title") %></h1>
+    <h1 class="text-lg font-bold text-gray-900"><%= t("meters.edit.title") %></h1>
   </div>
 
   <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="px-4 py-4">
-      <%= render "form", meter: @meter, url: property_meters_path(@property), method: :post, submit_label: t("meters.new.submit"), show_initial_reading: true %>
+      <%= render "form", meter: @meter, url: property_meter_path(@property, @meter), method: :patch, submit_label: t("meters.edit.submit") %>
     </div>
   </section>
 </div>

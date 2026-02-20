@@ -375,8 +375,7 @@ en:
       secondary: "secondary"
       no_meters: "No meters. Add a meter to start tracking consumption."
       no_readings: "no readings"
-    new:
-      title: "New meter"
+    form:
       label_placeholder: "e.g. Main electricity meter"
       meter_type_main: "Main"
       meter_type_secondary: "Secondary"
@@ -385,9 +384,17 @@ en:
       meter_group_hint: "Optional. For grouping related meters (e.g. dual-tariff metering)."
       initial_reading: "Initial reading"
       initial_reading_hint: "Current meter reading in kWh."
+    new:
+      title: "New meter"
       submit: "Add meter"
+    edit:
+      title: "Edit meter"
+      submit: "Save meter"
     create:
       success: "Meter %{label} added successfully."
+    update:
+      success: "Meter %{label} updated successfully."
+    not_found: "Meter not found."
 
   # Consumption reports
   reports:

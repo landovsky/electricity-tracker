@@ -70,7 +70,7 @@ Rails.application.routes.draw do
       patch :archive
       patch :update_users
     end
-    resources :merice, controller: "meters", only: [ :new, :create ], as: :meters
+    resources :merice, controller: "meters", only: [ :new, :create, :edit, :update ], as: :meters
   end
 
   # Users (admin-only management)
