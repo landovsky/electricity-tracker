@@ -15,89 +15,61 @@ Rails.application.routes.draw do
   # =============================================================================
   # AUTHENTICATION (Magic Link + SMS OTP)
   # =============================================================================
-  # Email magic link flow:
-  # 1. User selects email on login screen (GET /login)
-  # 2. Email with magic link sent (POST /login)
-  # 3. Info page shown (GET /login/email_sent)
-  # 4. User clicks link from email (GET /auth/:token)
-  #
-  # SMS OTP flow:
-  # 1. User selects SMS on login screen (GET /login)
-  # 2. OTP code sent via SMS (POST /login/sms)
-  # 3. OTP form shown (GET /login/verify_otp)
-  # 4. User enters code (POST /login/verify_otp)
-  #
-  # Onboarding (first-time users):
-  # 1. After first login, user sets their name (GET/PATCH /onboarding)
-
-  get "login", to: "sessions#new", as: :login
-  post "login", to: "sessions#create"
-  get "login/email_sent", to: "sessions#email_sent", as: :email_sent
-  post "login/sms", to: "sessions#create_sms", as: :login_sms
-  get "login/verify_otp", to: "sessions#otp_form", as: :otp_form
-  post "login/verify_otp", to: "sessions#verify_otp", as: :verify_otp
+  get "prihlaseni", to: "sessions#new", as: :login
+  post "prihlaseni", to: "sessions#create"
+  get "prihlaseni/email_odeslan", to: "sessions#email_sent", as: :email_sent
+  post "prihlaseni/sms", to: "sessions#create_sms", as: :login_sms
+  get "prihlaseni/overeni", to: "sessions#otp_form", as: :otp_form
+  post "prihlaseni/overeni", to: "sessions#verify_otp", as: :verify_otp
   get "auth/:token", to: "sessions#verify", as: :auth_verify
-  delete "logout", to: "sessions#destroy", as: :logout
+  delete "odhlaseni", to: "sessions#destroy", as: :logout
 
   # Onboarding (name input for new self-registered users)
-  get "onboarding", to: "onboarding#show", as: :onboarding
-  patch "onboarding", to: "onboarding#update"
+  get "uvod", to: "onboarding#show", as: :onboarding
+  patch "uvod", to: "onboarding#update"
 
   # =============================================================================
   # MAIN APPLICATION
   # =============================================================================
 
   # Root / Dashboard (S1 - Main Screen)
-  # Combined view: house status, action forms (check-in/out, manual entry), recent activity
   root "dashboard#index"
 
   # Stays (Check-in / Check-out)
-  # Check-in creates a new stay, check-out closes an existing stay
-  # Both require meter readings
-  resources :stays, only: [ :create ] do
+  resources :pobyty, controller: "stays", only: [ :create ], as: :stays do
     member do
-      # Custom action for check-out (closes the stay)
-      # PATCH /stays/:id/check_out
       patch :check_out
     end
   end
 
   # Manual Consumption Entries
-  # Direct kWh attribution (e.g., EV charging) without a formal stay
-  resources :manual_consumption_entries, only: [ :create ]
+  resources :rucni_spotreba, controller: "manual_consumption_entries", only: [ :create ], as: :manual_consumption_entries
 
   # Consumption Report (S2)
-  # Summary view showing kWh breakdown per visitor for a date range
-  # Single index action with date range params (year, start_date, end_date)
-  get "consumption_reports", to: "consumption_reports#index", as: :consumption_reports
+  get "prehled-spotreby", to: "consumption_reports#index", as: :consumption_reports
 
   # Meter Reading Events
-  resources :meter_reading_events, only: [ :destroy ]
+  resources :odecty, controller: "meter_reading_events", only: [ :destroy ], as: :meter_reading_events
 
   # Readings History (S3)
-  # Chronological log of all meter reading events and manual entries
-  # Filterable by visitor and date range
-  get "readings_history", to: "readings_history#index", as: :readings_history
+  get "historie-odectu", to: "readings_history#index", as: :readings_history
 
   # Visitors
-  # Full CRUD for visitor management
-  resources :visitors do
+  resources :navstevnici, controller: "visitors", as: :visitors do
     member do
-      # Soft delete / archive a visitor
-      # PATCH /visitors/:id/archive
       patch :archive
     end
   end
 
   # Properties (admin-only management)
-  resources :properties, except: [ :destroy ] do
+  resources :nemovitosti, controller: "properties", except: [ :destroy ], as: :properties do
     member do
       patch :archive
     end
   end
 
   # Users (admin-only management)
-  resources :users, except: [ :destroy ] do
+  resources :uzivatele, controller: "users", except: [ :destroy ], as: :users do
     member do
       patch :archive
     end
@@ -107,6 +79,6 @@ Rails.application.routes.draw do
   # ADMIN
   # =============================================================================
   namespace :admin do
-    post "migrations/xls", to: "migrations#xls", as: :xls_migration
+    post "migrace/xls", to: "migrations#xls", as: :xls_migration
   end
 end
