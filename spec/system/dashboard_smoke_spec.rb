@@ -13,7 +13,7 @@ RSpec.describe "Dashboard", type: :system do
   let!(:property) { create(:property) }
   let!(:main_meter) { create(:meter, :main, property: property) }
   let!(:secondary_meter) { create(:meter, :secondary, property: property) }
-  let!(:visitor) { create(:visitor, name: "Alice") }
+  let!(:visitor) { create(:visitor, name: "Alice", property: property) }
 
   scenario "loads the dashboard page" do
     visit root_path
@@ -27,7 +27,7 @@ RSpec.describe "Dashboard", type: :system do
     visit root_path
 
     # Forms should be present (using CSS selectors)
-    expect(page).to have_css("form[action='/stays']")
+    expect(page).to have_css("form[action='/pobyty']")
     expect(page).to have_selector("select#visitor_id")
     expect(page).to have_field("meter_readings[#{main_meter.id}]")
   end

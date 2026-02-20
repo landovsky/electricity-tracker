@@ -14,8 +14,8 @@ RSpec.describe "Manual Entry Flows", type: :system do
   let!(:property) { create(:property) }
   let!(:main_meter) { create(:meter, :main, property: property) }
   let!(:secondary_meter) { create(:meter, :secondary, property: property) }
-  let!(:alice) { create(:visitor, name: "Alice Anderson") }
-  let!(:bob) { create(:visitor, name: "Bob Brown") }
+  let!(:alice) { create(:visitor, name: "Alice Anderson", property: property) }
+  let!(:bob) { create(:visitor, name: "Bob Brown", property: property) }
   let!(:user) { create(:user) }
 
   before do

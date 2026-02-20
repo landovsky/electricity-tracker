@@ -35,7 +35,7 @@ RSpec.describe "Check-out Flows", type: :system do
   let!(:user) { create(:user) }
 
   describe "Happy Path Scenarios" do
-    let!(:alice) { create(:visitor, name: "Alice") }
+    let!(:alice) { create(:visitor, name: "Alice", property: property) }
 
     context "when checking out with both meter readings" do
       let!(:stay) do
@@ -160,7 +160,7 @@ RSpec.describe "Check-out Flows", type: :system do
   end
 
   describe "Validation Scenarios" do
-    let!(:alice) { create(:visitor, name: "Alice") }
+    let!(:alice) { create(:visitor, name: "Alice", property: property) }
 
     context "Constraint C3: check-out reading >= check-in reading" do
       let!(:stay) do
@@ -269,7 +269,7 @@ RSpec.describe "Check-out Flows", type: :system do
     end
 
     context "Constraint C1: non-decreasing meter readings" do
-      let!(:bob) { create(:visitor, name: "Bob") }
+      let!(:bob) { create(:visitor, name: "Bob", property: property) }
 
       before do
         # Set up timeline: Alice checked out previously
@@ -354,7 +354,7 @@ RSpec.describe "Check-out Flows", type: :system do
 
   describe "Edge Cases" do
     context "E3: Same-day check-in and check-out" do
-      let!(:alice) { create(:visitor, name: "Alice") }
+      let!(:alice) { create(:visitor, name: "Alice", property: property) }
 
       before do
         visit root_path
@@ -423,8 +423,8 @@ RSpec.describe "Check-out Flows", type: :system do
     end
 
     context "E11: Concurrent check-in/check-out events" do
-      let!(:alice) { create(:visitor, name: "Alice") }
-      let!(:bob) { create(:visitor, name: "Bob") }
+      let!(:alice) { create(:visitor, name: "Alice", property: property) }
+      let!(:bob) { create(:visitor, name: "Bob", property: property) }
 
       before do
         visit root_path
@@ -555,7 +555,7 @@ RSpec.describe "Check-out Flows", type: :system do
   end
 
   describe "Error Handling" do
-    let!(:alice) { create(:visitor, name: "Alice") }
+    let!(:alice) { create(:visitor, name: "Alice", property: property) }
 
     before do
       visit root_path
@@ -590,8 +590,8 @@ RSpec.describe "Check-out Flows", type: :system do
   end
 
   describe "Form Behavior" do
-    let!(:alice) { create(:visitor, name: "Alice") }
-    let!(:bob) { create(:visitor, name: "Bob") }
+    let!(:alice) { create(:visitor, name: "Alice", property: property) }
+    let!(:bob) { create(:visitor, name: "Bob", property: property) }
     let!(:alice_stay) do
       create(:stay, :open,
         visitor: alice,

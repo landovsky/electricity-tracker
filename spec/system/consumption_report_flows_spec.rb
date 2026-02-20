@@ -9,7 +9,7 @@ RSpec.describe "Consumption Report Flows", type: :system do
 
   describe "Happy Path Scenarios" do
     context "single visitor for a period" do
-      let!(:visitor_alice) { create(:visitor, name: "Alice") }
+      let!(:visitor_alice) { create(:visitor, name: "Alice", property: property) }
 
       it "generates report showing consumption for single visitor" do
         # Build timeline with single visitor
@@ -28,9 +28,11 @@ RSpec.describe "Consumption Report Flows", type: :system do
 
         # UI State Verification
         expect(page).to have_content(I18n.t("reports.title"))
-        expect(page).to have_content("January 01, 2026 - January 10, 2026")
+        expect(page).to have_content("2026-01-01")
+        expect(page).to have_content("2026-01-10")
         expect(page).to have_content("Alice")
-        expect(page).to have_content("200.00") # Total consumption
+        # Total = main delta (200) + secondary delta (100) = 300
+        expect(page).to have_content("300") # Total consumption (integer precision)
 
         # Database State Verification
         outcome = CalculateConsumption.run(
@@ -43,14 +45,14 @@ RSpec.describe "Consumption Report Flows", type: :system do
         result = outcome.result
         expect(result[:visitors].size).to eq(1)
         expect(result[:visitors].first[:visitor]).to eq(visitor_alice)
-        expect(result[:visitors].first[:total_kwh]).to eq(200.0)
-        expect(result[:total_consumption_kwh]).to eq(200.0)
+        expect(result[:visitors].first[:total_kwh]).to eq(300.0) # main 200 + secondary 100
+        expect(result[:total_consumption_kwh]).to eq(300.0)
       end
     end
 
     context "multiple non-overlapping visitors" do
-      let!(:visitor_alice) { create(:visitor, name: "Alice") }
-      let!(:visitor_bob) { create(:visitor, name: "Bob") }
+      let!(:visitor_alice) { create(:visitor, name: "Alice", property: property) }
+      let!(:visitor_bob) { create(:visitor, name: "Bob", property: property) }
 
       it "generates report showing separate consumption for each visitor" do
         # Timeline:
@@ -111,7 +113,7 @@ RSpec.describe "Consumption Report Flows", type: :system do
     end
 
     context "correct consumption allocation" do
-      let!(:visitor_alice) { create(:visitor, name: "Alice") }
+      let!(:visitor_alice) { create(:visitor, name: "Alice", property: property) }
 
       it "shows correct allocation in UI and database" do
         timeline = build_timeline(property) do |t|
@@ -126,11 +128,10 @@ RSpec.describe "Consumption Report Flows", type: :system do
 
         visit_consumption_report(from: Date.new(2026, 1, 1), to: Date.new(2026, 1, 10))
 
-        # UI shows correct values
-        within("table") do
-          expect(page).to have_content("Alice")
-          expect(page).to have_content("150.00") # Total
-        end
+        # UI shows correct values (integer precision, card-based layout)
+        # Total = main delta (150) + secondary delta (75) = 225
+        expect(page).to have_content("Alice")
+        expect(page).to have_content("225") # Total consumption (integer precision)
 
         # Database has correct allocation
         outcome = CalculateConsumption.run(
@@ -142,19 +143,19 @@ RSpec.describe "Consumption Report Flows", type: :system do
         result = outcome.result
         alice_result = result[:visitors].first
 
-        expect(alice_result[:period_shares_kwh]).to eq(150.0)
+        expect(alice_result[:period_shares_kwh]).to eq(225.0) # main 150 + secondary 75
         expect(alice_result[:manual_entries_kwh]).to eq(0.0)
         expect(alice_result[:empty_house_share_kwh]).to eq(0.0)
-        expect(alice_result[:total_kwh]).to eq(150.0)
+        expect(alice_result[:total_kwh]).to eq(225.0)
       end
     end
   end
 
   describe "Complex Allocation Scenarios" do
     context "E1: overlapping visitors (equal split)" do
-      let!(:visitor_alice) { create(:visitor, name: "Alice") }
-      let!(:visitor_bob) { create(:visitor, name: "Bob") }
-      let!(:visitor_charlie) { create(:visitor, name: "Charlie") }
+      let!(:visitor_alice) { create(:visitor, name: "Alice", property: property) }
+      let!(:visitor_bob) { create(:visitor, name: "Bob", property: property) }
+      let!(:visitor_charlie) { create(:visitor, name: "Charlie", property: property) }
 
       it "splits consumption equally among 3+ overlapping visitors" do
         # Timeline:
@@ -312,8 +313,8 @@ RSpec.describe "Consumption Report Flows", type: :system do
     end
 
     context "E2: empty house consumption pooling" do
-      let!(:visitor_alice) { create(:visitor, name: "Alice") }
-      let!(:visitor_bob) { create(:visitor, name: "Bob") }
+      let!(:visitor_alice) { create(:visitor, name: "Alice", property: property) }
+      let!(:visitor_bob) { create(:visitor, name: "Bob", property: property) }
 
       it "pools empty house consumption and distributes equally" do
         # Timeline:
@@ -422,7 +423,7 @@ RSpec.describe "Consumption Report Flows", type: :system do
     end
 
     context "E4: manual entries during empty house" do
-      let!(:visitor_alice) { create(:visitor, name: "Alice") }
+      let!(:visitor_alice) { create(:visitor, name: "Alice", property: property) }
 
       it "attributes manual entry and deducts from empty house pool" do
         # Timeline:
@@ -489,8 +490,8 @@ RSpec.describe "Consumption Report Flows", type: :system do
     end
 
     context "E5: manual entries during active stay" do
-      let!(:visitor_alice) { create(:visitor, name: "Alice") }
-      let!(:visitor_bob) { create(:visitor, name: "Bob") }
+      let!(:visitor_alice) { create(:visitor, name: "Alice", property: property) }
+      let!(:visitor_bob) { create(:visitor, name: "Bob", property: property) }
 
       it "attributes manual entry and splits remainder among present visitors" do
         # Timeline:
@@ -568,7 +569,7 @@ RSpec.describe "Consumption Report Flows", type: :system do
     end
 
     context "multiple meter types" do
-      let!(:visitor_alice) { create(:visitor, name: "Alice") }
+      let!(:visitor_alice) { create(:visitor, name: "Alice", property: property) }
 
       it "includes both main and secondary meter consumption" do
         # Timeline:
@@ -608,9 +609,9 @@ RSpec.describe "Consumption Report Flows", type: :system do
     end
 
     context "mixed scenarios (overlap + empty + manual)" do
-      let!(:visitor_alice) { create(:visitor, name: "Alice") }
-      let!(:visitor_bob) { create(:visitor, name: "Bob") }
-      let!(:visitor_charlie) { create(:visitor, name: "Charlie") }
+      let!(:visitor_alice) { create(:visitor, name: "Alice", property: property) }
+      let!(:visitor_bob) { create(:visitor, name: "Bob", property: property) }
+      let!(:visitor_charlie) { create(:visitor, name: "Charlie", property: property) }
 
       it "handles complex mixed scenario correctly" do
         # Complex Timeline:
@@ -721,7 +722,7 @@ RSpec.describe "Consumption Report Flows", type: :system do
   end
 
   describe "Date Range Filtering" do
-    let!(:visitor_alice) { create(:visitor, name: "Alice") }
+    let!(:visitor_alice) { create(:visitor, name: "Alice", property: property) }
 
     it "only shows consumption for specified date range" do
       # Create stays in different months
@@ -774,7 +775,7 @@ RSpec.describe "Consumption Report Flows", type: :system do
     end
 
     context "single meter reading event" do
-      let!(:visitor_alice) { create(:visitor, name: "Alice") }
+      let!(:visitor_alice) { create(:visitor, name: "Alice", property: property) }
 
       it "shows no consumption with only one event" do
         user = create(:user)
@@ -792,7 +793,7 @@ RSpec.describe "Consumption Report Flows", type: :system do
     end
 
     context "year parameter" do
-      let!(:visitor_alice) { create(:visitor, name: "Alice") }
+      let!(:visitor_alice) { create(:visitor, name: "Alice", property: property) }
 
       it "accepts year parameter for full year report" do
         timeline = build_timeline(property) do |t|
@@ -807,7 +808,8 @@ RSpec.describe "Consumption Report Flows", type: :system do
 
         visit consumption_reports_path(year: 2026)
 
-        expect(page).to have_content("January 01, 2026 - December 31, 2026")
+        expect(page).to have_content("2026-01-01")
+        expect(page).to have_content("2026-12-31")
         expect(page).to have_content("Alice")
       end
     end

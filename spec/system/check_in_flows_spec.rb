@@ -20,8 +20,8 @@ RSpec.describe "Visitor Check-In Flows", type: :system do
   let!(:property) { create(:property) }
   let!(:main_meter) { create(:meter, :main, property: property) }
   let!(:secondary_meter) { create(:meter, :secondary, property: property) }
-  let!(:visitor1) { create(:visitor, name: "Alice") }
-  let!(:visitor2) { create(:visitor, name: "Bob") }
+  let!(:visitor1) { create(:visitor, name: "Alice", property: property) }
+  let!(:visitor2) { create(:visitor, name: "Bob", property: property) }
   let!(:user) { create(:user) }
 
   before do
