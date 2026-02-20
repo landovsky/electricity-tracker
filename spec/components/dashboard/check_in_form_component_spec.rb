@@ -4,8 +4,8 @@ require "rails_helper"
 
 RSpec.describe Dashboard::CheckInFormComponent, type: :component do
   let(:visitor) { instance_double("Visitor", id: 1, name: "Alice") }
-  let(:main_meter) { instance_double("Meter", id: 1, meter_type: "main", label: "Main meter", main?: true, meter_group: nil) }
-  let(:secondary_meter) { instance_double("Meter", id: 2, meter_type: "secondary", label: "Upper floor", main?: false, meter_group: nil) }
+  let(:main_meter) { instance_double("Meter", id: 1, meter_type: "main", label: "Main meter", main?: true, meter_group: nil, identifier: nil) }
+  let(:secondary_meter) { instance_double("Meter", id: 2, meter_type: "secondary", label: "Upper floor", main?: false, meter_group: nil, identifier: nil) }
   let(:meters) { [ main_meter, secondary_meter ] }
   let(:last_readings) do
     {

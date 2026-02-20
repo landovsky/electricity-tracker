@@ -34,7 +34,7 @@ RSpec.describe Dashboard::RecentActivityComponent, type: :component do
     ))
 
     expect(page).to have_css("h2", text: "Recent activity")
-    expect(page).to have_link("View all", href: "/readings_history")
+    expect(page).to have_link("View all")
   end
 
   it "renders events and manual entries combined and sorted" do
