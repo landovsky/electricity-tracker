@@ -433,6 +433,13 @@ en:
     total_mismatch: "Total (%{total} kWh) does not match meter delta (%{delta} kWh). Please verify."
     per_visitor_summary: "Per-visitor summary"
     no_data: "No consumption data found for the selected period."
+    monthly_consumption: "Monthly consumption"
+    average_monthly: "Monthly average"
+    month: "Month"
+    consumption: "Consumption"
+    readings: "Readings"
+    year_over_year: "Year-over-year"
+    change: "Change"
 
   # Meter reading events
   meter_reading_events:

@@ -485,6 +485,13 @@ cs:
     total_mismatch: "Celkem (%{total} kWh) neodpovídá změně měřičů (%{delta} kWh). Prosím zkontrolujte."
     per_visitor_summary: "Shrnutí dle návštěvníků"
     no_data: "Pro vybrané období nebyla nalezena žádná data o spotřebě."
+    monthly_consumption: "Měsíční spotřeba"
+    average_monthly: "Měsíční průměr"
+    month: "Měsíc"
+    consumption: "Spotřeba"
+    readings: "Odečty"
+    year_over_year: "Meziroční srovnání"
+    change: "Změna"
 
   # Meter reading events
   meter_reading_events:

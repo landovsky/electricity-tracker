@@ -1,0 +1,143 @@
+<%= render "consumption_reports/header" %>
+
+<main class="max-w-lg mx-auto px-4 py-5 space-y-5">
+
+  <%= render "consumption_reports/date_range_selector" %>
+
+  <!-- Summary Card -->
+  <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("reports.period_totals") %></h2>
+    </div>
+    <div class="grid grid-cols-2 divide-x divide-gray-100">
+      <div class="p-4 text-center">
+        <div class="text-xs text-gray-500 mb-1"><i class="fa-solid fa-gauge-high mr-1"></i><%= t("reports.total_consumption") %></div>
+        <div class="text-2xl font-bold text-gray-900"><%= number_with_precision(@trends[:total_kwh], precision: 0) %></div>
+        <div class="text-xs text-gray-400">kWh</div>
+      </div>
+      <div class="p-4 text-center">
+        <% avg = @trends[:months].any? ? @trends[:total_kwh] / @trends[:months].size : 0 %>
+        <div class="text-xs text-gray-500 mb-1"><i class="fa-solid fa-chart-line mr-1"></i><%= t("reports.average_monthly") %></div>
+        <div class="text-2xl font-bold text-gray-900"><%= number_with_precision(avg, precision: 0) %></div>
+        <div class="text-xs text-gray-400">kWh</div>
+      </div>
+    </div>
+  </section>
+
+  <% if @trends[:months].any? %>
+    <!-- Monthly Consumption Table -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("reports.monthly_consumption") %></h2>
+      </div>
+
+      <!-- Table header -->
+      <div class="grid grid-cols-12 gap-1 px-4 py-2 border-b border-gray-100 text-xs text-gray-400 font-medium">
+        <div class="col-span-3"><%= t("reports.month") %></div>
+        <div class="col-span-2 text-right"><%= t("reports.consumption") %></div>
+        <div class="col-span-2 text-right"><%= t("reports.readings") %></div>
+        <div class="col-span-5"></div>
+      </div>
+
+      <% max_kwh = @trends[:months].map { |m| m[:total_kwh] }.max %>
+
+      <!-- Rows -->
+      <div class="divide-y divide-gray-50">
+        <% @trends[:months].each do |month_data| %>
+          <% bar_pct = max_kwh > 0 ? (month_data[:total_kwh] / max_kwh * 100).round : 0 %>
+          <div class="grid grid-cols-12 gap-1 px-4 py-3 text-sm items-center">
+            <div class="col-span-3 font-medium text-gray-900 truncate"><%= l(month_data[:month], format: :short) %></div>
+            <div class="col-span-2 text-right text-gray-600"><%= number_with_precision(month_data[:total_kwh], precision: 0) %></div>
+            <div class="col-span-2 text-right text-gray-400"><%= month_data[:readings_count] %></div>
+            <div class="col-span-5 pl-2">
+              <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-blue-500 rounded-full" style="width: <%= bar_pct %>%"></div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Totals row -->
+      <div class="grid grid-cols-12 gap-1 px-4 py-3 bg-gray-50 border-t border-gray-200 text-sm font-semibold">
+        <div class="col-span-3 text-gray-700"><%= t("reports.total") %></div>
+        <div class="col-span-2 text-right text-gray-900"><%= number_with_precision(@trends[:total_kwh], precision: 0) %></div>
+        <div class="col-span-2 text-right text-gray-400"><%= @trends[:months].sum { |m| m[:readings_count] } %></div>
+        <div class="col-span-5"></div>
+      </div>
+    </section>
+
+    <%
+      # Year-over-year comparison: group months by month number across years
+      years = @trends[:months].map { |m| m[:month].year }.uniq.sort
+    %>
+    <% if years.size >= 2 %>
+      <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+          <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide"><%= t("reports.year_over_year") %></h2>
+        </div>
+
+        <%
+          # Build lookup: { month_number => { year => kwh } }
+          yoy = {}
+          @trends[:months].each do |m|
+            mn = m[:month].month
+            yoy[mn] ||= {}
+            yoy[mn][m[:month].year] = m[:total_kwh]
+          end
+        %>
+
+        <!-- Header -->
+        <div class="grid grid-cols-<%= 3 + years.size * 2 + 2 %> gap-1 px-4 py-2 border-b border-gray-100 text-xs text-gray-400 font-medium">
+          <div class="col-span-3"><%= t("reports.month") %></div>
+          <% years.each do |year| %>
+            <div class="col-span-2 text-right"><%= year %></div>
+          <% end %>
+          <div class="col-span-2 text-right"><%= t("reports.change") %></div>
+        </div>
+
+        <!-- Rows -->
+        <div class="divide-y divide-gray-50">
+          <% (1..12).each do |mn| %>
+            <% next unless yoy[mn] %>
+            <% month_name = I18n.l(Date.new(2000, mn, 1), format: :short) %>
+            <div class="grid grid-cols-<%= 3 + years.size * 2 + 2 %> gap-1 px-4 py-2 text-sm items-center">
+              <div class="col-span-3 font-medium text-gray-900"><%= month_name %></div>
+              <% years.each do |year| %>
+                <div class="col-span-2 text-right text-gray-600">
+                  <%= yoy[mn][year] ? number_with_precision(yoy[mn][year], precision: 0) : "—" %>
+                </div>
+              <% end %>
+              <div class="col-span-2 text-right">
+                <%
+                  # Show change between last two years that have data for this month
+                  vals = years.map { |y| yoy[mn][y] }.compact
+                  if vals.size >= 2
+                    prev_val = vals[-2]
+                    curr_val = vals[-1]
+                    diff = curr_val - prev_val
+                    pct = prev_val > 0 ? ((diff / prev_val) * 100).round : 0
+                    color = diff < 0 ? "text-green-600" : (diff > 0 ? "text-red-600" : "text-gray-400")
+                    sign = diff > 0 ? "+" : ""
+                %>
+                  <span class="<%= color %> font-medium"><%= sign %><%= pct %>%</span>
+                <% else %>
+                  <span class="text-gray-300">—</span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+  <% else %>
+    <section class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-6 text-center text-gray-500">
+        <i class="fa-solid fa-inbox text-3xl text-gray-300 mb-2"></i>
+        <p><%= t("reports.no_data") %></p>
+      </div>
+    </section>
+  <% end %>
+
+</main>

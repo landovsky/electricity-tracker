@@ -1,0 +1,16 @@
+<header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+  <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <%= link_to root_path, class: "text-gray-400 hover:text-gray-600" do %>
+        <i class="fa-solid fa-chevron-left"></i>
+      <% end %>
+      <h1 class="text-lg font-bold text-gray-900">
+        <i class="fa-solid fa-chart-pie text-blue-600 mr-1"></i>
+        <%= t("reports.title") %>
+      </h1>
+    </div>
+    <%= link_to readings_history_path, class: "text-sm text-blue-600 font-medium hover:text-blue-700" do %>
+      <i class="fa-solid fa-clock-rotate-left mr-1"></i><%= t("reports.history") %>
+    <% end %>
+  </div>
+</header>

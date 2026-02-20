@@ -16,8 +16,41 @@ class ConsumptionReportsController < ApplicationController
   before_action :set_date_range
 
   # GET /consumption_reports
-  # Generates consumption report for the specified date range or year
+  # Generates consumption report for the specified date range or year.
+  # For meter_only properties, renders monthly trends instead of visitor allocation.
   def index
+    @past_years = past_years_with_data
+
+    if @property.meter_only?
+      render_trends
+    else
+      render_allocation
+    end
+  end
+
+  private
+
+  def render_trends
+    outcome = CalculateConsumptionTrends.run(
+      property: @property,
+      start_date: @start_date,
+      end_date: @end_date
+    )
+
+    if outcome.valid?
+      @trends = outcome.result
+    else
+      flash.now[:alert] = format_errors(outcome.errors)
+      @trends = empty_trends
+    end
+
+    respond_to do |format|
+      format.html { render :trends }
+      format.json { render json: build_trends_debug_json } if Rails.env.development?
+    end
+  end
+
+  def render_allocation
     outcome = CalculateConsumption.run(
       property: @property,
       start_date: @start_date,
@@ -32,15 +65,11 @@ class ConsumptionReportsController < ApplicationController
       @report = empty_report
     end
 
-    @past_years = past_years_with_data
-
     respond_to do |format|
       format.html
       format.json { render json: build_debug_json } if Rails.env.development?
     end
   end
-
-  private
 
   def set_property
     @property = current_property
@@ -100,6 +129,14 @@ class ConsumptionReportsController < ApplicationController
 
   def include_archived?
     params[:include_archived] == "true"
+  end
+
+  def empty_trends
+    {
+      months: [],
+      total_kwh: 0.0,
+      date_range: { start_date: @start_date, end_date: @end_date }
+    }
   end
 
   def empty_report
@@ -180,6 +217,32 @@ class ConsumptionReportsController < ApplicationController
           date: e.date,
           kwh: e.kwh.to_f,
           note: e.note
+        }
+      end
+    }
+  end
+
+  def build_trends_debug_json
+    {
+      date_range: { start_date: @start_date, end_date: @end_date },
+      tracking_mode: "meter_only",
+      trends: {
+        total_kwh: @trends[:total_kwh],
+        months: @trends[:months].map do |m|
+          {
+            month: m[:month].iso8601,
+            total_kwh: m[:total_kwh],
+            readings_count: m[:readings_count]
+          }
+        end
+      },
+      meter_reading_events: @property.meters.kept.flat_map(&:meter_readings)
+        .map(&:meter_reading_event).uniq.sort_by(&:recorded_at).map do |e|
+        {
+          id: e.id,
+          recorded_at: e.recorded_at.iso8601,
+          event_type: e.event_type,
+          readings: e.meter_readings.includes(:meter).map { |r| { meter: r.meter.label, identifier: r.meter.identifier, value_kwh: r.value_kwh.to_f } }
         }
       end
     }

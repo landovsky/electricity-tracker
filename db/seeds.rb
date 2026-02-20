@@ -49,17 +49,17 @@ end
 # VISITORS
 # =============================================================================
 
-petr = Visitor.find_or_create_by!(name: "Petr Potužník") do |v|
+petr = Visitor.find_or_create_by!(property:, status: "active", name: "Petr Potužník") do |v|
   v.status = "active"
   puts "✓ Created visitor: #{v.name}"
 end
 
-tereza = Visitor.find_or_create_by!(name: "Tereza") do |v|
+tereza = Visitor.find_or_create_by!(property:, status: "active", name: "Tereza") do |v|
   v.status = "active"
   puts "✓ Created visitor: #{v.name}"
 end
 
-bara = Visitor.find_or_create_by!(name: "Bára") do |v|
+bara = Visitor.find_or_create_by!(property:, status: "active", name: "Bára") do |v|
   v.status = "active"
   puts "✓ Created visitor: #{v.name}"
 end
@@ -292,6 +292,72 @@ create_manual_entry(
   kwh: 48.5,
   note: "Nabití elektroauta - Škoda Enyaq"
 )
+
+# =============================================================================
+# METER-ONLY PROPERTY (co-op boiler)
+# =============================================================================
+
+puts "\n🏢 Creating meter-only property..."
+
+coop = Property.find_or_create_by!(name: "Bytový dům — kotelna") do |p|
+  p.address = "Příčná 15, Praha 3"
+  p.tracking_mode = "meter_only"
+  puts "✓ Created meter_only property: #{p.name}"
+end
+
+# Ensure tracking mode is set even if property already existed
+coop.update!(tracking_mode: "meter_only") unless coop.meter_only?
+
+gas_meter = Meter.find_or_create_by!(property: coop, meter_type: "main", meter_group: "main") do |m|
+  m.label = "Plynový kotel"
+  m.unit = "kWh"
+  puts "✓ Created meter: #{m.label}"
+end
+
+# Grant admin access to the coop property
+coop.users << admin unless coop.users.include?(admin)
+
+# Create monthly readings spanning 2025 and 2026
+readings_data = [
+  # 2025 monthly readings (initial + 12 months)
+  { date: Time.zone.local(2025, 1, 1, 10, 0),  value: 10_000, type: :initial },
+  { date: Time.zone.local(2025, 2, 1, 10, 0),  value: 10_520 },
+  { date: Time.zone.local(2025, 3, 1, 10, 0),  value: 10_980 },
+  { date: Time.zone.local(2025, 4, 1, 10, 0),  value: 11_320 },
+  { date: Time.zone.local(2025, 5, 1, 10, 0),  value: 11_550 },
+  { date: Time.zone.local(2025, 6, 1, 10, 0),  value: 11_700 },
+  { date: Time.zone.local(2025, 7, 1, 10, 0),  value: 11_810 },
+  { date: Time.zone.local(2025, 8, 1, 10, 0),  value: 11_900 },
+  { date: Time.zone.local(2025, 9, 1, 10, 0),  value: 12_010 },
+  { date: Time.zone.local(2025, 10, 1, 10, 0), value: 12_250 },
+  { date: Time.zone.local(2025, 11, 1, 10, 0), value: 12_620 },
+  { date: Time.zone.local(2025, 12, 1, 10, 0), value: 13_100 },
+  # 2026 readings (partial year)
+  { date: Time.zone.local(2026, 1, 1, 10, 0),  value: 13_650 },
+  { date: Time.zone.local(2026, 2, 1, 10, 0),  value: 14_200 },
+]
+
+readings_data.each do |rd|
+  existing = MeterReadingEvent.kept
+    .joins(meter_readings: :meter)
+    .where(meters: { property_id: coop.id })
+    .where(recorded_at: rd[:date].beginning_of_day..rd[:date].end_of_day)
+    .first
+  next if existing
+
+  event_type = rd[:type] || :periodic
+  event = MeterReadingEvent.create!(
+    recorded_at: rd[:date],
+    event_type: event_type,
+    recorded_by_user: admin
+  )
+  MeterReading.create!(
+    meter_reading_event: event,
+    meter: gas_meter,
+    value_kwh: rd[:value]
+  )
+  puts "  ✓ #{event_type} reading #{rd[:date].strftime('%Y-%m-%d')}: #{rd[:value]} kWh"
+end
 
 # =============================================================================
 # SUMMARY
