@@ -57,6 +57,8 @@ RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 | `ADMIN_EMAIL` | Bootstrap admin user email | K8s deployment env |
 | `RECAPTCHA_SITE_KEY` | Google reCAPTCHA v3 site key | K8s secret `sucha-meter-secrets` |
 | `RECAPTCHA_SECRET_KEY` | Google reCAPTCHA v3 secret key | K8s secret `sucha-meter-secrets` |
+| `GEMINI_API_KEY` | Google Gemini API key | K8s secret `sucha-meter-secrets` |
+| `GOOGLE_APPLICATION_CREDENTIALS_JSON` | GCP service account JSON | K8s secret `sucha-meter-secrets` |
 | `RAILS_ENV` | Production mode | Dockerfile ENV |
 
 ## Release Process
