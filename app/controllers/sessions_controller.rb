@@ -128,6 +128,7 @@ class SessionsController < ApplicationController
   private
 
   def after_login_path(user)
+    AssignDefaultProperty.run!(user: user) if user.properties.empty?
     ensure_default_visitor(user) if user.onboarded?
     user.onboarded? ? root_path : onboarding_path
   end

@@ -18,7 +18,9 @@ class FindOrCreateUserByPhone < ApplicationService
     user = User.kept.find_by(phone_number: normalized)
     return user if user
 
-    User.create!(phone_number: normalized, name: nil, role: :member)
+    user = User.create!(phone_number: normalized, name: nil, role: :member)
+    AssignDefaultProperty.run!(user: user)
+    user
   rescue ActiveRecord::RecordInvalid => e
     errors.add(:base, e.record.errors.full_messages.join(", "))
     nil

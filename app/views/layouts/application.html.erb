@@ -48,7 +48,7 @@
         </div>
       </nav>
     <% end %>
-    <% if logged_in? && available_properties.size > 1 %>
+    <% if logged_in? && current_user.admin? && available_properties.size > 1 %>
       <div class="px-4 py-2 bg-gray-50 border-b border-gray-200">
         <div class="max-w-lg mx-auto flex items-center gap-2">
           <%= form_with url: switch_property_path, method: :patch, data: { controller: "auto-submit" }, class: "flex items-center gap-2 flex-1" do |f| %>
