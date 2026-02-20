@@ -5,12 +5,13 @@ set -e
 STAGED_RB_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.rb$' || true)
 
 if [ -n "$STAGED_RB_FILES" ]; then
-  echo "==> Running RuboCop on staged files..."
-  bin/rubocop --force-exclusion $STAGED_RB_FILES
+  echo "==> Running RuboCop (auto-fix) on staged files..."
+  bin/rubocop --force-exclusion -A $STAGED_RB_FILES
+  # Re-stage any auto-fixed files
+  git add $STAGED_RB_FILES
 fi
 
-# Tests disabled temporarily - re-enable when test suite is stable
-# echo "==> Running tests..."
-# bundle exec rspec --fail-fast
+echo "==> Running tests..."
+bundle exec rspec --fail-fast
 
 echo "All checks passed."

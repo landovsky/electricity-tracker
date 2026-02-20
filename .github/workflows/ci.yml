@@ -66,34 +66,34 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
-  # test:
-  #   runs-on: ubuntu-latest
-  #
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v6
-  #
-  #     - name: Set up Ruby
-  #       uses: ruby/setup-ruby@v1
-  #       with:
-  #         bundler-cache: true
-  #
-  #     - name: Set up database
-  #       env:
-  #         RAILS_ENV: test
-  #       run: bin/rails db:prepare
-  #
-  #     - name: Build Tailwind CSS
-  #       run: bin/rails tailwindcss:build
-  #
-  #     - name: Run tests
-  #       env:
-  #         RAILS_ENV: test
-  #       run: bundle exec rspec
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Set up database
+        env:
+          RAILS_ENV: test
+        run: bin/rails db:prepare
+
+      - name: Build Tailwind CSS
+        run: bin/rails tailwindcss:build
+
+      - name: Run tests
+        env:
+          RAILS_ENV: test
+        run: bundle exec rspec
 
   docker:
     runs-on: ubuntu-latest
-    needs: [ lint, scan_ruby, scan_js ]
+    needs: [ lint, scan_ruby, scan_js, test ]
     permissions:
       contents: read
       packages: write
