@@ -222,6 +222,7 @@ cs:
       note_placeholder: "např. víkendový pobyt"
       submit: "Zaznamenat příjezd"
       last_reading: "Poslední odečet: %{value} kWh (%{date})"
+      from_camera: "z fotoaparátu"
     check_out_form:
       visitor: "Návštěvník"
       date_time: "Datum a čas"
@@ -233,6 +234,7 @@ cs:
       no_visitors: "Žádní návštěvníci k odhlášení."
       since: "od %{date}"
       last_reading: "Poslední odečet: %{value} kWh (%{date})"
+      from_camera: "z fotoaparátu"
     manual_entry_form:
       visitor: "Návštěvník"
       select_visitor: "Vyberte návštěvníka..."

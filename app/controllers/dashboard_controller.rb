@@ -36,6 +36,12 @@ class DashboardController < ApplicationController
     # Default visitor for pre-selecting in forms
     @default_visitor_id = current_user&.default_visitor_id
 
+    # Prefill meter readings from camera session
+    @prefilled_readings = build_prefilled_readings(params[:camera_session_id])
+
+    # Auto-select tab based on event_type from camera
+    @default_tab = params[:event_type] == "check_out" ? "checkout" : "checkin"
+
     # Data for inline forms
 
     # Visitors available for check-in (active visitors without open stays)
@@ -52,6 +58,19 @@ class DashboardController < ApplicationController
   end
 
   private
+
+  def build_prefilled_readings(camera_session_id)
+    return {} unless camera_session_id.present?
+
+    MeterPhotoDetection
+      .for_session(camera_session_id)
+      .usable
+      .where.not(meter_id: nil)
+      .order(:created_at)
+      .each_with_object({}) do |detection, hash|
+        hash[detection.meter_id] = detection.detected_value
+      end
+  end
 
   def build_last_meter_readings
     return {} unless @property
