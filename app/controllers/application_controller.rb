@@ -45,13 +45,14 @@ class ApplicationController < ActionController::Base
   # Properties available to the current user, filtered by subdomain when present.
   # When accessing sucha.kopernici.cz, only properties with subdomain "sucha" are shown.
   # When accessing bare kopernici.cz (no subdomain), all user's properties are available.
+  # Admins bypass the subdomain filter and can always see all properties.
   def available_properties
     return Property.none unless current_user
 
     @available_properties ||= begin
       props = current_user.accessible_properties
       sub = request.subdomain.presence
-      sub ? props.where(subdomain: sub) : props
+      (sub && !current_user.admin?) ? props.where(subdomain: sub) : props
     end
   end
 
