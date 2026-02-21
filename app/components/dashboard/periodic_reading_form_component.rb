@@ -19,7 +19,7 @@ class Dashboard::PeriodicReadingFormComponent < ApplicationComponent
         grouped[meter.meter_group] ||= []
         grouped[meter.meter_group] << meter
       else
-        rows << [meter]
+        rows << [ meter ]
       end
     end
 

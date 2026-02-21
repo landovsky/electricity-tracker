@@ -334,7 +334,7 @@ readings_data = [
   { date: Time.zone.local(2025, 12, 1, 10, 0), value: 13_100 },
   # 2026 readings (partial year)
   { date: Time.zone.local(2026, 1, 1, 10, 0),  value: 13_650 },
-  { date: Time.zone.local(2026, 2, 1, 10, 0),  value: 14_200 },
+  { date: Time.zone.local(2026, 2, 1, 10, 0),  value: 14_200 }
 ]
 
 readings_data.each do |rd|
