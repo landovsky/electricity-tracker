@@ -93,7 +93,7 @@ group :development, :test do
 end
 
 # XLS file reading for data migration
-gem "roo", "~> 2.10"
+gem "roo", "~> 3.0"
 gem "roo-xls", "~> 2.0"
 
 group :development do
