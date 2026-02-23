@@ -88,7 +88,7 @@ group :development, :test do
   gem "ffaker", "~> 2.23"
   gem "shoulda-matchers", "~> 6.4"
   gem "capybara", "~> 3.40"
-  gem "selenium-webdriver", "~> 4.28"
+  gem "selenium-webdriver", "~> 4.41"
   gem "database_cleaner-active_record", "~> 2.2"
 end
 

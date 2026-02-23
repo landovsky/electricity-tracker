@@ -450,7 +450,7 @@ GEM
     ruby_llm-schema (0.3.0)
     rubyzip (2.4.1)
     securerandom (0.4.1)
-    selenium-webdriver (4.40.0)
+    selenium-webdriver (4.41.0)
       base64 (~> 0.2)
       logger (~> 1.4)
       rexml (~> 3.2, >= 3.2.5)
@@ -586,7 +586,7 @@ DEPENDENCIES
   rspec-rails (~> 7.1)
   rubocop-rails-omakase
   ruby_llm (~> 1.0)
-  selenium-webdriver (~> 4.28)
+  selenium-webdriver (~> 4.41)
   shoulda-matchers (~> 6.4)
   solid_cable
   solid_cache
@@ -767,7 +767,7 @@ CHECKSUMS
   ruby_llm-schema (0.3.0) sha256=a591edc5ca1b7f0304f0e2261de61ba4b3bea17be09f5cf7558153adfda3dec6
   rubyzip (2.4.1) sha256=8577c88edc1fde8935eb91064c5cb1aef9ad5494b940cf19c775ee833e075615
   securerandom (0.4.1) sha256=cc5193d414a4341b6e225f0cb4446aceca8e50d5e1888743fac16987638ea0b1
-  selenium-webdriver (4.40.0) sha256=16ef7aa9853c1d4b9d52eac45aafa916e3934c5c83cb4facb03f250adfd15e5b
+  selenium-webdriver (4.41.0) sha256=cdc1173cd55cf186022cea83156cc2d0bec06d337e039b02ad25d94e41bedd22
   shoulda-matchers (6.5.0) sha256=ef6b572b2bed1ac4aba6ab2c5ff345a24b6d055a93a3d1c3bfc86d9d499e3f44
   signet (0.21.0) sha256=d617e9fbf24928280d39dcfefba9a0372d1c38187ffffd0a9283957a10a8cd5b
   solid_cable (3.0.12) sha256=a168a54731a455d5627af48d8441ea3b554b8c1f6e6cd6074109de493e6b0460
