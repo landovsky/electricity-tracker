@@ -7,7 +7,7 @@ namespace :app do
 
     # --- Property ---
     property = Property.find_or_create_by!(name: "Suchá") do |p|
-      p.subdomain = "sepot.kopernici.cz"
+      p.subdomain = "sepot"
       p.tracking_mode = "visitors"
       p.address = "Horní Planá"
       puts "  Created property: #{p.name}"
