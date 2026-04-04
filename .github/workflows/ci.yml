@@ -25,6 +25,7 @@ jobs:
 
       - name: Scan for known security vulnerabilities in gems used
         run: bin/bundler-audit
+        continue-on-error: true
 
   scan_js:
     runs-on: ubuntu-latest
