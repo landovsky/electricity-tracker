@@ -32,6 +32,7 @@ class VisitorsController < ApplicationController
   def show
     @stays = @visitor.stays.kept.order(created_at: :desc).includes(:check_in_event, :check_out_event)
     @manual_entries = @visitor.manual_consumption_entries.kept.order(date: :desc)
+    @has_usage_records = @stays.any? || @manual_entries.any?
   end
 
   # GET /visitors/new
@@ -71,6 +72,11 @@ class VisitorsController < ApplicationController
   # PATCH /visitors/:id/archive
   # Soft deletes (archives) a visitor
   def archive
+    if @visitor.stays.kept.any? || @visitor.manual_consumption_entries.kept.any?
+      redirect_to visitor_path(@visitor), alert: t("visitors.show.cannot_delete")
+      return
+    end
+
     if @visitor.discard
       redirect_to visitors_path, notice: t("visitors.archive.success", name: @visitor.name)
     else

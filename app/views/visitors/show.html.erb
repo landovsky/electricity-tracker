@@ -70,4 +70,24 @@
       <% end %>
     </div>
   </section>
+
+  <% if current_user&.admin? %>
+    <section class="pt-2">
+      <% if @has_usage_records %>
+        <div class="flex items-start gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+          <i class="fa-solid fa-circle-info text-gray-400 mt-0.5"></i>
+          <div>
+            <p class="text-sm text-gray-500"><%= t("visitors.show.cannot_delete") %></p>
+          </div>
+        </div>
+      <% else %>
+        <%= button_to archive_visitor_path(@visitor),
+              method: :patch,
+              class: "w-full text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg px-4 py-2.5 transition-colors",
+              data: { turbo_confirm: t("visitors.show.delete_confirm", name: @visitor.name) } do %>
+          <i class="fa-solid fa-trash-can mr-1.5"></i><%= t("visitors.show.delete") %>
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
 </div>

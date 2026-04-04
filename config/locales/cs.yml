@@ -349,6 +349,9 @@ cs:
       no_entries: "Žádné ruční záznamy."
       edit: "Upravit"
       back: "Zpět na návštěvníky"
+      delete: "Smazat návštěvníka"
+      delete_confirm: "Opravdu chcete smazat návštěvníka %{name}?"
+      cannot_delete: "Návštěvníka nelze smazat, protože má záznamy o spotřebě elektřiny."
     create:
       success: "Návštěvník %{name} byl úspěšně vytvořen."
     update:
