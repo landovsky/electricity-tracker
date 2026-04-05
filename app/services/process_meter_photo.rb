@@ -41,7 +41,7 @@ class ProcessMeterPhoto < ApplicationService
         error_message: classification["explanation"],
         llm_response: classification
       )
-      return [detection]
+      return [ detection ]
     end
 
     # Step 3: Match meter(s) and extract reading(s)
@@ -97,7 +97,7 @@ class ProcessMeterPhoto < ApplicationService
   end
 
   def build_detections(matches)
-    return [update_single_detection(matches.first)] if matches.size <= 1
+    return [ update_single_detection(matches.first) ] if matches.size <= 1
 
     detections = []
 

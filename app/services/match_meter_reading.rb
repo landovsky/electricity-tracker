@@ -43,7 +43,7 @@ class MatchMeterReading < ApplicationService
     result = parse_response(response)
     return nil unless result
 
-    result["readings"] || [result]
+    result["readings"] || [ result ]
   rescue StandardError => e
     Rails.logger.error("MatchMeterReading failed: #{e.class} - #{e.message}")
     errors.add(:base, "Meter matching failed: #{e.message}")
@@ -67,7 +67,7 @@ class MatchMeterReading < ApplicationService
           last_reading_kwh: last_reading&.value_kwh&.to_f
         }
         entry[:identifier] = identifier if identifier.present?
-        entry[:same_device_as] = (group_meters - [meter]).map(&:label).join(", ") if identifier.present? && group_meters.size > 1
+        entry[:same_device_as] = (group_meters - [ meter ]).map(&:label).join(", ") if identifier.present? && group_meters.size > 1
         entry
       end
     end.to_json

@@ -23,12 +23,12 @@ class CameraSessionsController < ApplicationController
     detection.photo.attach(params[:photo])
 
     outcome = ProcessMeterPhoto.run(detection: detection)
-    result_detections = outcome.valid? ? Array(outcome.result) : [detection.reload]
+    result_detections = outcome.valid? ? Array(outcome.result) : [ detection.reload ]
 
     @detections_with_positions = result_detections.map do |det|
       det.reload
       position = MeterPhotoDetection.for_session(@session_id).where("id <= ?", det.id).count
-      [det, position]
+      [ det, position ]
     end
     @usable_count = MeterPhotoDetection.for_session(@session_id).usable.count
     @replaced_ids = result_detections.flat_map { |det| find_replaced_ids(det) }.uniq
