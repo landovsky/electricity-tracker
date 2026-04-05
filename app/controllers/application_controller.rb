@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
     @current_user ||= if session[:user_id]
       User.kept.find_by(id: session[:user_id])
     elsif auth_disabled?
-      User.kept.first
+      User.kept.admin.first
     end
   end
 

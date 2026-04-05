@@ -119,6 +119,7 @@ cs:
       properties: "Nemovitosti"
       visitors: "Návštěvníci"
       users: "Uživatelé"
+      photo_detections: "Detekce"
 
   # Authentication
   sessions:
@@ -192,6 +193,15 @@ cs:
       xls_button: "Import XLS"
       xls_confirm: "Tímto se smažou všechna data a znovu naimportují z XLS. Pokračovat?"
       xls_success: "XLS migrace proběhla úspěšně."
+    photo_detections:
+      title: "Detekce z fotek"
+      datetime: "Datum"
+      status: "Stav"
+      meter: "Měřič"
+      value: "Hodnota"
+      photo: "Foto"
+      error: "Chyba"
+      empty: "Žádné detekce."
 
   # Magic link mailer
   mailer:

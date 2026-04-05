@@ -96,5 +96,6 @@ Rails.application.routes.draw do
   # =============================================================================
   namespace :admin do
     post "migrace/xls", to: "migrations#xls", as: :xls_migration
+    resources :detekce, controller: "photo_detections", only: [ :index ], as: :photo_detections
   end
 end
