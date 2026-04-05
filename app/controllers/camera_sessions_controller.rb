@@ -22,13 +22,16 @@ class CameraSessionsController < ApplicationController
     )
     detection.photo.attach(params[:photo])
 
-    ProcessMeterPhoto.run(detection: detection)
-    detection.reload
+    outcome = ProcessMeterPhoto.run(detection: detection)
+    result_detections = outcome.valid? ? Array(outcome.result) : [detection.reload]
 
-    @detection = detection
-    @position = MeterPhotoDetection.for_session(@session_id).where("id <= ?", detection.id).count
+    @detections_with_positions = result_detections.map do |det|
+      det.reload
+      position = MeterPhotoDetection.for_session(@session_id).where("id <= ?", det.id).count
+      [det, position]
+    end
     @usable_count = MeterPhotoDetection.for_session(@session_id).usable.count
-    @replaced_ids = find_replaced_ids(detection)
+    @replaced_ids = result_detections.flat_map { |det| find_replaced_ids(det) }.uniq
 
     respond_to do |format|
       format.turbo_stream

@@ -17,6 +17,7 @@ namespace :app do
     vt = Meter.find_or_create_by!(property: property, label: "Hlavní - VT") do |m|
       m.meter_type = "main"
       m.meter_group = "main"
+      m.identifier = "9840270069354548"
       m.unit = "kWh"
       puts "  Created meter: #{m.label}"
     end
@@ -24,12 +25,14 @@ namespace :app do
     nt = Meter.find_or_create_by!(property: property, label: "Hlavní - NT") do |m|
       m.meter_type = "main"
       m.meter_group = "main"
+      m.identifier = "9840270069354548"
       m.unit = "kWh"
       puts "  Created meter: #{m.label}"
     end
 
     garage = Meter.find_or_create_by!(property: property, label: "Elektroměr garáž") do |m|
       m.meter_type = "secondary"
+      m.identifier = "8891000992016"
       m.unit = "kWh"
       puts "  Created meter: #{m.label}"
     end

@@ -28,4 +28,11 @@ class Meter < ApplicationRecord
       .order("meter_reading_events.recorded_at DESC")
       .first
   end
+
+  def short_identifier(prefix: nil)
+    return unless identifier.present?
+    return identifier if identifier.size < 10
+
+    "#{identifier[0..1]}…#{identifier[-4..]}"
+  end
 end

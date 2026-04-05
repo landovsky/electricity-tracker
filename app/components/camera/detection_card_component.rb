@@ -84,8 +84,8 @@ class Camera::DetectionCardComponent < ApplicationComponent
       ""
     end
 
-    if meter&.identifier.present? && status.in?(%w[ detected low_confidence replaced ])
-      "#{base} · #{meter.identifier}"
+    if meter&.short_identifier.present? && status.in?(%w[ detected low_confidence replaced ])
+      "#{base} · #{meter.short_identifier}"
     else
       base
     end

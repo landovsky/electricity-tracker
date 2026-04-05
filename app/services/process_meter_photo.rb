@@ -4,13 +4,17 @@
 #   1. Download image from ActiveStorage
 #   2. OCR via Google Vision API
 #   3. Classify: is it a meter photo?
-#   4. Match meter + extract reading
-#   5. Update the MeterPhotoDetection record
+#   4. Match meter(s) + extract reading(s)
+#   5. Update the MeterPhotoDetection record(s)
+#
+# When multiple readings are found in a single image, additional
+# MeterPhotoDetection records are created sharing the same session.
 #
 # Usage:
 #   detection = MeterPhotoDetection.create!(property: property, session_id: SecureRandom.uuid)
 #   detection.photo.attach(io: File.open("meter.jpg"), filename: "meter.jpg")
 #   outcome = ProcessMeterPhoto.run(detection: detection)
+#   outcome.result # => [detection, ...] (array of all detections from this photo)
 class ProcessMeterPhoto < ApplicationService
   object :detection, class: MeterPhotoDetection
 
@@ -37,20 +41,20 @@ class ProcessMeterPhoto < ApplicationService
         error_message: classification["explanation"],
         llm_response: classification
       )
-      return detection
+      return [detection]
     end
 
-    # Step 3: Match meter and extract reading
-    match = run_matching(ocr_text)
+    # Step 3: Match meter(s) and extract reading(s)
+    matches = run_matching(ocr_text)
     return if errors.any?
 
-    # Step 4: Update detection with results
-    update_detection_with_match(match)
+    # Step 4: Create detections for each match
+    detections = build_detections(matches)
 
     # Step 5: Handle duplicates within session
-    handle_session_duplicates
+    detections.each { |d| handle_session_duplicates(d) }
 
-    detection
+    detections
   rescue StandardError => e
     Rails.logger.error("ProcessMeterPhoto failed: #{e.class} - #{e.message}")
     Rails.logger.error(e.backtrace&.first(5)&.join("\n"))
@@ -92,7 +96,42 @@ class ProcessMeterPhoto < ApplicationService
     outcome.result
   end
 
-  def update_detection_with_match(match)
+  def build_detections(matches)
+    return [update_single_detection(matches.first)] if matches.size <= 1
+
+    detections = []
+
+    matches.each_with_index do |match, index|
+      det = if index == 0
+        detection
+      else
+        create_sibling_detection
+      end
+
+      apply_match(det, match)
+      detections << det
+    end
+
+    detections
+  end
+
+  def update_single_detection(match)
+    apply_match(detection, match)
+    detection
+  end
+
+  def create_sibling_detection
+    sibling = MeterPhotoDetection.create!(
+      property: detection.property,
+      session_id: detection.session_id,
+      status: :processing,
+      raw_ocr_text: detection.raw_ocr_text
+    )
+    sibling.photo.attach(detection.photo.blob)
+    sibling
+  end
+
+  def apply_match(det, match)
     meter = find_meter(match["meter_id"])
     confidence = match["confidence"]&.to_f || 0.0
     reading_value = match["reading_value"]&.to_f
@@ -103,7 +142,7 @@ class ProcessMeterPhoto < ApplicationService
       :low_confidence
     end
 
-    detection.update!(
+    det.update!(
       meter: meter,
       detected_value: reading_value,
       confidence: confidence,
@@ -118,21 +157,20 @@ class ProcessMeterPhoto < ApplicationService
     detection.property.meters.kept.find_by(id: meter_id)
   end
 
-  def handle_session_duplicates
-    return unless detection.meter_id.present?
+  def handle_session_duplicates(det)
+    return unless det.meter_id.present?
 
-    # Find other detections in the same session for the same meter
     duplicates = MeterPhotoDetection
-      .for_session(detection.session_id)
-      .where(meter_id: detection.meter_id)
-      .where.not(id: detection.id)
+      .for_session(det.session_id)
+      .where(meter_id: det.meter_id)
+      .where.not(id: det.id)
       .where.not(status: :replaced)
 
     duplicates.each do |dup|
-      if (dup.confidence || 0) <= (detection.confidence || 0)
+      if (dup.confidence || 0) <= (det.confidence || 0)
         dup.update!(status: :replaced)
       else
-        detection.update!(status: :replaced)
+        det.update!(status: :replaced)
         break
       end
     end

@@ -1,6 +1,8 @@
-<%# Append the new detection card %>
-<%= turbo_stream.append "detections" do %>
-  <%= render Camera::DetectionCardComponent.new(detection: @detection, meters: @meters, position: @position) %>
+<%# Append detection cards for each reading found in the photo %>
+<% @detections_with_positions.each do |detection, position| %>
+  <%= turbo_stream.append "detections" do %>
+    <%= render Camera::DetectionCardComponent.new(detection: detection, meters: @meters, position: position) %>
+  <% end %>
 <% end %>
 
 <%# Replace any cards that were marked as "replaced" (duplicate meter, lower confidence) %>
