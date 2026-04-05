@@ -33,7 +33,7 @@ export default class extends Controller {
     placeholder.id = placeholderId
     placeholder.className = "flex items-start gap-3 p-3 border-2 rounded-xl mb-2 border-blue-200 bg-blue-50"
     placeholder.innerHTML = `
-      <div class="w-14 h-14 rounded-lg flex-shrink-0 overflow-hidden">
+      <div class="w-24 h-24 rounded-lg flex-shrink-0 overflow-hidden">
         <img src="${thumbUrl}" class="w-full h-full object-cover animate-pulse" />
       </div>
       <div class="flex-1 min-w-0">

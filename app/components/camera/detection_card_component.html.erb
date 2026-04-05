@@ -1,7 +1,7 @@
 <div id="<%= dom_id %>" class="<%= card_classes %>">
   <%# Thumbnail %>
   <% if has_photo? %>
-    <a href="<%= photo_url %>" target="_blank" class="w-14 h-14 rounded-lg flex-shrink-0 overflow-hidden block">
+    <a href="<%= photo_url %>" target="_blank" class="w-24 h-24 rounded-lg flex-shrink-0 overflow-hidden block">
       <img src="<%= thumb_url %>" alt="IMG <%= position %>" class="w-full h-full object-cover <%= 'opacity-50' if detection.replaced? %>" loading="lazy" />
     </a>
   <% else %>

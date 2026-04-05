@@ -30,7 +30,7 @@ class Camera::DetectionCardComponent < ApplicationComponent
   end
 
   def thumb_classes
-    base = "w-14 h-14 rounded-lg flex items-center justify-center text-white text-xs font-mono font-medium flex-shrink-0"
+    base = "w-24 h-24 rounded-lg flex items-center justify-center text-white text-xs font-mono font-medium flex-shrink-0"
     case status
     when "detected"
       "#{base} bg-gradient-to-br from-slate-400 to-slate-600"
@@ -52,14 +52,14 @@ class Camera::DetectionCardComponent < ApplicationComponent
   def photo_url
     return nil unless has_photo?
 
-    Rails.application.routes.url_helpers.rails_blob_path(detection.photo, only_path: true)
+    Rails.application.routes.url_helpers.rails_blob_path(detection.photo.variant(:medium), only_path: true)
   end
 
   def thumb_url
     return nil unless has_photo?
 
     Rails.application.routes.url_helpers.rails_blob_path(
-      detection.photo.variant(resize_to_fill: [ 112, 112 ]),
+      detection.photo.variant(:thumb),
       only_path: true
     )
   end
