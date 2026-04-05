@@ -68,7 +68,7 @@ class CalculateConsumptionTrends < ApplicationService
   end
 
   def compute_deltas(events)
-    meters = property.meters.kept
+    meters = property.meters.kept.main
 
     events.each_cons(2).map do |start_event, end_event|
       total = BigDecimal("0")
