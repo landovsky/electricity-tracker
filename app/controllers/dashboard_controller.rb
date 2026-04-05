@@ -7,7 +7,7 @@ class DashboardController < ApplicationController
 
     # Common data for both modes
     @last_meter_readings = build_last_meter_readings
-    @meters = @property.meters.kept.order(:meter_type, :meter_group, :label)
+    @meters = @property.meters.kept.order(:meter_type, :meter_group, label: :desc)
     @recent_events = MeterReadingEvent.kept
                                       .joins(meter_readings: :meter)
                                       .where(meters: { property_id: @property.id })
