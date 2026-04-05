@@ -28,7 +28,7 @@ class Dashboard::CheckInFormComponent < ApplicationComponent
       end
     end
 
-    grouped.each_value { |group| rows << group }
+    grouped.each_value { |group| rows.unshift(group) }
     rows
   end
 
