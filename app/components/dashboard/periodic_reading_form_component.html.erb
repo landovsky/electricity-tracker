@@ -57,18 +57,10 @@
         %>
       </div>
 
-      <div class="flex gap-2">
-        <%= link_to camera_session_path(SecureRandom.uuid),
-              class: "px-4 py-3 rounded-lg font-medium text-sm text-center text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 hover:from-blue-600 hover:via-indigo-600 hover:to-violet-600 active:from-blue-700 active:via-indigo-700 active:to-violet-700 shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-1.5",
-              data: { turbo_frame: "_top" } do %>
-          <i class="fa-solid fa-camera"></i>
-          AI
-        <% end %>
-        <%= button_tag type: "submit", class: "flex-1 py-3 rounded-lg font-medium text-sm border-2 border-brand-600 text-brand-700 bg-white hover:bg-brand-50 active:bg-brand-100 transition-colors" do %>
-          <i class="fa-solid fa-gauge mr-1.5"></i>
-          <%= t("dashboard.periodic_reading_form.submit") %>
-        <% end %>
-      </div>
+      <%= button_tag type: "submit", class: "w-full py-3 rounded-lg font-medium text-sm border-2 border-brand-600 text-brand-700 bg-white hover:bg-brand-50 active:bg-brand-100 transition-colors" do %>
+        <i class="fa-solid fa-gauge mr-1.5"></i>
+        <%= t("dashboard.periodic_reading_form.submit") %>
+      <% end %>
     <% end %>
   </div>
 </section>
