@@ -23,7 +23,7 @@ class Dashboard::PeriodicReadingFormComponent < ApplicationComponent
       end
     end
 
-    grouped.each_value { |group| rows.unshift(group) }
+    grouped.each_value { |group| rows << group }
     rows
   end
 
