@@ -25,7 +25,7 @@
             <% prefilled = prefilled_value_for(meter) %>
             <div class="<%= 'flex-1' if row.size > 1 %>">
               <label class="block text-sm font-medium text-gray-700 mb-1">
-                <%= meter.label %><% if meter.identifier.present? %> <span class="font-normal text-gray-400">· <%= meter.identifier %></span><% end %>
+                <%= meter.label %><% if meter.identifier.present? %> <span class="font-normal text-gray-400">· <%= meter.short_identifier %></span><% end %>
                 <% if meter_required?(meter) %>
                   <span class="text-red-500">*</span>
                 <% else %>
