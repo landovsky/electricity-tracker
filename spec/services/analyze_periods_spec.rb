@@ -512,7 +512,7 @@ RSpec.describe AnalyzePeriods do
         create(:manual_consumption_entry,
           visitor: visitor_a,
           property: property,
-          date: (5.days.ago + 1.hour).to_date, # Clearly within Alice's stay (5 to 4 days ago)
+          date: 5.days.ago.to_date, # Clearly within Alice's stay (5 to 4 days ago)
           kwh: 15.0,
           note: "EV charging during Alice's stay"
         )
