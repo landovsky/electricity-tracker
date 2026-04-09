@@ -67,7 +67,7 @@ gem "aws-sdk-s3"
 gem "ruby_llm", "~> 1.0"
 
 # Google Cloud auth (service account credentials for Vision API)
-gem "googleauth", "~> 1.11"
+gem "googleauth", "~> 1.16"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
