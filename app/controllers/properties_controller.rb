@@ -25,7 +25,7 @@ class PropertiesController < ApplicationController
     @property = Property.new(property_params)
 
     if @property.save
-      sync_user_ids(@property, params[:property][:user_ids])
+      sync_user_ids(@property, params[:property][:user_ids]) if user_ids_submitted?
       redirect_to properties_path, notice: t("properties.create.success", name: @property.name)
     else
       @users = User.kept.order(name: :asc)
@@ -39,7 +39,7 @@ class PropertiesController < ApplicationController
 
   def update
     if @property.update(property_params)
-      sync_user_ids(@property, params[:property][:user_ids])
+      sync_user_ids(@property, params[:property][:user_ids]) if user_ids_submitted?
       redirect_to property_path(@property), notice: t("properties.update.success", name: @property.name)
     else
       @users = User.kept.order(name: :asc)
@@ -72,6 +72,13 @@ class PropertiesController < ApplicationController
 
   def property_params
     params.require(:property).permit(:name, :address, :subdomain, :tracking_mode)
+  end
+
+  # Membership is only touched when the form actually rendered the user
+  # checkboxes (it always sends at least the hidden blank entry). A form
+  # without them — e.g. editing just the address — must keep existing members.
+  def user_ids_submitted?
+    params[:property].key?(:user_ids)
   end
 
   # Sync the allowed users for a property from checkbox form input.
