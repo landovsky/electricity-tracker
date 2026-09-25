@@ -54,6 +54,23 @@ RSpec.describe VerifyMagicLinkToken, type: :service do
       end
     end
 
+    context "the confirmation page only checks the link (consume: false), e.g. when a mail scanner prefetches it" do
+      it "accepts the link without spending it, so the later confirmation still works" do
+        token = generate_token(user)
+
+        expect(described_class.run(token: token, consume: false).result).to eq(user)
+        expect(described_class.run(token: token, consume: false).result).to eq(user)
+        expect(described_class.run(token: token).result).to eq(user)
+      end
+
+      it "still reports an already used link as invalid" do
+        token = generate_token(user)
+        described_class.run(token: token)
+
+        expect(described_class.run(token: token, consume: false).result).to be_nil
+      end
+    end
+
     context "the user logged out (nonce cleared) before an older link was opened" do
       it "refuses the link, because logout revokes every outstanding link" do
         token = generate_token(user)

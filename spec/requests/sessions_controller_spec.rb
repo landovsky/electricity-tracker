@@ -80,6 +80,15 @@ RSpec.describe SessionsController, type: :request do
       end
     end
 
+    context "several people submit the form with an empty e-mail field" do
+      it "does not lump them into one shared per-address bucket, so strangers cannot lock each other out" do
+        3.times { post login_path, params: { email: "" }, env: { "REMOTE_ADDR" => "203.0.113.1" } }
+
+        post login_path, params: { email: "" }, env: { "REMOTE_ADDR" => "203.0.113.2" }
+        expect(response).to redirect_to(email_sent_path)
+      end
+    end
+
     context "a script registers many addresses from one IP" do
       it "stops after 10 submissions within 10 minutes, protecting the SMTP quota" do
         expect {
@@ -126,12 +135,45 @@ RSpec.describe SessionsController, type: :request do
     end
   end
 
-  describe "GET /auth/:token" do
+  describe "GET /auth/:token (the link in the email)" do
+    context "a mail scanner or link previewer fetches the link before the user clicks it" do
+      it "shows a confirmation page without logging anyone in" do
+        get auth_verify_path(token: GenerateMagicLinkToken.run!(user: user))
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(I18n.t("sessions.confirm.submit"))
+        expect(session[:user_id]).to be_nil
+      end
+
+      it "leaves the link usable, so the user's real click still logs them in" do
+        token = GenerateMagicLinkToken.run!(user: user)
+        2.times { get auth_verify_path(token: token) }
+
+        post auth_verify_path(token: token)
+        expect(response).to redirect_to(root_path)
+        expect(session[:user_id]).to eq(user.id)
+      end
+    end
+
+    context "the link was already used or has expired" do
+      it "sends the user back to login right away instead of offering a button that cannot work" do
+        token = GenerateMagicLinkToken.run!(user: user)
+        post auth_verify_path(token: token)
+        reset!
+
+        get auth_verify_path(token: token)
+        expect(response).to redirect_to(login_path)
+        expect(flash[:alert]).to include("Invalid or expired link")
+      end
+    end
+  end
+
+  describe "POST /auth/:token (confirming the login)" do
     context "with a valid token" do
       let(:token) { GenerateMagicLinkToken.run!(user: user) }
 
       it "creates a session and redirects to root" do
-        get auth_verify_path(token: token)
+        post auth_verify_path(token: token)
         expect(response).to redirect_to(root_path)
         expect(flash[:notice]).to include("Login successful")
       end
@@ -145,7 +187,7 @@ RSpec.describe SessionsController, type: :request do
       end
 
       it "redirects to login with an error" do
-        get auth_verify_path(token: expired_token)
+        post auth_verify_path(token: expired_token)
         expect(response).to redirect_to(login_path)
         expect(flash[:alert]).to include("Invalid or expired link")
       end
@@ -153,7 +195,7 @@ RSpec.describe SessionsController, type: :request do
 
     context "with an invalid token" do
       it "redirects to login with an error" do
-        get auth_verify_path(token: "garbage")
+        post auth_verify_path(token: "garbage")
         expect(response).to redirect_to(login_path)
         expect(flash[:alert]).to include("Invalid or expired link")
       end
@@ -162,10 +204,10 @@ RSpec.describe SessionsController, type: :request do
     context "the link is opened again after it was used (browser history on a shared phone)" do
       it "refuses the second login" do
         token = GenerateMagicLinkToken.run!(user: user)
-        get auth_verify_path(token: token)
+        post auth_verify_path(token: token)
         reset!
 
-        get auth_verify_path(token: token)
+        post auth_verify_path(token: token)
         expect(response).to redirect_to(login_path)
         expect(flash[:alert]).to include("Invalid or expired link")
       end
@@ -174,13 +216,13 @@ RSpec.describe SessionsController, type: :request do
     context "the user logged out while an unused link was still in their inbox" do
       it "refuses that link, because logout revokes outstanding links" do
         login_token = GenerateMagicLinkToken.run!(user: user)
-        get auth_verify_path(token: login_token)
+        post auth_verify_path(token: login_token)
 
         # A second link requested from another device, never clicked.
         leaked_token = GenerateMagicLinkToken.run!(user: user.reload)
         delete logout_path
 
-        get auth_verify_path(token: leaked_token)
+        post auth_verify_path(token: leaked_token)
         expect(response).to redirect_to(login_path)
         expect(flash[:alert]).to include("Invalid or expired link")
       end
@@ -193,7 +235,7 @@ RSpec.describe SessionsController, type: :request do
         user.properties << property
         user.properties.delete(property)
 
-        get auth_verify_path(token: GenerateMagicLinkToken.run!(user: user))
+        post auth_verify_path(token: GenerateMagicLinkToken.run!(user: user))
 
         expect(response).to redirect_to(root_path)
         expect(user.reload.properties).to be_empty
@@ -207,7 +249,7 @@ RSpec.describe SessionsController, type: :request do
         post login_path, params: { email: "jan@example.com" }
         new_user = User.find_by!(email: "jan@example.com")
 
-        get auth_verify_path(token: GenerateMagicLinkToken.run!(user: new_user))
+        post auth_verify_path(token: GenerateMagicLinkToken.run!(user: new_user))
         expect(response).to redirect_to(onboarding_path)
 
         patch onboarding_path, params: { name: "Jan" }
@@ -280,7 +322,7 @@ RSpec.describe SessionsController, type: :request do
 
   describe "flash messages on the login page" do
     it "shows the logout notice once (as a toast), not twice" do
-      get auth_verify_path(token: GenerateMagicLinkToken.run!(user: user))
+      post auth_verify_path(token: GenerateMagicLinkToken.run!(user: user))
       delete logout_path
       follow_redirect!
 
@@ -292,7 +334,7 @@ RSpec.describe SessionsController, type: :request do
     it "clears the session and redirects to login" do
       # First log in via the real flow
       token = GenerateMagicLinkToken.run!(user: user)
-      get auth_verify_path(token: token)
+      post auth_verify_path(token: token)
 
       # Now logout
       delete logout_path

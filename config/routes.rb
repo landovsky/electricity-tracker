@@ -21,7 +21,8 @@ Rails.application.routes.draw do
   post "prihlaseni/sms", to: "sessions#create_sms", as: :login_sms
   get "prihlaseni/overeni", to: "sessions#otp_form", as: :otp_form
   post "prihlaseni/overeni", to: "sessions#verify_otp", as: :verify_otp
-  get "auth/:token", to: "sessions#verify", as: :auth_verify
+  get "auth/:token", to: "sessions#confirm", as: :auth_verify
+  post "auth/:token", to: "sessions#verify"
   delete "odhlaseni", to: "sessions#destroy", as: :logout
 
   # Onboarding (name input for new self-registered users)

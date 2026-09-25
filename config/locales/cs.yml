@@ -167,6 +167,12 @@ cs:
       code_label: "Ověřovací kód"
       submit: "Ověřit"
       back: "Zpět na přihlášení"
+    confirm:
+      title: "Potvrzení přihlášení — Měřič spotřeby"
+      heading: "Přihlásit se?"
+      instruction: "Dokončete přihlášení kliknutím na tlačítko. Odkaz lze použít jen jednou."
+      submit: "Přihlásit se"
+      back: "Zpět na přihlášení"
     verify:
       success: "Přihlášení proběhlo úspěšně."
       failure: "Neplatný nebo expirovaný odkaz. Vyžádejte si prosím nový."

@@ -6,7 +6,8 @@
 # 1. GET  /login            → Show login form (email/SMS choice)
 # 2. POST /login            → Find/create user, send magic link email
 # 3. GET  /login/email_sent → Info page: "check your email"
-# 4. GET  /auth/:token      → Verify token, create session
+# 4. GET  /auth/:token      → Confirmation page (no side effects)
+# 5. POST /auth/:token      → Verify + consume token, create session
 #
 # SMS flow:
 # 1. GET  /login            → Show login form (email/SMS choice)
@@ -14,13 +15,13 @@
 # 3. GET  /login/verify_otp → Show OTP input form
 # 4. POST /login/verify_otp → Verify OTP, create session
 #
-# 5. DELETE /logout          → Destroy session
+# 6. DELETE /logout          → Destroy session
 
 require "ostruct"
 
 class SessionsController < ApplicationController
-  skip_before_action :require_authentication, only: %i[new create email_sent create_sms otp_form verify_otp verify]
-  skip_before_action :require_onboarding, only: %i[new create email_sent create_sms otp_form verify_otp verify destroy]
+  skip_before_action :require_authentication, only: %i[new create email_sent create_sms otp_form verify_otp confirm verify]
+  skip_before_action :require_onboarding, only: %i[new create email_sent create_sms otp_form verify_otp confirm verify destroy]
 
   # Throttling for the unauthenticated login endpoints. Each of them either
   # sends a mail/SMS on our account or checks a secret, so an unthrottled
@@ -32,7 +33,7 @@ class SessionsController < ApplicationController
   rate_limit to: 10, within: 10.minutes, only: :create, store: RATE_LIMIT_STORE,
     with: -> { throttled! }
   rate_limit to: 3, within: 10.minutes, only: :create, store: RATE_LIMIT_STORE, name: "email",
-    by: -> { params[:email].to_s.strip.downcase }, with: -> { throttled! }
+    by: -> { params[:email].to_s.strip.downcase.presence || request.remote_ip }, with: -> { throttled! }
   rate_limit to: 5, within: 10.minutes, only: :create_sms, store: RATE_LIMIT_STORE,
     with: -> { throttled! }
   rate_limit to: 10, within: 10.minutes, only: :verify_otp, store: RATE_LIMIT_STORE,
@@ -127,7 +128,21 @@ class SessionsController < ApplicationController
     end
   end
 
-  # GET /auth/:token — Email magic link verification
+  # GET /auth/:token — Email magic link landing page.
+  # Must stay free of side effects: mail scanners and link previewers
+  # (e.g. Safe Links) fetch emailed URLs before the user clicks, and would
+  # otherwise spend the single-use link. The user confirms with a POST.
+  def confirm
+    outcome = VerifyMagicLinkToken.run(token: params[:token], consume: false)
+
+    if outcome.valid? && outcome.result
+      @token = params[:token]
+    else
+      redirect_to login_path, alert: t("sessions.verify.failure")
+    end
+  end
+
+  # POST /auth/:token — Email magic link verification (consumes the link)
   def verify
     outcome = VerifyMagicLinkToken.run(token: params[:token])
 

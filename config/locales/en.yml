@@ -161,6 +161,12 @@ en:
       code_label: "Verification code"
       submit: "Verify"
       back: "Back to sign in"
+    confirm:
+      title: "Confirm sign in — Electricity Tracker"
+      heading: "Sign in?"
+      instruction: "Click the button to finish signing in. The link can only be used once."
+      submit: "Sign in"
+      back: "Back to sign in"
     verify:
       success: "Login successful."
       failure: "Invalid or expired link. Please request a new one."
