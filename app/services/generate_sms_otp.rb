@@ -9,7 +9,7 @@ class GenerateSmsOtp < ApplicationService
 
   def execute
     code = SecureRandom.random_number(10**6).to_s.rjust(6, "0")
-    user.update!(sms_otp_code: code, sms_otp_sent_at: Time.current)
+    user.update!(sms_otp_code: code, sms_otp_sent_at: Time.current, sms_otp_attempts: 0)
     code
   end
 end

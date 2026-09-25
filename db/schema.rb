@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_20_195131) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_25_030523) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -178,10 +178,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_20_195131) do
     t.integer "default_visitor_id"
     t.datetime "deleted_at"
     t.string "email"
+    t.string "magic_link_nonce"
     t.string "name"
     t.string "phone_number"
     t.float "recaptcha_score"
     t.string "role"
+    t.integer "sms_otp_attempts", default: 0, null: false
     t.string "sms_otp_code"
     t.datetime "sms_otp_sent_at"
     t.datetime "updated_at", null: false

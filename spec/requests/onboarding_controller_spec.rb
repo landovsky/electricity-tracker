@@ -62,6 +62,39 @@ RSpec.describe OnboardingController, type: :request do
       end
     end
 
+    context "a self-registered user has no property yet (access is granted only after a verified login)" do
+      let(:newcomer) { create(:user, :not_onboarded) }
+
+      before { sign_in_as(newcomer) }
+
+      it "assigns the default property and creates exactly one visitor with the entered name" do
+        expect {
+          patch onboarding_path, params: { name: "Jan Novak" }
+        }.to change(Visitor, :count).by(1)
+
+        newcomer.reload
+        expect(newcomer.properties).to include(property)
+        expect(newcomer.default_visitor.name).to eq("Jan Novak")
+      end
+    end
+
+    context "a user registered under the old flow already has a visitor auto-named after their email" do
+      let(:legacy_user) { create(:user, :not_onboarded, email: "jana@example.com") }
+
+      before do
+        legacy_user.properties << property # callback names the visitor after the email
+        sign_in_as(legacy_user.reload)
+      end
+
+      it "renames that visitor to the entered name instead of keeping the email for everyone to see" do
+        expect {
+          patch onboarding_path, params: { name: "Jana" }
+        }.not_to change(Visitor, :count)
+
+        expect(legacy_user.reload.default_visitor.name).to eq("Jana")
+      end
+    end
+
     context "when user already has a default_visitor (re-submit guard)" do
       let(:existing_visitor) { create(:visitor, name: "Jiri Dvorak") }
 

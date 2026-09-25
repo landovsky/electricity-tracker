@@ -153,6 +153,7 @@ en:
       invalid_code: "Invalid or expired code. Please try again."
       session_expired: "Session expired. Please start again."
       recaptcha_failed: "Bot verification failed. Please try again."
+      too_many_attempts: "Too many invalid attempts. Please request a new code."
     otp:
       title: "Verification code — Electricity Tracker"
       heading: "Enter verification code"
@@ -165,6 +166,7 @@ en:
       failure: "Invalid or expired link. Please request a new one."
     destroy:
       notice: "Logged out successfully."
+    throttled: "Too many login attempts. Please try again in a few minutes."
 
   # Onboarding (first-time user name input)
   onboarding:

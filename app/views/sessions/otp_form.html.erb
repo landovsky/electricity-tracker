@@ -11,12 +11,6 @@
         <p class="text-sm text-gray-500 mt-1"><%= t("sessions.otp.instruction") %></p>
       </div>
 
-      <% if flash[:alert] %>
-        <div class="mb-4 p-3 rounded-lg bg-red-50 text-red-800 text-sm">
-          <%= flash[:alert] %>
-        </div>
-      <% end %>
-
       <%= form_with url: verify_otp_path, method: :post, class: "space-y-4" do |f| %>
         <div>
           <label for="code" class="block text-sm font-medium text-gray-700 mb-1"><%= t("sessions.otp.code_label") %></label>

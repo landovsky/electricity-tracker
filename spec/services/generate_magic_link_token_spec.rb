@@ -37,6 +37,17 @@ RSpec.describe GenerateMagicLinkToken, type: :service do
       end
     end
 
+    context "the user asks for a second link before clicking the first one" do
+      it "lets the older link still log in once, so a double-submitted form does not strand the user" do
+        first = described_class.run!(user: user)
+        second = described_class.run!(user: user)
+
+        expect(VerifyMagicLinkToken.run(token: first).result).to eq(user)
+        # Both links share the nonce, so the login consumed them both.
+        expect(VerifyMagicLinkToken.run(token: second).result).to be_nil
+      end
+    end
+
     context "without a user" do
       it "is invalid" do
         outcome = described_class.run(user: nil)

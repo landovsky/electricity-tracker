@@ -159,6 +159,7 @@ cs:
       invalid_code: "Neplatný nebo expirovaný kód. Zkuste to prosím znovu."
       session_expired: "Relace vypršela. Začněte prosím znovu."
       recaptcha_failed: "Ověření proti robotům selhalo. Zkuste to prosím znovu."
+      too_many_attempts: "Příliš mnoho neplatných pokusů. Vyžádejte si prosím nový kód."
     otp:
       title: "Ověřovací kód — Měřič spotřeby"
       heading: "Zadejte ověřovací kód"
@@ -171,6 +172,7 @@ cs:
       failure: "Neplatný nebo expirovaný odkaz. Vyžádejte si prosím nový."
     destroy:
       notice: "Odhlášení proběhlo úspěšně."
+    throttled: "Příliš mnoho pokusů o přihlášení. Zkuste to prosím za pár minut."
 
   # Onboarding (first-time user name input)
   onboarding:
