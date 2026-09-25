@@ -601,7 +601,7 @@ RSpec.describe AnalyzePeriods do
         create(:manual_consumption_entry,
           visitor: visitor_a,
           property: property,
-          date: 2.days.ago.to_date, # Must fall within period (event2 -> event3), i.e. >= start_date and < end_date
+          date: 1.day.ago.to_date, # Day of the empty-house closing reading; Alice isn't present then
           kwh: 10.0,
           note: "EV charging during empty house"
         )
@@ -910,6 +910,134 @@ RSpec.describe AnalyzePeriods do
         period = periods.first
         expect(period[:total_kwh]).to eq(BigDecimal("50.0"))
         expect(period[:present_visitors]).to contain_exactly(visitor_a)
+      end
+    end
+
+    context "an admin adds a meter with a starting value while a visitor is staying" do
+      let(:visitor_a) { create(:visitor, name: "Alice") }
+
+      def reading_event(at, type, readings)
+        event = create(:meter_reading_event, recorded_at: at, event_type: type, recorded_by_user: user)
+        readings.each { |meter, value| create(:meter_reading, meter_reading_event: event, meter: meter, value_kwh: value) }
+        event
+      end
+
+      let!(:check_in) { reading_event(Time.zone.local(2026, 3, 1, 12), :check_in, main_meter => 1000) }
+
+      before do
+        stay = create(:stay, visitor: visitor_a, property: property, check_in_event: check_in)
+        # Garage meter installed mid-stay; its "initial" event carries only its own reading
+        reading_event(Time.zone.local(2026, 3, 3, 12), :initial, secondary_meter => 500)
+        check_out = reading_event(Time.zone.local(2026, 3, 5, 12), :check_out, main_meter => 1100, secondary_meter => 510)
+        stay.update!(check_out_event: check_out)
+      end
+
+      it "keeps the stay as one period so the main meter's 100 kWh is not lost at the initial event" do
+        periods = described_class.run!(property: property, date_range: { start_date: Date.new(2026, 3, 1), end_date: Date.new(2026, 3, 31) })
+
+        expect(periods.size).to eq(1)
+        expect(periods.first[:primary_delta]).to eq(BigDecimal("100"))
+        expect(periods.first[:present_visitors]).to contain_exactly(visitor_a)
+      end
+
+      it "measures the new meter from its initial value, so the garage's 10 kWh is still seen" do
+        periods = described_class.run!(property: property, date_range: { start_date: Date.new(2026, 3, 1), end_date: Date.new(2026, 3, 31) })
+
+        expect(periods.first[:secondary_delta]).to eq(BigDecimal("10"))
+      end
+    end
+
+    context "a second main meter (NT tariff) is added with a starting value mid-stay" do
+      let(:nt_meter) { property.meters.create!(meter_type: "main", label: "NT", unit: "kWh") }
+
+      it "counts VT across the initial event and NT from its baseline" do
+        visitor = create(:visitor)
+        check_in = create(:meter_reading_event, recorded_at: Time.zone.local(2026, 3, 1, 12), recorded_by_user: user)
+        create(:meter_reading, meter_reading_event: check_in, meter: main_meter, value_kwh: 1000)
+        stay = create(:stay, visitor: visitor, property: property, check_in_event: check_in)
+
+        initial = create(:meter_reading_event, recorded_at: Time.zone.local(2026, 3, 3, 12), event_type: :initial, recorded_by_user: user)
+        create(:meter_reading, meter_reading_event: initial, meter: nt_meter, value_kwh: 200)
+
+        check_out = create(:meter_reading_event, recorded_at: Time.zone.local(2026, 3, 5, 12), event_type: :check_out, recorded_by_user: user)
+        create(:meter_reading, meter_reading_event: check_out, meter: main_meter, value_kwh: 1080)
+        create(:meter_reading, meter_reading_event: check_out, meter: nt_meter, value_kwh: 230)
+        stay.update!(check_out_event: check_out)
+
+        periods = described_class.run!(property: property, date_range: { start_date: Date.new(2026, 3, 1), end_date: Date.new(2026, 3, 31) })
+
+        # VT 80 + NT 30
+        expect(periods.map { |p| p[:primary_delta] }).to eq([ BigDecimal("110") ])
+      end
+    end
+
+    context "E8: the secondary meter was not read at one event" do
+      it "charges the secondary consumption to the period in which it is next read instead of dropping it" do
+        e1 = create(:meter_reading_event, recorded_at: Time.zone.local(2026, 4, 1, 12), property: property, main_reading: 1000, secondary_reading: 500)
+        create(:meter_reading_event, recorded_at: Time.zone.local(2026, 4, 5, 12), property: property, main_reading: 1040)
+        create(:meter_reading_event, recorded_at: Time.zone.local(2026, 4, 9, 12), property: property, main_reading: 1090, secondary_reading: 512)
+
+        periods = described_class.run!(property: property, date_range: { start_date: Date.new(2026, 4, 1), end_date: Date.new(2026, 4, 30) })
+
+        expect(periods.first[:start_event]).to eq(e1)
+        expect(periods.map { |p| p[:secondary_delta] }).to eq([ BigDecimal("0"), BigDecimal("12") ])
+        expect(periods.map { |p| p[:primary_delta] }).to eq([ BigDecimal("40"), BigDecimal("50") ])
+      end
+    end
+
+    context "a manual entry is dated on a day that two periods share" do
+      let(:visitor_a) { create(:visitor, name: "Alice") }
+      let(:visitor_b) { create(:visitor, name: "Bob") }
+
+      # Jun 1 reading -> empty house -> Alice Jun 10 12:00 .. Jun 20 09:00 -> empty house -> Jul 1 reading
+      # periods: [0] Jun 1-10 empty, [1] Alice's stay, [2] Jun 20 - Jul 1 empty
+      let!(:opening_reading) do
+        create(:meter_reading_event, recorded_at: Time.zone.local(2026, 6, 1, 12), property: property,
+          main_reading: 990, secondary_reading: 500)
+      end
+      let!(:stay_a) do
+        create(:stay, :closed, visitor: visitor_a, property: property,
+          check_in_at: Time.zone.local(2026, 6, 10, 12), check_out_at: Time.zone.local(2026, 6, 20, 9),
+          main_reading_in: 1000, secondary_reading_in: 500, main_reading_out: 1100, secondary_reading_out: 500)
+      end
+      let!(:closing_reading) do
+        create(:meter_reading_event, recorded_at: Time.zone.local(2026, 7, 1, 12), property: property,
+          main_reading: 1150, secondary_reading: 500)
+      end
+
+      def periods
+        described_class.run!(property: property, date_range: { start_date: Date.new(2026, 6, 1), end_date: Date.new(2026, 7, 31) })
+      end
+
+      it "puts a check-out-day entry into the visitor's own stay (E5), not the empty house after it" do
+        entry = create(:manual_consumption_entry, visitor: visitor_a, property: property, date: Date.new(2026, 6, 20), kwh: 33)
+
+        result = periods
+        expect(result[1][:present_visitors]).to contain_exactly(visitor_a)
+        expect(result[1][:manual_entries]).to contain_exactly(entry)
+        expect(result[2][:manual_entries]).to be_empty
+      end
+
+      it "puts a check-in-day entry into the visitor's own stay, not the empty house before it" do
+        entry = create(:manual_consumption_entry, visitor: visitor_a, property: property, date: Date.new(2026, 6, 10), kwh: 5)
+
+        result = periods
+        expect(result[1][:manual_entries]).to contain_exactly(entry)
+        expect(result[0][:manual_entries]).to be_empty
+      end
+
+      it "gives an entry by someone who wasn't staying to the later period only, so it is counted once" do
+        entry = create(:manual_consumption_entry, visitor: visitor_b, property: property, date: Date.new(2026, 6, 20), kwh: 7)
+
+        result = periods
+        expect(result[1][:manual_entries]).to be_empty
+        expect(result[2][:manual_entries]).to contain_exactly(entry)
+      end
+
+      it "includes an entry dated on the day of the latest reading instead of leaving it out of the report" do
+        entry = create(:manual_consumption_entry, visitor: visitor_b, property: property, date: Date.new(2026, 7, 1), kwh: 4)
+
+        expect(periods.flat_map { |p| p[:manual_entries] }).to contain_exactly(entry)
       end
     end
   end

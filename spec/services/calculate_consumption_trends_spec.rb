@@ -122,6 +122,46 @@ RSpec.describe CalculateConsumptionTrends, type: :service do
       end
     end
 
+    context "a two-tariff property where one periodic reading left NT blank" do
+      let(:nt_meter) { create(:meter, property: property, meter_type: :main, label: "NT") }
+
+      def reading(at, values)
+        event = create(:meter_reading_event, recorded_at: at, event_type: :periodic, recorded_by_user: user)
+        values.each { |m, v| create(:meter_reading, meter_reading_event: event, meter: m, value_kwh: v) }
+      end
+
+      it "still counts NT's consumption, in the month NT is read again" do
+        reading(Time.zone.local(2025, 1, 1, 10), meter => 100, nt_meter => 50)
+        reading(Time.zone.local(2025, 2, 1, 10), meter => 150)
+        reading(Time.zone.local(2025, 3, 1, 10), meter => 200, nt_meter => 80)
+
+        result = described_class.run!(property: property, start_date: Date.new(2025, 1, 1), end_date: Date.new(2025, 12, 31))
+
+        # Feb: VT 50; Mar: VT 50 + NT 30
+        expect(result[:months].map { |m| m[:total_kwh] }).to eq([ 50.0, 80.0 ])
+        expect(result[:total_kwh]).to eq(130.0)
+      end
+    end
+
+    context "an NT meter is added with a starting value between two readings" do
+      let(:nt_meter) { create(:meter, property: property, meter_type: :main, label: "NT") }
+
+      it "doesn't lose VT's consumption across the initial event" do
+        create_event(recorded_at: Time.zone.local(2025, 1, 1, 10), reading: 1000)
+        initial = create(:meter_reading_event, recorded_at: Time.zone.local(2025, 1, 20, 10), event_type: :initial, recorded_by_user: user)
+        create(:meter_reading, meter_reading_event: initial, meter: nt_meter, value_kwh: 300)
+        feb = create_event(recorded_at: Time.zone.local(2025, 2, 1, 10), reading: 1400)
+        create(:meter_reading, meter_reading_event: feb, meter: nt_meter, value_kwh: 320)
+
+        result = described_class.run!(property: property, start_date: Date.new(2025, 1, 1), end_date: Date.new(2025, 12, 31))
+
+        # VT 400 + NT 20, one delta in February
+        expect(result[:months].size).to eq(1)
+        expect(result[:months].first[:month]).to eq(Date.new(2025, 2, 1))
+        expect(result[:total_kwh]).to eq(420.0)
+      end
+    end
+
     context "with invalid date range" do
       it "returns error" do
         outcome = described_class.run(

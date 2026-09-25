@@ -7,9 +7,9 @@
 # The primary (main) meter measures total consumption including the secondary meter's
 # circuit. The secondary meter measures a subset (e.g., a garage/flat).
 #
-# For each period:
-#   1. Secondary pool = secondary_delta → split among secondary participants
-#   2. Primary pool = primary_delta - secondary_delta → split among primary participants
+# For each period, primary_delta is the total consumption (it already includes the
+# secondary circuit). The pool split among present visitors (or added to the
+# empty-house pool) is primary_delta - unreconciled secondary - manual entries.
 #
 # Cross-period reconciliation:
 #   When secondary_delta > 0 but primary_delta = 0 (secondary user didn't read primary),
@@ -37,7 +37,6 @@ class CalculateConsumption < ApplicationService
   object :property, class: Property
   date :start_date
   date :end_date
-  boolean :include_archived_visitors, default: false
 
   # Custom validations
   validate :validate_date_range
@@ -49,8 +48,9 @@ class CalculateConsumption < ApplicationService
     all_periods = fetch_all_periods
     return empty_result if all_periods.empty?
 
-    # Filter periods by archived visitor preference
-    all_periods = filter_periods_by_visitor_status(all_periods) unless include_archived_visitors
+    # Archived visitors (E10: a guest archived after departure) stay in the
+    # allocation. Dropping them would silently move their past consumption
+    # onto everyone else.
 
     # Step 2: Initialize tracking
     visitor_totals = Hash.new do |h, k|
@@ -109,12 +109,18 @@ class CalculateConsumption < ApplicationService
           end
         end
       else
-        # Empty house
-        empty_kwh = primary_delta - secondary_delta
+        # Empty house: same pool rules as an occupied period, but the pool goes
+        # to the unattributed (empty-house) pool instead of being split here.
         if primary_delta > 0
-          empty_kwh -= unreconciled_secondary
+          empty_kwh = primary_delta - unreconciled_secondary - manual_kwh
           unreconciled_secondary = BigDecimal("0")
-          empty_kwh -= manual_kwh
+        elsif secondary_delta > 0
+          # Primary hasn't advanced yet: count the secondary kWh now and
+          # remember it so the later primary catch-up doesn't count it again.
+          empty_kwh = secondary_delta
+          unreconciled_secondary += secondary_delta
+        else
+          empty_kwh = BigDecimal("0")
         end
         unattributed_pool += empty_kwh if in_range
       end
@@ -234,18 +240,6 @@ class CalculateConsumption < ApplicationService
     end
 
     owners
-  end
-
-  def filter_periods_by_visitor_status(periods)
-    periods.map do |period|
-      filtered_visitors = period[:present_visitors].select { |v| v.status == "active" }
-      filtered_manual_entries = period[:manual_entries].select { |e| e.visitor.status == "active" }
-
-      period.merge(
-        present_visitors: filtered_visitors,
-        manual_entries: filtered_manual_entries
-      )
-    end
   end
 
   def calculate_total_meter_delta(periods)

@@ -25,10 +25,9 @@ class CalculateConsumptionTrends < ApplicationService
   validate :validate_date_range
 
   def execute
-    events = fetch_events
-    return empty_result if events.size < 2
+    deltas = compute_deltas
+    return empty_result if deltas.empty?
 
-    deltas = compute_deltas(events)
     monthly = aggregate_by_month(deltas)
 
     {
@@ -46,44 +45,21 @@ class CalculateConsumptionTrends < ApplicationService
     errors.add(:end_date, "must be after or equal to start_date") if end_date < start_date
   end
 
-  def fetch_events
-    # Include boundary event before range (for first delta)
-    in_range = MeterReadingEvent.kept
-                 .joins(meter_readings: :meter)
-                 .where(meters: { property_id: property.id })
-                 .where(recorded_at: start_date.beginning_of_day..end_date.end_of_day)
-                 .distinct
+  # One delta per pair of consecutive readings, attributed to the month of the
+  # later reading. MeterTimeline carries each meter's last known value forward,
+  # so a reading that left one meter out (e.g. NT blank) doesn't lose that
+  # meter's consumption, and an "initial" event for a newly added meter only
+  # sets its baseline instead of splitting the period.
+  def compute_deltas
+    main_ids = property.meters.kept.main.pluck(:id)
+    range_start = start_date.beginning_of_day
 
-    boundary_event = MeterReadingEvent.kept
-                       .joins(meter_readings: :meter)
-                       .where(meters: { property_id: property.id })
-                       .where("meter_reading_events.recorded_at < ?", start_date.beginning_of_day)
-                       .distinct
-                       .order(recorded_at: :desc)
-                       .first
-
-    events = in_range.chronological.to_a
-    events.unshift(boundary_event) if boundary_event && events.none? { |e| e.id == boundary_event.id }
-    events
-  end
-
-  def compute_deltas(events)
-    meters = property.meters.kept.main
-
-    events.each_cons(2).map do |start_event, end_event|
-      total = BigDecimal("0")
-
-      meters.each do |meter|
-        start_reading = start_event.meter_readings.find_by(meter: meter)
-        end_reading = end_event.meter_readings.find_by(meter: meter)
-        next unless start_reading && end_reading
-
-        total += end_reading.value_kwh - start_reading.value_kwh
-      end
-
+    MeterTimeline.new(property: property, until_time: end_date.end_of_day).segments
+                 .select { |segment| segment.end_event.recorded_at >= range_start }
+                 .map do |segment|
       {
-        end_date: end_event.recorded_at.to_date,
-        total_kwh: total.to_f.round(2)
+        end_date: segment.end_event.recorded_at.to_date,
+        total_kwh: segment.delta_for(main_ids).to_f.round(2)
       }
     end
   end
