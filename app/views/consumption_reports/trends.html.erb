@@ -46,7 +46,7 @@
         <% @trends[:months].each do |month_data| %>
           <% bar_pct = max_kwh > 0 ? (month_data[:total_kwh] / max_kwh * 100).round : 0 %>
           <div class="grid grid-cols-12 gap-1 px-4 py-3 text-sm items-center">
-            <div class="col-span-3 font-medium text-gray-900 truncate"><%= l(month_data[:month], format: :short) %></div>
+            <div class="col-span-3 font-medium text-gray-900 truncate"><%= l(month_data[:month], format: :month_year) %></div>
             <div class="col-span-2 text-right text-gray-600"><%= number_with_precision(month_data[:total_kwh], precision: 0) %></div>
             <div class="col-span-2 text-right text-gray-400"><%= month_data[:readings_count] %></div>
             <div class="col-span-5 pl-2">
@@ -87,8 +87,12 @@
           end
         %>
 
+        <%# Column count depends on the number of years, so it can't be a static
+            Tailwind class (v4 only emits classes literally present in source). %>
+        <% yoy_grid_style = "grid-template-columns: repeat(#{3 + years.size * 2 + 2}, minmax(0, 1fr));" %>
+
         <!-- Header -->
-        <div class="grid grid-cols-<%= 3 + years.size * 2 + 2 %> gap-1 px-4 py-2 border-b border-gray-100 text-xs text-gray-400 font-medium">
+        <div class="grid gap-1 px-4 py-2 border-b border-gray-100 text-xs text-gray-400 font-medium" style="<%= yoy_grid_style %>">
           <div class="col-span-3"><%= t("reports.month") %></div>
           <% years.each do |year| %>
             <div class="col-span-2 text-right"><%= year %></div>
@@ -100,8 +104,8 @@
         <div class="divide-y divide-gray-50">
           <% (1..12).each do |mn| %>
             <% next unless yoy[mn] %>
-            <% month_name = I18n.l(Date.new(2000, mn, 1), format: :short) %>
-            <div class="grid grid-cols-<%= 3 + years.size * 2 + 2 %> gap-1 px-4 py-2 text-sm items-center">
+            <% month_name = I18n.l(Date.new(2000, mn, 1), format: :month) %>
+            <div class="grid gap-1 px-4 py-2 text-sm items-center" style="<%= yoy_grid_style %>">
               <div class="col-span-3 font-medium text-gray-900"><%= month_name %></div>
               <% years.each do |year| %>
                 <div class="col-span-2 text-right text-gray-600">

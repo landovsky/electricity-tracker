@@ -539,6 +539,8 @@ cs:
       default: "%d.%m.%Y"
       short: "%d. %b"
       long: "%d. %B %Y"
+      month: "%B"
+      month_year: "%B %Y"
     month_names:
       [
         ~,

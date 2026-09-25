@@ -106,7 +106,8 @@
       </div>
       <div class="px-4 py-3 space-y-3">
         <%
-          colors = ['blue-500', 'emerald-500', 'amber-500', 'purple-500', 'pink-500', 'indigo-500']
+          # Full literal class names — Tailwind only generates classes it finds verbatim in source.
+          colors = %w[bg-blue-500 bg-emerald-500 bg-amber-500 bg-purple-500 bg-pink-500 bg-indigo-500]
           @report[:visitors].each_with_index do |visitor_data, index|
             percentage = @report[:total_consumption_kwh] > 0 ? (visitor_data[:total_kwh].to_f / @report[:total_consumption_kwh] * 100).round : 0
             color = colors[index % colors.length]
@@ -117,7 +118,7 @@
               <span class="text-gray-600"><%= number_with_precision(visitor_data[:total_kwh].to_f, precision: 0) %> kWh <span class="text-gray-400">(<%= percentage %>%)</span></span>
             </div>
             <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
-              <div class="h-full bg-<%= color %> rounded-full" style="width: <%= percentage %>%"></div>
+              <div class="h-full <%= color %> rounded-full" style="width: <%= percentage %>%"></div>
             </div>
           </div>
         <% end %>
