@@ -1,8 +1,18 @@
 # frozen_string_literal: true
 
 namespace :app do
-  desc "Set up essential production data (property, meters, users, visitors, stays). Idempotent."
+  desc "Bootstrap essential production data (property, meters, users, visitors, stays) on an empty database. " \
+       "No-op once any property exists."
   task setup: :environment do
+    # Runs on every container start (bin/docker-entrypoint). It is a first-boot
+    # bootstrap only: once a property exists, the data belongs to the admins and
+    # must never be re-seeded, re-granted or overwritten (records are looked up
+    # by names/emails that admins can edit, so re-running would duplicate them).
+    if Property.with_discarded.exists?
+      puts "Database already bootstrapped (#{Property.with_discarded.count} properties), skipping app:setup."
+      next
+    end
+
     puts "Setting up essential data..."
 
     # --- Property ---
@@ -62,7 +72,8 @@ namespace :app do
         u.role = attrs[:role]
         puts "  Created user: #{u.email} (#{attrs[:role]})"
       end
-      user.update!(default_visitor: visitors[visitor_name]) if user.default_visitor != visitors[visitor_name]
+      # Only fill a missing default; never overwrite an admin's choice.
+      user.update!(default_visitor: visitors[visitor_name]) if user.default_visitor_id.nil?
       PropertyUser.find_or_create_by!(property: property, user: user)
     end
 

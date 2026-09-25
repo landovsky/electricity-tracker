@@ -82,7 +82,7 @@ Docker image tags: `<semver>`, `sha-<hash>`, `latest` (default branch).
 3. **Final**: Non-root `rails:rails` user (UID 1000), Thruster on port 80
 
 **CMD**: `./bin/thrust ./bin/rails server`
-**Entrypoint**: `bin/docker-entrypoint` (runs `db:prepare` + `app:setup`)
+**Entrypoint**: `bin/docker-entrypoint` (runs `db:prepare` + `app:setup`; the latter seeds only an empty DB)
 
 ## Kubernetes Resources
 
@@ -167,7 +167,9 @@ All manifests in `/Users/tomas/git/k3s/apps/sucha-meter/`.
 
 ## Production Bootstrap
 
-`lib/tasks/setup.rake` (`app:setup`) creates the initial Property, meters, admin user, and visitors. Runs automatically on container start via `bin/docker-entrypoint` (after `db:prepare`). All operations use `find_or_create_by!` — idempotent.
+`lib/tasks/setup.rake` (`app:setup`) seeds the initial Property, meters, users, visitors and historical stays. Runs automatically on container start via `bin/docker-entrypoint` (after `db:prepare`), but is a **first-boot-only** bootstrap: when any property already exists it logs "Database already bootstrapped" and exits, so deploys and pod restarts never overwrite, re-create or re-grant anything admins changed.
+
+The admin "Import XLS" action (`XlsDataMigration`) wipes and re-imports all data. It is refused while stays/readings/manual entries exist unless `ALLOW_DESTRUCTIVE_XLS_MIGRATION=true` is set on the deployment (not set in production — keep it that way).
 
 ## Known Issues
 

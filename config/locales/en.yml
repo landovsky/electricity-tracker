@@ -187,6 +187,7 @@ en:
       xls_button: "Import XLS"
       xls_confirm: "This will reset all data and re-import from XLS. Continue?"
       xls_success: "XLS migration completed successfully."
+      xls_refused: "XLS migration refused: the database already contains stays and readings that the import would permanently delete. To overwrite them anyway, run the app with the environment variable %{env}=true."
 
   # Magic link mailer
   mailer:

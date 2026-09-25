@@ -44,9 +44,16 @@ RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
 ## Production Bootstrap
 
-- `lib/tasks/setup.rake` (`app:setup`) — creates Property "Suchá", main + secondary meters, admin user, visitors (Tomas, Petr)
+- `lib/tasks/setup.rake` (`app:setup`) — seeds Property "Suchá" (subdomain `sepot`), main + secondary meters, the six family users + visitors, initial readings and the 2025/26 stays
 - Runs automatically on container start via `bin/docker-entrypoint` (after `db:prepare`)
-- All operations use `find_or_create_by!` — idempotent
+- **First boot only**: if any property exists (including soft-deleted), the task prints "already bootstrapped" and exits without touching anything. It never re-creates, re-grants access or resets `default_visitor` on later boots — admins own the data after bootstrap (records are keyed by editable names/emails, so re-seeding would duplicate them)
+- To re-bootstrap an environment, start from an empty database
+
+## XLS Migration (admin "Import XLS" button)
+
+- `XlsDataMigration` (`app/services/xls_data_migration.rb`) wipes properties, meters, visitors, stays, readings, manual entries, audits and non-admin users, then imports the Sep 2024 – Aug 2025 XLS history
+- **Refused** whenever the DB already holds stays, meter reading events or manual entries, unless the deployment sets `ALLOW_DESTRUCTIVE_XLS_MIGRATION=true`; the UI shows an explanatory alert instead
+- The wipe and the import run in a single transaction (FK checks deferred to commit), so a failed import rolls back the wipe
 
 ## Environment Variables
 

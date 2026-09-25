@@ -193,6 +193,7 @@ cs:
       xls_button: "Import XLS"
       xls_confirm: "Tímto se smažou všechna data a znovu naimportují z XLS. Pokračovat?"
       xls_success: "XLS migrace proběhla úspěšně."
+      xls_refused: "XLS migrace zamítnuta: databáze už obsahuje pobyty a odečty, které by import nevratně smazal. Pokud je opravdu chcete přepsat, spusťte aplikaci s proměnnou prostředí %{env}=true."
     photo_detections:
       title: "Detekce z fotek"
       datetime: "Datum"
