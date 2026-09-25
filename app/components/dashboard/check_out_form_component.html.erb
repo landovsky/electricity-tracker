@@ -72,7 +72,11 @@
           <% if detection.photo.attached? %>
             <a href="<%= rails_blob_path(detection.photo, only_path: true) %>" target="_blank" class="flex-shrink-0">
               <div class="w-16 h-16 rounded-lg overflow-hidden border-2 border-emerald-300 relative">
-                <%= image_tag detection.photo.variant(resize_to_fill: [128, 128]), class: "w-full h-full object-cover", loading: "lazy" %>
+                <% if detection.thumbnailable? %>
+                  <%= image_tag detection.photo.variant(resize_to_fill: [128, 128]), class: "w-full h-full object-cover", loading: "lazy" %>
+                <% else %>
+                  <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400"><i class="fa-solid fa-image"></i></div>
+                <% end %>
                 <span class="absolute bottom-0 right-0 bg-emerald-500 text-white text-[9px] px-1 rounded-tl"><%= detection.meter&.label&.truncate(8) %></span>
               </div>
             </a>

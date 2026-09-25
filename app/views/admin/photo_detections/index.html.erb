@@ -38,7 +38,7 @@
               <td class="px-4 py-2 text-gray-900 font-mono"><%= detection.detected_value ? number_with_delimiter(detection.detected_value, delimiter: " ") : "—" %></td>
               <td class="px-4 py-2">
                 <% if detection.photo.attached? %>
-                  <a href="<%= rails_blob_path(detection.photo.variant(:medium), only_path: true) %>" target="_blank" class="text-blue-600 hover:text-blue-800">
+                  <a href="<%= rails_blob_path(detection.thumbnailable? ? detection.photo.variant(:medium) : detection.photo, only_path: true) %>" target="_blank" class="text-blue-600 hover:text-blue-800">
                     <i class="fa-solid fa-image"></i>
                   </a>
                 <% else %>
