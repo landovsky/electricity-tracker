@@ -115,6 +115,49 @@ RSpec.describe OnboardingController, type: :request do
 
         expect(response).to redirect_to(root_path)
       end
+
+      it "leaves the name alone so the form cannot be used as a back-door profile edit" do
+        patch onboarding_path, params: { name: "Someone Else" }
+
+        expect(user.reload.name).to eq("Jiri Dvorak")
+      end
+    end
+
+    context "an admin removed an onboarded member from the property and the member re-submits the onboarding form" do
+      let(:member) { create(:user, name: "Martin Revoked") }
+
+      before do
+        member.properties << property # callback gives them their own visitor
+        member.property_users.destroy_all # admin unchecks them in the property form
+        sign_in_as(member.reload)
+      end
+
+      it "does not grant the property back, so the admin's revoke sticks" do
+        expect {
+          patch onboarding_path, params: { name: "Martin Revoked" }
+        }.not_to change(PropertyUser, :count)
+
+        expect(member.reload.properties).to be_empty
+        expect(response).to redirect_to(root_path)
+      end
+    end
+
+    context "a member who was set up before (has a visitor) but has no property and a blank name" do
+      let(:member) { create(:user, :not_onboarded) }
+
+      before do
+        member.update_column(:default_visitor_id, create(:visitor, property: property, name: "Old Visitor").id)
+        sign_in_as(member)
+      end
+
+      it "finishes onboarding without self-granting a property, because access was removed by an admin" do
+        expect {
+          patch onboarding_path, params: { name: "Returning Member" }
+        }.not_to change(PropertyUser, :count)
+
+        expect(member.reload.name).to eq("Returning Member")
+        expect(member.properties).to be_empty
+      end
     end
   end
 end
