@@ -13,6 +13,7 @@
 # - Members: can view and create visitors
 # - Admins: can edit and archive visitors
 class VisitorsController < ApplicationController
+  before_action :require_property
   before_action :set_visitor, only: %i[show edit update archive]
   before_action :require_admin, only: %i[edit update archive]
 

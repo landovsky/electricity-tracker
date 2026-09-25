@@ -7,7 +7,7 @@ RSpec.describe CheckInVisitor, type: :service do
   let(:property) { create(:property) }
   let(:main_meter) { create(:meter, :main, property: property) }
   let(:secondary_meter) { create(:meter, :secondary, property: property) }
-  let(:visitor) { create(:visitor) }
+  let(:visitor) { create(:visitor, property: property) }
   let(:user) { create(:user) }
 
   # Default parameters for a successful check-in
@@ -27,6 +27,19 @@ RSpec.describe CheckInVisitor, type: :service do
     # Ensure meters exist
     main_meter
     secondary_meter
+  end
+
+  describe "visitor from another property" do
+    it "refuses, so a stay is never opened on meters the visitor has nothing to do with" do
+      foreign_visitor = create(:visitor, property: create(:property))
+
+      outcome = described_class.run(valid_params.merge(visitor: foreign_visitor))
+
+      expect(outcome).not_to be_valid
+      expect(outcome.errors[:visitor]).to be_present
+      expect(Stay.count).to eq(0)
+      expect(MeterReadingEvent.count).to eq(0)
+    end
   end
 
   describe "happy path - successful check-in" do
@@ -455,7 +468,7 @@ RSpec.describe CheckInVisitor, type: :service do
   end
 
   describe "different visitors can have simultaneous open stays" do
-    let(:visitor2) { create(:visitor) }
+    let(:visitor2) { create(:visitor, property: property) }
 
     before do
       # Create an open stay for visitor1

@@ -3,20 +3,21 @@
 class CameraSessionsController < ApplicationController
   EVENT_TYPES = %w[check_in check_out].freeze
   MAX_PHOTO_SIZE = 15.megabytes
+  before_action :require_property
 
   def show
     @property = current_property
     @session_id = params[:id]
     @event_type = EVENT_TYPES.include?(params[:event_type]) ? params[:event_type] : "check_in"
     @visitor_name = params[:visitor_name] || ""
-    @meters = @property.meters.kept.order(:meter_type, :meter_group, :label)
+    @meters = @property.meters.kept.form_order
     @detections = session_detections.order(:created_at)
   end
 
   def upload
     @property = current_property
     @session_id = params[:id]
-    @meters = @property.meters.kept.order(:meter_type, :meter_group, :label)
+    @meters = @property.meters.kept.form_order
 
     photo_error = validate_photo(params[:photo])
     return render(plain: photo_error, status: :unprocessable_content) if photo_error

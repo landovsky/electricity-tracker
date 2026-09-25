@@ -30,7 +30,7 @@
         <%= form.select :year,
             options_for_select(
               year_filter_options,
-              params[:year]
+              selected_year
             ),
             {},
             class: "border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
@@ -144,10 +144,12 @@
                 <% end %>
                 <div class="flex items-center justify-between mt-2">
                   <div class="text-xs text-gray-400"><%= t("history.recorded_by", name: event.recorded_by_user&.name || t("history.unknown")) %></div>
-                  <%= button_to meter_reading_event_path(event), method: :delete,
-                        form: { data: { turbo_confirm: t("meter_reading_events.destroy.confirm") } },
-                        class: "inline-flex items-center justify-center w-7 h-7 rounded-lg border border-red-200 text-red-400 hover:text-red-600 hover:border-red-300 hover:bg-red-50 transition-colors cursor-pointer" do %>
-                    <i class="fa-solid fa-trash-can text-[10px]"></i>
+                  <% if current_user&.admin? %>
+                    <%= button_to meter_reading_event_path(event), method: :delete,
+                          form: { data: { turbo_confirm: t("meter_reading_events.destroy.confirm") } },
+                          class: "inline-flex items-center justify-center w-7 h-7 rounded-lg border border-red-200 text-red-400 hover:text-red-600 hover:border-red-300 hover:bg-red-50 transition-colors cursor-pointer" do %>
+                      <i class="fa-solid fa-trash-can text-[10px]"></i>
+                    <% end %>
                   <% end %>
                 </div>
               </div>
@@ -192,10 +194,12 @@
                 <% end %>
                 <div class="flex items-center justify-between mt-2">
                   <div class="text-xs text-gray-400"><%= t("history.recorded_by", name: event.recorded_by_user&.name || t("history.unknown")) %></div>
-                  <%= button_to meter_reading_event_path(event), method: :delete,
-                        form: { data: { turbo_confirm: t("meter_reading_events.destroy.confirm") } },
-                        class: "inline-flex items-center justify-center w-7 h-7 rounded-lg border border-red-200 text-red-400 hover:text-red-600 hover:border-red-300 hover:bg-red-50 transition-colors cursor-pointer" do %>
-                    <i class="fa-solid fa-trash-can text-[10px]"></i>
+                  <% if current_user&.admin? %>
+                    <%= button_to meter_reading_event_path(event), method: :delete,
+                          form: { data: { turbo_confirm: t("meter_reading_events.destroy.confirm") } },
+                          class: "inline-flex items-center justify-center w-7 h-7 rounded-lg border border-red-200 text-red-400 hover:text-red-600 hover:border-red-300 hover:bg-red-50 transition-colors cursor-pointer" do %>
+                      <i class="fa-solid fa-trash-can text-[10px]"></i>
+                    <% end %>
                   <% end %>
                 </div>
               </div>

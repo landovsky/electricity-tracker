@@ -17,10 +17,8 @@
 #
 #   if outcome.valid?
 #     entry = outcome.result
-#     # Check for warnings
-#     if outcome.errors[:consumption_warning].any?
-#       # Display warning to user
-#     end
+#     # C8 soft validation: entry is saved, but may carry a warning
+#     flash[:warning] = outcome.consumption_warning if outcome.consumption_warning
 #   else
 #     # Handle validation errors
 #   end
@@ -35,7 +33,11 @@ class CreateManualConsumptionEntry < ApplicationService
 
   # Validations
   validate :kwh_must_be_positive
-  validate :check_period_consumption_warning
+  validate :visitor_must_belong_to_property
+
+  # C8 soft validation result. Set after a successful save; never an error,
+  # because an error would make the outcome invalid and block the entry.
+  attr_reader :consumption_warning
 
   def execute
     entry = ManualConsumptionEntry.new(
@@ -48,6 +50,7 @@ class CreateManualConsumptionEntry < ApplicationService
     )
 
     if entry.save
+      @consumption_warning = period_consumption_warning(entry)
       entry
     else
       # Merge model validation errors into the interaction errors
@@ -67,28 +70,53 @@ class CreateManualConsumptionEntry < ApplicationService
     errors.add(:kwh, I18n.t("services.create_manual_consumption_entry.kwh_not_positive")) if kwh <= 0
   end
 
-  def check_period_consumption_warning
-    # C8: Manual entry kWh should not exceed unattributed consumption in the enclosing period
-    # This is a soft validation - adds a warning, not a blocking error
-    #
-    # TODO: Implement period consumption check once period analysis service is complete
-    # 1. Find the period that contains this entry's date
-    # 2. Calculate total_kwh for that period (main meter delta)
-    # 3. Calculate manual_kwh already attributed in that period
-    # 4. Calculate shared_kwh for present visitors in that period
-    # 5. Calculate unattributed_kwh = total_kwh - manual_kwh - shared_kwh
-    # 6. If kwh > unattributed_kwh, add a warning
-    #
-    # For now, this is a placeholder that does nothing.
-    # When period analysis service exists, wire it up here.
-    #
-    # Example implementation:
-    #   period = PeriodAnalysisService.find_period_for_date(property, date)
-    #   return unless period
-    #
-    #   unattributed = period.unattributed_kwh
-    #   if kwh > unattributed
-    #     errors.add(:consumption_warning, "Manual entry (#{kwh} kWh) exceeds unattributed consumption (#{unattributed.round(2)} kWh) for this period")
-    #   end
+  # A manual entry booked under another property's visitor would pull kWh out
+  # of this property's shared pool and bill it to someone who was never here.
+  def visitor_must_belong_to_property
+    return unless visitor && property
+    return if visitor.property_id == property.id
+
+    errors.add(:visitor, :invalid)
+  end
+
+  # C8: warn when the manual entries of the enclosing period (including this
+  # one) exceed what the main meter measured in that period, i.e. this entry
+  # exceeds the consumption still unattributed to other manual entries.
+  #
+  # The enclosing period uses AnalyzePeriods' own rule: an entry dated D belongs
+  # to the period whose start event is on or before D and whose end event is on
+  # a later day. The end event is therefore the first event from D+1 onwards and
+  # the first event of its own day, so analysing just that day (plus the boundary
+  # event AnalyzePeriods prepends) yields the enclosing period first.
+  #
+  # When no event exists after D yet, the period is still open and cannot be
+  # checked.
+  def period_consumption_warning(entry)
+    period = enclosing_period(entry.date)
+    return nil unless period
+
+    manual_kwh = period[:manual_entries].sum(&:kwh)
+    return nil if manual_kwh <= period[:primary_delta]
+
+    I18n.t("activerecord.errors.models.manual_consumption_entry.attributes.kwh.exceeds_period",
+           kwh: entry.kwh,
+           available: [ period[:primary_delta] - (manual_kwh - entry.kwh), 0 ].max.to_f.round(2))
+  end
+
+  def enclosing_period(entry_date)
+    end_event_at = MeterReadingEvent.kept
+                                    .joins(meter_readings: :meter)
+                                    .where(meters: { property_id: property.id })
+                                    .where("meter_reading_events.recorded_at >= ?", (entry_date + 1).in_time_zone.beginning_of_day)
+                                    .minimum(:recorded_at)
+    return nil unless end_event_at
+
+    end_day = end_event_at.in_time_zone.to_date
+    outcome = AnalyzePeriods.run(property: property, date_range: { start_date: end_day, end_date: end_day })
+    return nil unless outcome.valid?
+
+    outcome.result.find do |period|
+      period[:start_time].to_date <= entry_date && entry_date < period[:end_time].to_date
+    end
   end
 end

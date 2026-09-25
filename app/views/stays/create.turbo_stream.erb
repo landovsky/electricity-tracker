@@ -9,20 +9,6 @@
   ) %>
 <% end %>
 
-<%# Update action forms to refresh visitor lists %>
-<%= turbo_stream.replace "check-out-form" do %>
-  <turbo-frame id="check-out-form" data-action-forms-target="formPanel" data-form-type="checkout">
-    <div class="p-4">
-      <%= render Dashboard::CheckOutFormComponent.new(
-        current_visitors: @visitors_for_checkout,
-        last_readings: @last_meter_readings,
-        meters: @meters,
-        selected_visitor_id: @default_visitor_id
-      ) %>
-    </div>
-  </turbo-frame>
-<% end %>
-
 <%# Update recent activity %>
 <%= turbo_stream.replace "recent-activity" do %>
   <%= render Dashboard::RecentActivityComponent.new(
@@ -31,18 +17,36 @@
   ) %>
 <% end %>
 
-<%# Reset check-in form (nil visitor on success so prompt shows) %>
-<%= turbo_stream.replace "check-in-form" do %>
-  <turbo-frame id="check-in-form" data-action-forms-target="formPanel" data-form-type="checkin">
-    <div class="p-4">
-      <%= render Dashboard::CheckInFormComponent.new(
-        visitors: @visitors_for_checkin,
-        last_readings: @last_meter_readings,
-        meters: @meters,
-        selected_visitor_id: flash[:notice] ? nil : @default_visitor_id
-      ) %>
-    </div>
-  </turbo-frame>
+<%# Forms are only refreshed on success. On failure they are left untouched so
+    the visitor the user picked and the readings they typed survive the error. %>
+<% if @succeeded %>
+  <%# Refresh check-out list so the visitor just checked in can check out %>
+  <%= turbo_stream.replace "check-out-form" do %>
+    <turbo-frame id="check-out-form" data-action-forms-target="formPanel" data-form-type="checkout">
+      <div class="p-4">
+        <%= render Dashboard::CheckOutFormComponent.new(
+          current_visitors: @visitors_for_checkout,
+          last_readings: @last_meter_readings,
+          meters: @meters,
+          selected_visitor_id: @default_visitor_id
+        ) %>
+      </div>
+    </turbo-frame>
+  <% end %>
+
+  <%# Reset check-in form (nil visitor so the prompt shows) %>
+  <%= turbo_stream.replace "check-in-form" do %>
+    <turbo-frame id="check-in-form" data-action-forms-target="formPanel" data-form-type="checkin">
+      <div class="p-4">
+        <%= render Dashboard::CheckInFormComponent.new(
+          visitors: @visitors_for_checkin,
+          last_readings: @last_meter_readings,
+          meters: @meters,
+          selected_visitor_id: nil
+        ) %>
+      </div>
+    </turbo-frame>
+  <% end %>
 <% end %>
 
 <%# Show toast notification %>

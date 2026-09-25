@@ -200,47 +200,38 @@ RSpec.describe "ManualConsumptionEntries", type: :request do
       end
     end
 
-    context "constraint C8: period consumption warning (soft validation)" do
-      # C8 is a soft validation that adds a warning, not a blocking error
-      # The entry should still be created, but a warning flash should be displayed
-      #
-      # NOTE: The actual C8 validation logic is not implemented yet
-      # (it requires period analysis service). This test verifies that:
-      # 1. The entry is created despite the warning
-      # 2. The controller properly displays warnings from outcome.errors[:consumption_warning]
-      #
-      # TODO: Once period analysis service is implemented, create a test scenario
-      # that actually triggers the C8 warning by:
-      # 1. Setting up a period with known consumption (e.g., 100 kWh)
-      # 2. Creating manual entries/stays that consume most of it
-      # 3. Attempting to create a manual entry that exceeds remaining consumption
-      # 4. Verifying the warning is displayed
-
-      it "creates entry successfully (C8 not yet implemented)" do
-        # This is a placeholder test
-        # Currently C8 validation is stubbed in the service
-        params = valid_params.merge(kwh: 1000) # Unrealistically high value
-
-        expect {
-          post manual_consumption_entries_path, params: params
-        }.to change(ManualConsumptionEntry, :count).by(1)
-
-        # Entry should be created despite potentially exceeding period consumption
-        entry = ManualConsumptionEntry.last
-        expect(entry.kwh).to eq(1000)
+    context "constraint C8: an EV charge is logged for more than the house used in that period" do
+      before do
+        # 20 kWh measured on the main meter between 1 and 3 January
+        create(:meter_reading_event, :check_in, property: property,
+               recorded_at: Time.zone.local(2026, 1, 1, 18), main_reading: 1000)
+        create(:meter_reading_event, :check_out, property: property,
+               recorded_at: Time.zone.local(2026, 1, 3, 10), main_reading: 1020)
       end
 
-      # TODO: Add this test once C8 is implemented in the service
-      # it "displays warning flash when exceeding period consumption" do
-      #   # Set up a period with limited consumption
-      #   # ...
-      #
-      #   params = valid_params.merge(kwh: 1000)
-      #   post manual_consumption_entries_path, params: params
-      #
-      #   expect(response).to redirect_to(root_path)
-      #   expect(flash[:warning]).to match(/exceeds unattributed consumption/)
-      # end
+      it "saves the entry but shows a warning, because C8 is soft" do
+        expect {
+          post manual_consumption_entries_path, params: valid_params.merge(date: "2026-01-02", kwh: 500)
+        }.to change(ManualConsumptionEntry, :count).by(1)
+
+        expect(response).to redirect_to(root_path)
+        expect(flash[:warning]).to include("500")
+      end
+
+      it "shows the warning as a toast on the Turbo dashboard too" do
+        post manual_consumption_entries_path, params: valid_params.merge(date: "2026-01-02", kwh: 500),
+                                              as: :turbo_stream
+
+        expect(response.body).to include("bg-yellow-50")
+        expect(ManualConsumptionEntry.last.kwh).to eq(500)
+      end
+
+      it "reports plain success when the entry fits into the measured consumption" do
+        post manual_consumption_entries_path, params: valid_params.merge(date: "2026-01-02", kwh: 5)
+
+        expect(flash[:warning]).to be_nil
+        expect(flash[:success]).to be_present
+      end
     end
 
     context "with invalid property_id" do

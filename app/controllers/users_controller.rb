@@ -2,6 +2,7 @@
 
 class UsersController < ApplicationController
   before_action :require_admin
+  before_action :require_property, only: %i[new create edit update]
   before_action :set_user, only: %i[show edit update archive]
 
   def index

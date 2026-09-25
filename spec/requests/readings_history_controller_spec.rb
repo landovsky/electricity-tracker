@@ -160,6 +160,83 @@ RSpec.describe ReadingsHistoryController, type: :request do
     end
   end
 
+  describe "year filter" do
+    let(:history_property) { create(:property, name: "AAA history") }
+    let(:old_visitor) { create(:visitor, name: "Loňský host", property: history_property) }
+    let(:new_visitor) { create(:visitor, name: "Letošní host", property: history_property) }
+
+    let!(:old_event) { create(:stay, visitor: old_visitor, property: history_property, check_in_at: 2.years.ago).check_in_event }
+    let!(:new_event) { create(:stay, visitor: new_visitor, property: history_property, check_in_at: 1.hour.ago).check_in_event }
+
+    before { patch switch_property_path, params: { property_id: history_property.id } }
+
+    def selected_option(body)
+      year_select = body[%r{<select[^>]*name="year".*?</select>}m]
+      year_select[/<option selected="selected" value="([^"]*)"/, 1]
+    end
+
+    context "the history is opened without any filter" do
+      it "lists only the current year, because that is the year the dropdown shows as selected" do
+        get readings_history_path
+
+        expect(selected_option(response.body)).to eq(Date.current.year.to_s)
+        expect(response.body).to include(ActionView::RecordIdentifier.dom_id(new_event))
+        expect(response.body).not_to include(ActionView::RecordIdentifier.dom_id(old_event))
+      end
+    end
+
+    context "the user explicitly picks the all-time option" do
+      it "lists every year and shows all-time as the selected option" do
+        get readings_history_path, params: { year: "" }
+
+        expect(selected_option(response.body)).to eq("")
+        expect(response.body).to include(ActionView::RecordIdentifier.dom_id(new_event))
+        expect(response.body).to include(ActionView::RecordIdentifier.dom_id(old_event))
+      end
+    end
+  end
+
+  describe "events around local midnight on New Year" do
+    let(:tz_property) { create(:property, name: "AAA timezone") }
+    let(:new_year_visitor) { create(:visitor, name: "Silvestrovský host", property: tz_property) }
+
+    # 00:30 Prague time is still 2025-12-31 23:30 in UTC, where it is stored
+    let!(:new_year_event) do
+      create(:stay, visitor: new_year_visitor, property: tz_property,
+                    check_in_at: Time.zone.local(2026, 1, 1, 0, 30)).check_in_event
+    end
+
+    before { patch switch_property_path, params: { property_id: tz_property.id } }
+
+    it "files the check-in under the local year it is displayed in (2026)" do
+      get readings_history_path, params: { year: "2026" }
+
+      expect(response.body).to include(ActionView::RecordIdentifier.dom_id(new_year_event))
+    end
+
+    it "keeps it out of the previous year" do
+      get readings_history_path, params: { year: "2025" }
+
+      expect(response.body).not_to include(ActionView::RecordIdentifier.dom_id(new_year_event))
+    end
+  end
+
+  describe "periodic readings in the Czech UI" do
+    let(:meter_only_property) { create(:property, name: "AAA chata", tracking_mode: "meter_only") }
+
+    before do
+      create(:meter_reading_event, event_type: "periodic", property: meter_only_property, main_reading: 1000)
+      patch switch_property_path, params: { property_id: meter_only_property.id }
+    end
+
+    it "labels them in Czech instead of falling back to English" do
+      I18n.with_locale(:cs) { get readings_history_path }
+
+      expect(response.body).to include("Odečet měřičů")
+      expect(response.body).not_to include("Meter reading")
+    end
+  end
+
   context "when not authenticated" do
     before do
       # Undo the auto-sign-in from authentication_helpers.rb

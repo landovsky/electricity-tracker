@@ -70,6 +70,16 @@ class ApplicationController < ActionController::Base
     redirect_to onboarding_path
   end
 
+  # Opt-in guard for controllers that operate on the current property.
+  # A non-admin on a host whose subdomain matches none of their properties
+  # (or a user with no property at all) has no current_property; send them
+  # to the dashboard, which renders an empty state, instead of raising on nil.
+  def require_property
+    return if current_property
+
+    redirect_to root_path, alert: t("no_property")
+  end
+
   def auth_disabled?
     ENV["DISABLE_AUTH"] == "true"
   end

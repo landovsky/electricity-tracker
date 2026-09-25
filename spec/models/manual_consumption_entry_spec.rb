@@ -98,58 +98,6 @@ RSpec.describe ManualConsumptionEntry, type: :model do
     end
   end
 
-  describe "C8: soft validation for exceeding period consumption" do
-    let(:property) { Property.create!(name: "Test Property") }
-    let(:visitor) { create(:visitor, name: "Test Visitor", property: property) }
-
-    it "has exceeds_period_consumption? method" do
-      entry = ManualConsumptionEntry.new(
-        visitor: visitor,
-        property: property,
-        date: Time.zone.today,
-        kwh: 100,
-        note: "Large entry"
-      )
-      expect(entry).to respond_to(:exceeds_period_consumption?)
-    end
-
-    it "has consumption_warning method" do
-      entry = ManualConsumptionEntry.new(
-        visitor: visitor,
-        property: property,
-        date: Time.zone.today,
-        kwh: 100,
-        note: "Large entry"
-      )
-      expect(entry).to respond_to(:consumption_warning)
-    end
-
-    it "returns nil warning when not exceeding" do
-      entry = ManualConsumptionEntry.new(
-        visitor: visitor,
-        property: property,
-        date: Time.zone.today,
-        kwh: 10,
-        note: "Small entry"
-      )
-      allow(entry).to receive(:exceeds_period_consumption?).and_return(false)
-      expect(entry.consumption_warning).to be_nil
-    end
-
-    it "returns warning message when exceeding" do
-      entry = ManualConsumptionEntry.new(
-        visitor: visitor,
-        property: property,
-        date: Time.zone.today,
-        kwh: 100,
-        note: "Large entry"
-      )
-      allow(entry).to receive(:exceeds_period_consumption?).and_return(true)
-      expect(entry.consumption_warning).to include("Warning")
-      expect(entry.consumption_warning).to include("100")
-    end
-  end
-
   describe "edge case: manual entry during empty house (E4)" do
     let(:property) { Property.create!(name: "Test Property") }
     let(:visitor) { create(:visitor, name: "Test Visitor", property: property) }
