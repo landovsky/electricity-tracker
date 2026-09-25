@@ -19,6 +19,12 @@ class Stay < ApplicationRecord
   scope :open, -> { where(check_out_event_id: nil) }
   scope :closed, -> { where.not(check_out_event_id: nil) }
 
+  # Stays that represent real presence: not soft-deleted and anchored to a kept
+  # check-in event. Older code deleted check-ins without discarding the stay,
+  # leaving stays whose check-in is discarded or NULL; those must not count as
+  # "currently here", block a new check-in (C2) or be billed.
+  scope :live, -> { kept.where(check_in_event_id: MeterReadingEvent.kept.select(:id)) }
+
   # Computed properties
   def status
     check_out_event_id.nil? ? "open" : "closed"
@@ -32,13 +38,17 @@ class Stay < ApplicationRecord
     status == "closed"
   end
 
+  def live?
+    kept? && check_in_event.present? && check_in_event.kept?
+  end
+
   private
 
   # C2: A visitor can have at most one open stay at a time
   def visitor_has_no_other_open_stay
     return unless visitor_id.present?
 
-    other_open_stays = Stay.kept
+    other_open_stays = Stay.live
                            .where(visitor_id: visitor_id, check_out_event_id: nil)
                            .where.not(id: id)
 

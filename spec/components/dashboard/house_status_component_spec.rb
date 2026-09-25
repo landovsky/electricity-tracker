@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Dashboard::HouseStatusComponent, type: :component do
   let(:event) { instance_double("Event", recorded_at: 2.days.ago) }
   let(:stay) { instance_double("Stay", id: 1, open?: true, check_in_event: event) }
-  let(:visitor) { instance_double("Visitor", name: "Alice", stays: [ stay ]) }
+  let(:visitor) { instance_double("Visitor", name: "Alice", current_stay: stay) }
 
   let(:last_meter_readings) do
     {

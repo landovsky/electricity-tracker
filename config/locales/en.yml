@@ -446,6 +446,7 @@ en:
     destroy:
       success: "Event deleted successfully."
       has_checkout: "Cannot delete check-in with associated check-out. Delete check-out first."
+      has_later_stay: "Cannot delete check-out because the visitor has a later stay. Delete the later stay first."
       confirm: "Are you sure you want to delete this event? This action cannot be undone."
 
   # Readings history

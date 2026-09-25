@@ -610,4 +610,24 @@ RSpec.describe CheckOutVisitor, type: :service do
       end
     end
   end
+
+  context "a mistyped reading was deleted from history by older code that kept its readings" do
+    let!(:stay) do
+      create(:stay, :open, visitor: visitor, property: property, check_in_at: 3.days.ago,
+             main_reading_in: 1000.0, secondary_reading_in: 500.0, recorded_by: user)
+    end
+
+    before do
+      create(:meter_reading_event, event_type: "periodic", recorded_at: 2.days.ago, property: property,
+             main_reading: 99_999.0, secondary_reading: 88_888.0).discard!
+    end
+
+    it "checks out against the last live reading, so the deleted typo cannot block the visitor (C1)" do
+      outcome = described_class.run(visitor: visitor, property: property, recorded_by_user: user,
+                                    main_meter_reading: 1050.0)
+
+      expect(outcome).to be_valid, outcome.errors.full_messages.join(", ")
+      expect(outcome.result.check_out_event.meter_readings.find_by(meter: secondary_meter).value_kwh).to eq(500.0)
+    end
+  end
 end

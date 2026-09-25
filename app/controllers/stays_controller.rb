@@ -40,7 +40,7 @@ class StaysController < ApplicationController
   # PATCH /stays/:id/check_out
   # Check-out action - closes an existing stay with meter readings
   def check_out
-    stay = Stay.kept.find(params[:id])
+    stay = Stay.live.find(params[:id])
     outcome = CheckOutVisitor.run(check_out_params(stay))
 
     respond_to do |format|
@@ -151,7 +151,7 @@ class StaysController < ApplicationController
   def load_dashboard_data
     property = find_property
     @property_name = property.name
-    @current_visitors = property.current_visitors.includes(:stays)
+    @current_visitors = property.current_visitors.preload(stays: :check_in_event)
     @visitors_for_checkin = property.visitors.kept.order(:name)
     @visitors_for_checkout = @current_visitors
     @default_visitor_id = current_user&.default_visitor_id

@@ -511,6 +511,7 @@ cs:
     destroy:
       success: "Událost byla úspěšně smazána."
       has_checkout: "Nelze smazat příjezd, ke kterému existuje odjezd. Nejprve smažte odjezd."
+      has_later_stay: "Nelze smazat odjezd, protože návštěvník má pozdější pobyt. Nejprve smažte pozdější pobyt."
       confirm: "Opravdu chcete smazat tuto událost? Tato akce je nevratná."
 
   # Readings history

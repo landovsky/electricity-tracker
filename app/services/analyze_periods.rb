@@ -125,7 +125,7 @@ class AnalyzePeriods < ApplicationService
     # A visitor is present if they have a stay that spans the entire period:
     # - check_in_event.recorded_at <= period_start
     # - AND (check_out_event.recorded_at >= period_end OR check_out_event is nil)
-    stays = Stay.kept
+    stays = Stay.live
                 .where(property_id: property.id)
                 .joins(:check_in_event)
                 .where("meter_reading_events.recorded_at <= ?", period_start)

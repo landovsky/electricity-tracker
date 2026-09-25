@@ -912,5 +912,30 @@ RSpec.describe AnalyzePeriods do
         expect(period[:present_visitors]).to contain_exactly(visitor_a)
       end
     end
+
+    context "legacy stay left open after its check-in event was deleted by older code" do
+      let(:visitor_a) { create(:visitor, name: "Alice") }
+      let(:visitor_b) { create(:visitor, name: "Bob") }
+      let!(:orphan_stay) do
+        create(:stay, :open, visitor: visitor_a, property: property, check_in_at: 5.days.ago,
+               main_reading_in: 1000.0, secondary_reading_in: 500.0)
+          .tap { |s| s.check_in_event.discard! }
+      end
+      let!(:stay_b) do
+        create(:stay, :closed, visitor: visitor_b, property: property,
+               check_in_at: 3.days.ago, check_out_at: 1.day.ago,
+               main_reading_in: 1100.0, secondary_reading_in: 550.0,
+               main_reading_out: 1200.0, secondary_reading_out: 600.0)
+      end
+
+      it "does not bill the orphaned visitor for periods after the deleted check-in" do
+        outcome = described_class.run(
+          property: property,
+          date_range: { start_date: 1.week.ago.to_date, end_date: Date.current }
+        )
+
+        expect(outcome.result.flat_map { |p| p[:present_visitors] }).not_to include(visitor_a)
+      end
+    end
   end
 end

@@ -23,8 +23,7 @@ class Meter < ApplicationRecord
   # Returns the last recorded reading for this meter
   def last_reading
     meter_readings
-      .kept
-      .joins(:meter_reading_event)
+      .live
       .order("meter_reading_events.recorded_at DESC")
       .first
   end
