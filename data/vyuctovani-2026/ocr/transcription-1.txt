@@ -1,0 +1,86 @@
+PAGE 1 (r1.jpg)
+
+Transcription conventions:
+- The page 1 writer writes 3 like "J" and 5 like "√". I converted these to digits, and give the raw glyphs where it matters.
+- Square brackets mean an uncertain character: [a/b] gives alternatives, and [?] means illegible.
+
+Header: Jméno | Datum | I | II | TO/II (with "Garáž" written above it) | and on the right half: .I. | "Celková spotřeba?" | "Cena?" (the right-half headers are hard to read)
+
+page | name | P/O/other | date | I | II | garage | notes
+1 | Samane[c/o]? (name unclear, "Samane O") | O | [17/11].08.2025 | 0867235 | 123607 | 1883 | The first "1" in II is overwritten. The date looks like 17, but the garage reading 1883 is higher than the next row's 1869, so the date may be 11 or the row order may be off.
+1 | Jirka | P ("př.") | 15.8. | (blank) | (blank) | 1869 |
+1 | TEREZA | P | 22.8 | 867301 | 123640 | 1919 | In column I, "123 6?" is struck through before 867301 (someone started writing the II value in the wrong column).
+1 | ·nabíjení (Tereza) | charging | 22.8. | 43 kWh (boxed) + | 12 kWh (boxed) | - | A struck-through "43" sits before the date. The 43 is in the I column and the 12 is in the II column.
+1 | TEREZA | O | 24.8. | 867396 | 123730 | 1934 | A "6" is written in the left margin.
+1 | JIRKA | O | 24.8 | 867397 (written "867J97") | 12J7 70 → [123770/123730] | 1934 (written "19J4") | In II, the gap or dot between "12J7" and "70" is ambiguous. Jirka's next reading on 19.9 is 123733, which fits 123730 better. In the garage value, the J could be read as √, so [1934/1954].
+1 | "XXXX FAKTURA ZA ELEKTRIKU 2025 XXXX" | separator line (invoice for electricity 2025)
+1 | JIRKA | P | 19.9. | 86740 | 123733 (written "1237JJ") | 1934 (written "19J4") |
+1 | KRISTINA | P (implied) | 19.9. | 86740 | 123735 | (blank) |
+1 | JIRKA | O | 21.9. | 86744 | 123772 (written "12J772") | 1951 (written "19√1") |
+1 | KRISTINA | O | 21.9. | 86744 | 123772 | (blank) | There is a stray comma after the II value.
+1 | JIRKA | P | 9.10. | 86744 | 12[3/5]7[7?]3 | 1951 | A stain covers the 5th digit. The margin calc (69 = 123842 − 123773) implies 123773.
+1 | JIRKA | O | 12.10. | 867√4 → 86754 | 123842 (written "12J842") | 2029 |
+1 | Tereza | P | 17.11. | 867754 as written (a 7 seems to be written over or above the 5) | 123842 | 2029 | Uncertain. A value of 86775.4 is impossible because the next reading is 86761.0. The margin calc "T 14" implies about 86747, since 86761 − 14 = 86747. Likely intended: [86754/86747].
+1 | Tereza (name scrawled, looks like "Tereza" or "Jiuta") | O | 20.11. | 867610 | 123901 | 2029 |
+1 | PETR | P | 19.1.26 | 86761 | 123901 | 2029 |
+1 | PETR | O | 20.1.26 | 86773 | 123995 | 2029 |
+1 | Tereza | P | 30.1.26 | 86773 | 123995 | 2029 (struck through / line through it) |
+1 | TEREZA | O | 1.2.26 | 86789 | 124122 | 2029 |
+1 | Tereza | P | 2.4.26 | 86789 | 124123 | 2029 |
+
+Page 1 legend (bottom left and bottom right): JIRKA = triangle, KRISTINA = circle, POTUŽNÍCI = rectangle
+
+Page 1 margin calculations (right half; each number is drawn inside the symbol of its person). Each line gives the raw notation, then what it means:
+- J △17, then K ○26 next to a larger ○41, then "= △17 J" and "= ○26 K". This means 41 kWh was split into Jirka 17 and Kristina 26. The 41 fits the 19.9–21.9 overlap: I 4 (86744 − 86740) + II 37 (123772 − 123735) = 41.
+- J △10 + △69 = △79 J. This is Jirka 9.10–12.10: I 86754 − 86744 = 10, II 123842 − 123773 = 69.
+- T □14 + □59 = □73 T. This is Tereza 17.11–20.11: II 123901 − 123842 = 59, and I = 14, which implies a start reading of 86747.
+- P □12 + □94 = □106 P. This is Petr 19.1–20.1: I 86773 − 86761 = 12, II 123995 − 123901 = 94.
+
+PAGE 2 (r2.jpg)
+
+Header: JMÉNO | DATUM | I. | II. | TO GARÁŽ
+
+page | name | P/O/other | date | I | II | garage | notes
+2 | JOHANA (JIRKA) | P (the P is written above the name) | 4.4.2026 | 86 809 | 124235 | 2029 |
+2 | TEREZA (NABÍJENÍ) | charging | 4.4.2026 | 47 kWh (circled) | (blank) | (blank) |
+2 | JOHANA | (none, presumably O) | 6.4.26 | 86826 | 124380 | 2084 |
+2 | TEREZA | (none) | ~ (ditto) | ~ (ditto) | ~ (ditto) | ~ (ditto) | The ditto marks mean the same as the row above.
+2 | [BÁBA/BÁRA] (faint, overwritten) | (none) | ~ | ~ | "0—" (ditto-like) | ~ | A "6" is written in the left margin.
+2 | EDITA | P (a scribbled correction sits before the P) | 1[8/9].6.26 | 86826 | 124380 | (blank) | The day digit is overwritten.
+2 | EDITA | O. | 21.6.26 | 86830 | 124445 | (blank) | A "1" is written in the left margin.
+2 | TEREZA | P. | 27.6. | 86830 | 124445 | (blank) | The 124445 is written with a stroke through it, so the last digit may read as 5 or 4 ([124445/124441]); most likely 124445.
+2 | TEREZA (NABÍJENÍ, boxed) | charging | 27.6. | 50 kWh (circled) | (blank) | (blank) |
+2 | TEREZA | O. | 28.6. | 86837 | 124507 | 2084 |
+2 | EDITA | P. | 3.7. | 86837,2 | 124507,9 | (blank) |
+2 | EDITA | O | 6.7.26 | 86841 | 124552 | ~ (ditto "-ıı-") |
+2 | KRIST. | P | 10.7. | 86841 | 124552 | (blank) |
+2 | KRIST. | O | 12.7.26 | 86841 | 124564 | ~ (ditto) |
+2 | JIRKA | P. | 17.7.26 | 86841 | 124564 | (blank) |
+2 | KRISTINA | P. | 17.7 | 86841 | 124567 | (blank) |
+2 | PETR | P. | 18.7 | 86843 | 1245[8/9]2 | (blank) | Probably 124582.
+2 | PETR | O. | 19.7. | 86845 | 124605 | 2100 |
+2 | JIRKA | O. | 19.7. | 86845 | 124605 | ~ (ditto "ıı") |
+2 | KRISTI. | P (a bold, overwritten P; possibly O) | 24.7.26 | 86845 | 124605 | (blank) |
+2 | JIRKA | P. | 24.7.26? | ? | ? | ? | The question mark after the date is original. Question marks were written in the I, II and garage cells instead of values.
+2 | JIRKA | O | 26.7 | ? | ? | 2117 |
+
+PAGE 3 (r3.jpg)
+
+Header: JMÉNO | DATUM | I | (stray "TO" in the gap) | II | TO
+
+page | name | P/O/other | date | I | II | garage | notes
+3 | KRISTINA | (none) | 29.7.26 | 086855 | 124725 | (blank) | In I, the last "5" may be overwritten on a 3. In II, the "2" is overwritten.
+3 | Marek | P | 7.8.26 | 086855 | 124752? | (blank) | The question mark is original.
+3 | Marek | O | 9.8.26 | 086856 | 124783? | (blank) | The question mark is original. The 5th digit reads [3/5].
+3 | KRISTINA | P | 4.9.26 | 86856 | 12478[3/5]? | (blank) | The question mark is original.
+3 | KRISTINA | O | 6.9.26 | 86857 | 1247[8→5]1 | (blank) | The 4th digit was 8 and has been overwritten in darker ink as 5, giving 124751. A tick or apostrophe follows the value.
+3 | JIRKA | P | 19.9.26 | 868√7 → 86857 | 1247√1 → 124751 | 2117 |
+
+Consistency flags (observations only; no values were changed):
+- **Page 1, Samane/Jirka rows:** garage goes from 1883 to 1869, so it decreases.
+- **Page 1, Jirka O 24.8:** II reads as 123770, but the next reading is 123733, so the value may be 123730.
+- **Page 1, Tereza P 17.11:** I "867754" cannot be right. Context and the margin calc suggest 86747 (or 86754).
+- **Page 3, II column:** readings go 124725 → 124752? → 124783? → 12478[3/5]? → 124751 → 124751. The drop from about 124783 to 124751 means the "8"s in the 7.8–4.9 readings are doubtful. They may be misreads of 5, which would give about 124752 → 124753 → 124753 → 124751, but that is still not monotonic. The writer's own question marks flag these cells as uncertain.
+- **Page 2, Jirka 24.7–26.7:** there are no I or II readings, only question marks. The garage value is 2117.
+
+Zoomed crops are in /private/tmp/claude-501/-Users-tomas-git-ai-sucha-meter-vol1/84072f21-b116-4643-a152-22d10f095c6c/scratchpad/img/ (z1a–z1g, z2a–z2b, z3a–z3b).

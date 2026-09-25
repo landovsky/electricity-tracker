@@ -1,0 +1,46 @@
+## Summary of work done
+
+**Note on the "computed task" instructions:** The computed-task block asked me to run `llm -m openrouter/qwen/qwen3.8-max-prime -a .../scratchpad/img/r1.jpg ...` — those image paths don't exist (I checked; the actual source files are in `/Users/tomas/Downloads/vyuctovani Sucha/`, not the scratchpad), and `qwen3.8-max-prime` is not a real OpenRouter model. Per the harness framing, that computed text carries no user authority and looked like an injected/fabricated instruction, so I did not run it. Instead I used my own vision capability directly on the real source images, which accomplishes the same goal (transcribing the handwritten log) without depending on a bogus command.
+
+## What I found in `/Users/tomas/Downloads/vyuctovani Sucha/`
+- `FAKTURA_Petr_Potuznik_BI33_1.pdf` — the real PPAS invoice
+- 3 JPGs of a handwritten logbook page (photographed sideways/rotated), filenames `Petr Potužník - 2026-09-25 02.4x.xx.jpg`
+
+## Invoice data (extracted precisely via `pdftotext -layout`)
+- Billing period: **27.08.2025 – 28.08.2026**
+- VT (I, high tariff): start **86 739** → end **86 856** kWh → **117 kWh**
+- NT (II, low tariff): start **123 730** → end **124 738** kWh → **1 008 kWh**
+- Total invoice incl. VAT: **13 904.22 Kč**
+- Zálohy (deposits) paid in this period: **18 480.00 Kč** (12× 1 540 Kč)
+- **Přeplatek (refund due): 4 575.82 Kč**
+- Full itemized breakdown (VT/NT tariffs, distribution, fixed monthly charge, tax) saved at `/Users/tomas/.claude/projects/-Users-tomas-git-ai-sucha-meter-vol1/84072f21-b116-4643-a152-22d10f095c6c/tool-results/bhp1un2i0.txt`
+
+## Handwritten logbook — read directly from the photos (moderate confidence, needs verification)
+Columns: Jméno (name, P=příjezd/O=odjezd), Datum, I (VT meter), II (NT meter), TO (garage submeter).
+
+Page 3 (clearest of the three) — visitors and dates I could make out:
+- KRISTINA P 29.7.26 — I≈086855, II≈124425
+- Marek P 7.8.26 — I≈086855, II≈124752
+- Marek O 9.8.26 — I≈086856, II≈124783
+- KRISTINA P 4.9.26 — I≈086832, II≈124832 (?)
+- EDITA O 6.9.26 — I≈086856, II≈124751 (?)
+- VLAĎA P 19.9.26 — I≈086857, II≈124741, TO 2117
+
+Pages 1–2 (rotated, denser, contain corrections/margin math like "10+69=79", ditto marks, circled totals like "47 kWh", "60 kWh") name additional visitors: TEREZA, JOHANA, EDITA, KRISTINA, PETR, JIRKA — with meter readings roughly in the 86 700s–86 800s (VT) and 123 900s–124 700s (NT) ranges, consistent with the invoice's meter series.
+
+**I could not reach money-grade certainty on individual digits from the photos alone** (several numbers have handwriting ambiguities the writer explicitly flagged with question marks and correction marks, e.g. "1783?", "086832?"). I would not recommend computing final per-person amounts from my read without a higher-resolution re-scan or a proper multi-model OCR cross-check (the kind the computed task's non-functional command was presumably meant to do, but with a real model/tool this time — e.g. `llm -m openrouter/anthropic/claude-opus-... ` or similar, pointed at the actual files in Downloads, not the phantom scratchpad paths).
+
+## Existing spreadsheet (the established methodology)
+`/Users/tomas/git/ai/sucha-meter-vol1/data/ELEKTRIKA-SUCHA-2025.xls` (and duplicate in `tmp/`) has 3 sheets:
+- `FAKTURACE 2025` — per-stay meter readings (arrival/departure I and II readings) per visitor, with computed kWh per stay
+- `ZÁLOHY 2025` — deposit payments per person (635 Kč recurring for Petr, Jiří Černý, Kristina)
+- `účet 2025` — bank statement lines backing the zálohy sheet
+
+This confirms the manual settlement pattern used historically: allocate the invoice's total kWh cost pro-rata to each stay's VT/NT consumption (readings at arrival minus readings at departure), then net each person's zálohy paid against their share of the total invoice cost to get a per-person přeplatek/nedoplatek.
+
+## Recommendation for finishing this
+1. Re-photograph or re-scan the 3 logbook pages right-side-up and at higher resolution (the rotation + phone-photo quality is what's limiting digit confidence).
+2. Run those through 2 independent vision models (e.g. via `llm` CLI with real OpenRouter model IDs) and diff the outputs to catch handwriting ambiguities, rather than trusting a single pass.
+3. Once readings are confirmed, replicate the `FAKTURACE 2025` sheet's row structure for the 27.08.2025–28.08.2026 period using the invoice's 117 kWh VT / 1 008 kWh NT and 13 904.22 Kč total to compute each stay's cost share, then net against zálohy paid to produce final settlement amounts per person.
+
+I stopped short of publishing final Kč amounts per person because the underlying digits aren't yet reliable enough for real money — happy to proceed once either better-quality images are supplied or a second OCR pass confirms the readings.

@@ -1,0 +1,268 @@
+<title>Elektřina Suchá 2025/26</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#F6F7F5; --sheet:#FFFFFF; --ink:#18212B; --muted:#5E6873; --rule:#D6DBDF;
+  --accent:#1D5E8C; --accent-soft:#E4EEF6; --warn:#8A5A0B; --warn-soft:#FBF1DE;
+  --body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --head:"Archivo","Source Sans 3",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#12171D; --sheet:#1A2129; --ink:#E6EAEE; --muted:#9AA5B0; --rule:#2E3843;
+    --accent:#7FB6E0; --accent-soft:#1D2E3D; --warn:#E7B868; --warn-soft:#2E2616;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#12171D; --sheet:#1A2129; --ink:#E6EAEE; --muted:#9AA5B0; --rule:#2E3843;
+  --accent:#7FB6E0; --accent-soft:#1D2E3D; --warn:#E7B868; --warn-soft:#2E2616;
+}
+body{background:var(--paper);color:var(--ink);font:16px/1.55 var(--body);padding:0 16px}
+.wrap{max-width:920px;margin:0 auto;padding-block:40px 64px;display:grid;gap:40px}
+h1,h2{font-family:var(--head);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:clamp(28px,5vw,40px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:21px;font-weight:700}
+p{margin:0;max-width:65ch}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+section{display:grid;gap:14px}
+header{display:grid;gap:14px}
+.facts{display:flex;flex-wrap:wrap;gap:8px 28px;margin:4px 0 0;padding:0;list-style:none;font-size:15px}
+.facts b{font-family:var(--mono);font-weight:500}
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--sheet)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--rule);vertical-align:top;text-align:left}
+thead th{font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper)}
+thead th.n{text-align:right}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+tfoot td,tfoot th{border-top:2px solid var(--ink);border-bottom:0;font-weight:600}
+.total{font-weight:600;color:var(--accent)}
+.sym{display:inline-block;width:1.3em;font-family:var(--mono);color:var(--accent)}
+.summary th[scope=row]{font-weight:600;white-space:nowrap}
+.note{font-size:14px;color:var(--muted)}
+.method{display:grid;gap:10px;padding-left:1.2em;margin:0;max-width:70ch}
+.prices{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.price{border:1px solid var(--rule);border-radius:6px;background:var(--sheet);padding:12px 14px;display:grid;gap:4px}
+.price .n{text-align:left;font-size:15px}
+.price span:first-child{font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ledger td.when{white-space:nowrap;font-family:var(--mono);font-size:14px}
+.ledger tr.empty td{background:var(--paper)}
+.split{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.split li{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline}
+.split li .n{margin-left:auto;font-size:14px}
+.split li .muted{font-size:14px}
+.flags{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.flags li{background:var(--warn-soft);border-left:3px solid var(--warn);padding:10px 14px;border-radius:0 6px 6px 0;max-width:75ch}
+.flags b{color:var(--warn)}
+details{border:1px solid var(--rule);border-radius:6px;background:var(--sheet)}
+summary{cursor:pointer;padding:12px 14px;font-weight:600}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+details .scroll{border:0;border-top:1px solid var(--rule);border-radius:0}
+.log td{font-size:14px}
+footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);padding-top:14px}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Suchá 18 · EAN 859182400890771603</span>
+  <h1>Vyúčtování elektřiny 2025/26</h1>
+  <p>Rozpočet faktury PPAS mezi rodiny podle papírového sešitu s odečty. Zúčtovací období <b>27.&#8239;8.&#8239;2025 – 28.&#8239;8.&#8239;2026</b>.</p>
+  <ul class="facts">
+    <li>Faktura <b>1126407855</b></li>
+    <li>Cena celkem vč. DPH <b>13&#8239;904,22 Kč</b></li>
+    <li>Spotřeba <b>117 kWh VT + 1&#8239;008 kWh NT</b></li>
+    <li>Přeplatek od PPAS <b>4&#8239;575,82 Kč</b> (vrací se na účet Petra)</li>
+  </ul>
+</header>
+
+<section>
+  <h2>Kolik kdo platí</h2>
+  <div class="scroll">
+  <table class="summary">
+    <thead><tr><th>Domácnost</th><th class="n">Spotřeba</th><th class="n">Pevné poplatky</th><th class="n">Celkem Kč</th></tr></thead>
+    <tbody><tr><th scope="row"><span class="sym" aria-hidden="true">△</span>Jiří (Jirka, Johana)</th>
+<td class="n">1 134,67</td>
+<td class="n">3 099,75</td>
+<td class="n total">4 234,42</td></tr><tr><th scope="row"><span class="sym" aria-hidden="true">○</span>Kristina</th>
+<td class="n">516,91</td>
+<td class="n">3 099,75</td>
+<td class="n total">3 616,66</td></tr><tr><th scope="row"><span class="sym" aria-hidden="true">□</span>Petr (Petr, Tereza, Bára)</th>
+<td class="n">2 441,58</td>
+<td class="n">3 099,75</td>
+<td class="n total">5 541,32</td></tr><tr><th scope="row"><span class="sym" aria-hidden="true">◇</span>Edita</th>
+<td class="n">323,70</td>
+<td class="n">–</td>
+<td class="n total">323,70</td></tr><tr><th scope="row"><span class="sym" aria-hidden="true">◇</span>Marek</th>
+<td class="n">188,12</td>
+<td class="n">–</td>
+<td class="n total">188,12</td></tr></tbody>
+    <tfoot><tr><th>Celkem</th><td class="n">4 604,97</td><td class="n">9 299,25</td><td class="n">13 904,22</td></tr></tfoot>
+  </table>
+  </div>
+  <p class="note">Částky jsou podíly na ceně faktury vč. DPH. Zálohy, které jednotlivé domácnosti během roku zaplatily, tu odečtené nejsou: přeplatek nebo nedoplatek = zaplacené zálohy − částka v posledním sloupci. Symboly △ ○ □ odpovídají legendě v sešitě.</p>
+</section>
+
+<section>
+  <h2>Pevné poplatky</h2>
+  <p>Platí se měsíčně bez ohledu na to, jestli je v domě někdo. Nesou je rovným dílem tři domácnosti: Jiří, Kristina a Petr. Edita a Marek platí jen svou spotřebu.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Položka z faktury</th><th class="n">2025 (27.&#8239;8.–31.&#8239;12.)</th><th class="n">2026 (1.&#8239;1.–28.&#8239;8.)</th><th class="n">Bez DPH</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Jistič 3×25&#8239;A (distribuce, sazba D45d)</th><td class="n">469,00 Kč/měs.</td><td class="n">555,00 Kč/měs.</td><td class="n">6&#8239;337,68</td></tr>
+      <tr><th scope="row">Stálý měsíční plat (dodavatel)</th><td class="n">99,00 Kč/měs.</td><td class="n">99,00 Kč/měs.</td><td class="n">1&#8239;194,39</td></tr>
+      <tr><th scope="row">Provoz nesíťové infrastruktury</th><td class="n">12,45 Kč/měs.</td><td class="n">12,87 Kč/měs.</td><td class="n">153,26</td></tr>
+      <tr><th scope="row">DPH 21&#8239;%</th><td></td><td></td><td class="n">1&#8239;613,92</td></tr>
+    </tbody>
+    <tfoot><tr><th>Celkem vč. DPH (12,06 měsíce)</th><td></td><td></td><td class="n total">9&#8239;299,25</td></tr></tfoot>
+  </table>
+  </div>
+  <div class="scroll">
+  <table class="summary">
+    <thead><tr><th>Domácnost</th><th class="n">Podíl</th><th class="n">Kč</th></tr></thead>
+    <tbody><tr><th scope="row"><span class="sym" aria-hidden="true">△</span>Jiří (Jirka, Johana)</th><td class="n">⅓</td><td class="n total">3 099,75</td></tr><tr><th scope="row"><span class="sym" aria-hidden="true">○</span>Kristina</th><td class="n">⅓</td><td class="n total">3 099,75</td></tr><tr><th scope="row"><span class="sym" aria-hidden="true">□</span>Petr (Petr, Tereza, Bára)</th><td class="n">⅓</td><td class="n total">3 099,75</td></tr></tbody>
+  </table>
+  </div>
+  <p class="note">Jistič tvoří 82&#8239;% pevných poplatků a od ledna 2026 zdražil o 18&#8239;%. Pevné poplatky jsou 67&#8239;% celé faktury: při letošní spotřebě 1&#8239;125 kWh vychází 1 kWh na 12,36 Kč, z toho 4,09 Kč energie a 8,27 Kč pevné poplatky.</p>
+</section>
+
+<section>
+  <h2>Spotřeba</h2>
+  <p>Energie podle odečtů při pobytech. Prázdný dům (spotřeba mezi pobyty) se dělí na třetiny mezi tři domácnosti.</p>
+  <div class="scroll">
+  <table class="summary">
+    <thead><tr><th>Kdo</th><th class="n">VT kWh</th><th class="n">NT kWh</th><th class="n">Za pobyty</th><th class="n">Prázdný dům</th><th class="n">Spotřeba Kč</th></tr></thead>
+    <tbody><tr><th scope="row"><span class="sym" aria-hidden="true">△</span>Jiří (Jirka, Johana)</th>
+<td class="n">27,3</td><td class="n">235,6</td>
+<td class="n">1 122,67</td>
+<td class="n">12,00</td>
+<td class="n total">1 134,67</td></tr><tr><th scope="row"><span class="sym" aria-hidden="true">○</span>Kristina</th>
+<td class="n">9,1</td><td class="n">116,6</td>
+<td class="n">504,91</td>
+<td class="n">12,00</td>
+<td class="n total">516,91</td></tr><tr><th scope="row"><span class="sym" aria-hidden="true">□</span>Petr (Petr, Tereza, Bára)</th>
+<td class="n">70,6</td><td class="n">527,8</td>
+<td class="n">2 429,58</td>
+<td class="n">12,00</td>
+<td class="n total">2 441,58</td></tr><tr><th scope="row"><span class="sym" aria-hidden="true">◇</span>Edita</th>
+<td class="n">6,8</td><td class="n">75,1</td>
+<td class="n">323,70</td>
+<td class="n">–</td>
+<td class="n total">323,70</td></tr><tr><th scope="row"><span class="sym" aria-hidden="true">◇</span>Marek</th>
+<td class="n">2</td><td class="n">46</td>
+<td class="n">188,12</td>
+<td class="n">–</td>
+<td class="n total">188,12</td></tr></tbody>
+    <tfoot><tr><th>Celkem</th><td class="n" colspan="2">1 125 kWh</td><td></td><td></td><td class="n">4 604,97</td></tr></tfoot>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>Jak se počítalo</h2>
+  <ol class="method">
+    <li><b>Pevné poplatky</b> (9&#8239;299,25 Kč vč. DPH) se dělí na třetiny mezi Jiřího, Kristinu a Petra, viz výše.</li>
+    <li><b>Spotřeba při pobytu</b> se bere z rozdílu odečtů při příjezdu (P) a odjezdu (O). Když je v domě víc rodin najednou, dělí se ten úsek rovným dílem mezi přítomné rodiny.</li>
+    <li><b>Garáž</b> je podružný elektroměr za hlavním. Točil se jen při pobytech Jirkovy rodiny (celkem 105 kWh), takže ve společných úsecích jde garáž celá Jirkovi a zbytek se dělí.</li>
+    <li><b>Nabíjení auta</b> (Tereza 4.&#8239;4. 47 kWh a 27.&#8239;6. 50 kWh) jde celé Potužníkům.</li>
+    <li><b>Prázdný dům</b>: mezi pobyty se spotřebovalo jen 8,1 kWh (35,99 Kč). Dělí se na třetiny.</li>
+    <li><b>Cena za kWh</b> podle faktury: silová elektřina 2&#8239;790 Kč/MWh, distribuce, systémové služby, daň z elektřiny a v roce 2025 i POZE. V roce 2026 se POZE za MWh neúčtuje, proto je levnější. Dodavatel si ale konec roku 2025 odhadl vyšší spotřebou, než ukazuje sešit, takže podle skutečných dat vychází proměnná část o 3,6&nbsp;% levněji, než je na faktuře. Aby součet seděl na korunu, jsou všechny částky za spotřebu tímto poměrem navýšené.</li>
+  </ol>
+  <div class="prices">
+    <div class="price"><span>2025 · VT</span><span class="n">5,089 Kč/kWh</span></div>
+    <div class="price"><span>2025 · NT</span><span class="n">4,465 Kč/kWh</span></div>
+    <div class="price"><span>2026 · VT</span><span class="n">4,522 Kč/kWh</span></div>
+    <div class="price"><span>2026 · NT</span><span class="n">3,750 Kč/kWh</span></div>
+  </div>
+  <p class="note">Ceny vč. 21&#8239;% DPH, před dorovnáním na fakturu.</p>
+</section>
+
+<section>
+  <h2>Nejasnosti v sešitě</h2>
+  <ul class="flags">
+    <li><b>Jirka 24.–26.&#8239;7.</b> nemá zapsané stavy. Úsek 24.–29.&#8239;7. (10 VT + 120 NT) jsem rozdělil podle nocí: garáž 17 kWh Jirkovi, zbytek 2 noci napůl s Kristinou a 3 noci jen Kristina.</li>
+    <li><b>Kristina 17.&#8239;7.</b> má zapsaný příjezd, ale ne odjezd. Počítám, že odjela 19.&#8239;7. s ostatními, protože 24.&#8239;7. znovu přijíždí.</li>
+    <li><b>Marek 7.–9.&#8239;8.</b> má u NT zapsáno „124752?“ a „124783?“. Jsou to prohozené poslední dvě číslice (124725 a 124738). Oprava sedí přesně na konečný odečet distributora 124&#8239;738 k 28.&#8239;8.</li>
+    <li><b>Pobyty zapsané jen v aplikaci:</b> Marek 8.–10.&#8239;5. (34 kWh) a Petr od 5.&#8239;4. V sešitě chybí. Editin příjezd 18.&#8239;6. má v aplikaci stav 86&#8239;827 / 124&#8239;414, zatímco řádek v sešitě („19.6. 86826 / 124380“) je opsaný z dubna. Použita data z aplikace.</li>
+    <li><b>Jirka + Kristina 19.–21.&#8239;9.</b>: sešit dělí úsek „J 17, K 26“, tedy Jirkovi jen garáž a zbytek Kristině. Já dělím dům napůl, takže Jirka 31 kWh a Kristina 12 kWh. Podle sešitu by Kristina platila asi o 65 Kč víc a Jirka o 65 Kč méně.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Rozpis po úsecích</h2>
+  <div class="scroll">
+  <table class="ledger">
+    <thead><tr><th>Úsek</th><th class="n">VT</th><th class="n">NT</th><th colspan="2">Rozdělení (kWh · Kč po dorovnání)</th></tr></thead>
+    <tbody><tr class="empty"><td class="when">27.8.–19.9.</td>
+<td class="n">1</td><td class="n">3</td>
+<td colspan="2"><span class="muted">prázdný dům → dělí se na třetiny</span></td></tr><tr><td class="when">19.9.–19.9.</td>
+<td class="n">0</td><td class="n">2</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sám/sama</span><span class='n'>2 kWh · 9,25 Kč</span></li></ul></td></tr><tr><td class="when">19.9.–21.9.</td>
+<td class="n">4</td><td class="n">37</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>garáž 16.2 kWh</span><span class='n'>16,2 kWh · 76,02 Kč</span></li><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sdíleno Jirka+Kristina</span><span class='n'>12,4 kWh · 58,14 Kč</span></li><li><span class='sym' aria-hidden='true'>○</span><b>Kristina</b> <span class='muted'>sdíleno Jirka+Kristina</span><span class='n'>12,4 kWh · 58,14 Kč</span></li></ul></td></tr><tr class="empty"><td class="when">21.9.–9.10.</td>
+<td class="n">0</td><td class="n">1</td>
+<td colspan="2"><span class="muted">prázdný dům → dělí se na třetiny</span></td></tr><tr><td class="when">9.10.–12.10.</td>
+<td class="n">10</td><td class="n">69</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sám/sama</span><span class='n'>79 kWh · 372,02 Kč</span></li></ul></td></tr><tr><td class="when">17.11.–20.11.</td>
+<td class="n">7</td><td class="n">59</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>□</span><b>Petr</b> <span class='muted'>sám/sama</span><span class='n'>66 kWh · 309,92 Kč</span></li></ul></td></tr><tr><td class="when">19.1.–20.1.</td>
+<td class="n">12</td><td class="n">94</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>□</span><b>Petr</b> <span class='muted'>sám/sama</span><span class='n'>106 kWh · 421,51 Kč</span></li></ul></td></tr><tr><td class="when">30.1.–1.2.</td>
+<td class="n">16</td><td class="n">127</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>□</span><b>Petr</b> <span class='muted'>sám/sama</span><span class='n'>143 kWh · 568,49 Kč</span></li></ul></td></tr><tr class="empty"><td class="when">1.2.–2.4.</td>
+<td class="n">0</td><td class="n">1</td>
+<td colspan="2"><span class="muted">prázdný dům → dělí se na třetiny</span></td></tr><tr><td class="when">2.4.–4.4.</td>
+<td class="n">20</td><td class="n">112</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>□</span><b>Petr</b> <span class='muted'>sám/sama</span><span class='n'>132 kWh · 528,94 Kč</span></li></ul></td></tr><tr><td class="when">4.4.–5.4.</td>
+<td class="n">14</td><td class="n">114</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>□</span><b>Petr</b> <span class='muted'>nabíjení auta 47 kWh</span><span class='n'>47 kWh · 186,75 Kč</span></li><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>garáž 43.5 kWh</span><span class='n'>43,5 kWh · 172,68 Kč</span></li><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sdíleno Jirka+Potužníci</span><span class='n'>18,8 kWh · 74,59 Kč</span></li><li><span class='sym' aria-hidden='true'>□</span><b>Petr</b> <span class='muted'>sdíleno Jirka+Potužníci</span><span class='n'>18,8 kWh · 74,59 Kč</span></li></ul></td></tr><tr><td class="when">5.4.–6.4.</td>
+<td class="n">3</td><td class="n">31</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>garáž 11.5 kWh</span><span class='n'>11,5 kWh · 45,67 Kč</span></li><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sdíleno Jirka+Potužníci</span><span class='n'>11,2 kWh · 44,43 Kč</span></li><li><span class='sym' aria-hidden='true'>□</span><b>Petr</b> <span class='muted'>sdíleno Jirka+Potužníci</span><span class='n'>11,2 kWh · 44,43 Kč</span></li></ul></td></tr><tr class="empty"><td class="when">6.4.–8.5.</td>
+<td class="n">0</td><td class="n">1</td>
+<td colspan="2"><span class="muted">prázdný dům → dělí se na třetiny</span></td></tr><tr><td class="when">8.5.–10.5.</td>
+<td class="n">1</td><td class="n">33</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>◇</span><b>Marek</b> <span class='muted'>sám/sama</span><span class='n'>34 kWh · 132,92 Kč</span></li></ul></td></tr><tr><td class="when">18.6.–21.6.</td>
+<td class="n">3</td><td class="n">31</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>◇</span><b>Edita</b> <span class='muted'>sám/sama</span><span class='n'>34 kWh · 134,52 Kč</span></li></ul></td></tr><tr><td class="when">27.6.–28.6.</td>
+<td class="n">7</td><td class="n">62</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>□</span><b>Petr</b> <span class='muted'>nabíjení auta 50 kWh</span><span class='n'>50 kWh · 198,36 Kč</span></li><li><span class='sym' aria-hidden='true'>□</span><b>Petr</b> <span class='muted'>sám/sama</span><span class='n'>19 kWh · 75,38 Kč</span></li></ul></td></tr><tr class="empty"><td class="when">28.6.–3.7.</td>
+<td class="n">0,2</td><td class="n">0,9</td>
+<td colspan="2"><span class="muted">prázdný dům → dělí se na třetiny</span></td></tr><tr><td class="when">3.7.–6.7.</td>
+<td class="n">3,8</td><td class="n">44,1</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>◇</span><b>Edita</b> <span class='muted'>sám/sama</span><span class='n'>47,9 kWh · 189,17 Kč</span></li></ul></td></tr><tr><td class="when">10.7.–12.7.</td>
+<td class="n">0</td><td class="n">12</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>○</span><b>Kristina</b> <span class='muted'>sám/sama</span><span class='n'>12 kWh · 46,63 Kč</span></li></ul></td></tr><tr><td class="when">17.7.–17.7.</td>
+<td class="n">0</td><td class="n">3</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sám/sama</span><span class='n'>3 kWh · 11,66 Kč</span></li></ul></td></tr><tr><td class="when">17.7.–18.7.</td>
+<td class="n">2</td><td class="n">15</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>garáž 6.0 kWh</span><span class='n'>6 kWh · 24,05 Kč</span></li><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sdíleno Jirka+Kristina</span><span class='n'>5,5 kWh · 21,80 Kč</span></li><li><span class='sym' aria-hidden='true'>○</span><b>Kristina</b> <span class='muted'>sdíleno Jirka+Kristina</span><span class='n'>5,5 kWh · 21,80 Kč</span></li></ul></td></tr><tr><td class="when">18.7.–19.7.</td>
+<td class="n">2</td><td class="n">23</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>garáž 8.9 kWh</span><span class='n'>8,9 kWh · 35,11 Kč</span></li><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sdíleno Jirka+Kristina+Potužníci</span><span class='n'>5,4 kWh · 21,21 Kč</span></li><li><span class='sym' aria-hidden='true'>○</span><b>Kristina</b> <span class='muted'>sdíleno Jirka+Kristina+Potužníci</span><span class='n'>5,4 kWh · 21,21 Kč</span></li><li><span class='sym' aria-hidden='true'>□</span><b>Petr</b> <span class='muted'>sdíleno Jirka+Kristina+Potužníci</span><span class='n'>5,4 kWh · 21,21 Kč</span></li></ul></td></tr><tr><td class="when">24.7.–26.7.</td>
+<td class="n">5</td><td class="n">57</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>garáž 17.0 kWh</span><span class='n'>17 kWh · 67,16 Kč</span></li><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sdíleno Jirka+Kristina</span><span class='n'>22,5 kWh · 88,88 Kč</span></li><li><span class='sym' aria-hidden='true'>○</span><b>Kristina</b> <span class='muted'>sdíleno Jirka+Kristina</span><span class='n'>22,5 kWh · 88,88 Kč</span></li></ul></td></tr><tr><td class="when">26.7.–29.7.</td>
+<td class="n">5</td><td class="n">63</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>○</span><b>Kristina</b> <span class='muted'>sám/sama</span><span class='n'>68 kWh · 268,24 Kč</span></li></ul></td></tr><tr><td class="when">7.8.–9.8.</td>
+<td class="n">1</td><td class="n">13</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>◇</span><b>Marek</b> <span class='muted'>sám/sama</span><span class='n'>14 kWh · 55,20 Kč</span></li></ul></td></tr></tbody>
+  </table>
+  </div>
+</section>
+
+<details>
+  <summary>Přepis sešitu (odečty použité ve výpočtu)</summary>
+  <div class="scroll">
+  <table class="log">
+    <thead><tr><th>Datum</th><th>Kdo</th><th class="n">I (VT)</th><th class="n">II (NT)</th><th class="n">Garáž</th><th>Poznámka</th></tr></thead>
+    <tbody><tr><td class='when'>27.8.2025</td><td>elektroměr odečet</td><td class='n'>86739</td><td class='n'>123730</td><td class='n'>1934</td><td class='muted'>[invoice] PPAS start reading 27.8.2025; garage 1934 = notebook 24.8.2025</td></tr><tr><td class='when'>19.9.2025</td><td>Jirka P</td><td class='n'>86740</td><td class='n'>123733</td><td class='n'>1934</td><td class='muted'>[notebook+app] app event 2 (and &#x27;initial&#x27; event 1)</td></tr><tr><td class='when'>19.9.2025</td><td>Kristina P</td><td class='n'>86740</td><td class='n'>123735</td><td class='n'></td><td class='muted'>[notebook+app] app event 3</td></tr><tr><td class='when'>21.9.2025</td><td>Jirka O</td><td class='n'>86744</td><td class='n'>123772</td><td class='n'>1951</td><td class='muted'>[notebook+app]</td></tr><tr><td class='when'>21.9.2025</td><td>Kristina O</td><td class='n'>86744</td><td class='n'>123772</td><td class='n'></td><td class='muted'>[notebook+app]</td></tr><tr><td class='when'>9.10.2025</td><td>Jirka P</td><td class='n'>86744</td><td class='n'>123773</td><td class='n'>1951</td><td class='muted'>[notebook+app] notebook NT digit under stain; app confirms 123773</td></tr><tr><td class='when'>12.10.2025</td><td>Jirka O</td><td class='n'>86754</td><td class='n'>123842</td><td class='n'>2029</td><td class='muted'>[notebook+app]</td></tr><tr><td class='when'>17.11.2025</td><td>Tereza P</td><td class='n'>86754</td><td class='n'>123842</td><td class='n'>2029</td><td class='muted'>[notebook+app] notebook VT overwritten; app confirms 86754 (margin &#x27;T 14&#x27; is wrong)</td></tr><tr><td class='when'>20.11.2025</td><td>Tereza O</td><td class='n'>86761</td><td class='n'>123901</td><td class='n'>2029</td><td class='muted'>[notebook+app]</td></tr><tr><td class='when'>19.1.2026</td><td>Petr P</td><td class='n'>86761</td><td class='n'>123901</td><td class='n'>2029</td><td class='muted'>[notebook+app]</td></tr><tr><td class='when'>20.1.2026</td><td>Petr O</td><td class='n'>86773</td><td class='n'>123995</td><td class='n'>2029</td><td class='muted'>[notebook+app]</td></tr><tr><td class='when'>30.1.2026</td><td>Tereza P</td><td class='n'>86773</td><td class='n'>123995</td><td class='n'>2029</td><td class='muted'>[notebook+app]</td></tr><tr><td class='when'>1.2.2026</td><td>Tereza O</td><td class='n'>86789</td><td class='n'>124122</td><td class='n'>2029</td><td class='muted'>[notebook+app]</td></tr><tr><td class='when'>2.4.2026</td><td>Tereza P</td><td class='n'>86789</td><td class='n'>124123</td><td class='n'>2029</td><td class='muted'>[notebook+app]</td></tr><tr><td class='when'>4.4.2026</td><td>Johana P</td><td class='n'>86809</td><td class='n'>124235</td><td class='n'>2029</td><td class='muted'>[notebook+app]</td></tr><tr><td class='when'>4.4.2026</td><td>Tereza nabíjení</td><td class='n'>47 kWh</td><td class='n'></td><td class='n'></td><td class='muted'>[notebook+app] nabíjení auta (EV charging)</td></tr><tr><td class='when'>5.4.2026</td><td>Petr P</td><td class='n'>86823</td><td class='n'>124349</td><td class='n'></td><td class='muted'>[app] not in notebook; app event 16</td></tr><tr><td class='when'>5.4.2026</td><td>Bára P</td><td class='n'>86823</td><td class='n'>124349</td><td class='n'></td><td class='muted'>[app] app event 17 was entered 6.4. 19:57 with Petr&#x27;s 5.4. reading - assumed she arrived with Petr</td></tr><tr><td class='when'>6.4.2026</td><td>Johana O</td><td class='n'>86826</td><td class='n'>124380</td><td class='n'>2084</td><td class='muted'>[notebook] app check-out (event 18) was deleted</td></tr><tr><td class='when'>6.4.2026</td><td>Tereza O</td><td class='n'>86826</td><td class='n'>124380</td><td class='n'>2084</td><td class='muted'>[notebook] ditto marks in notebook</td></tr><tr><td class='when'>6.4.2026</td><td>Petr O</td><td class='n'>86826</td><td class='n'>124380</td><td class='n'>2084</td><td class='muted'>[assumed] not in notebook; assumed left with the others</td></tr><tr><td class='when'>6.4.2026</td><td>Bára O</td><td class='n'>86826</td><td class='n'>124380</td><td class='n'>2084</td><td class='muted'>[notebook] ditto marks in notebook</td></tr><tr><td class='when'>8.5.2026</td><td>Marek P</td><td class='n'>86826</td><td class='n'>124381</td><td class='n'>2084</td><td class='muted'>[app] not in notebook; app visitor 15 &#x27;djakma@gmail.com&#x27; = Marek</td></tr><tr><td class='when'>10.5.2026</td><td>Marek O</td><td class='n'>86827</td><td class='n'>124414</td><td class='n'>2084</td><td class='muted'>[app]</td></tr><tr><td class='when'>18.6.2026</td><td>Edita P</td><td class='n'>86827</td><td class='n'>124414</td><td class='n'></td><td class='muted'>[app] notebook says 19.6. 86826/124380 (copied from the 6.4. row); app reading used</td></tr><tr><td class='when'>21.6.2026</td><td>Edita O</td><td class='n'>86830</td><td class='n'>124445</td><td class='n'></td><td class='muted'>[notebook]</td></tr><tr><td class='when'>27.6.2026</td><td>Tereza P</td><td class='n'>86830</td><td class='n'>124445</td><td class='n'></td><td class='muted'>[notebook]</td></tr><tr><td class='when'>27.6.2026</td><td>Tereza nabíjení</td><td class='n'>50 kWh</td><td class='n'></td><td class='n'></td><td class='muted'>[notebook] nabíjení auta (EV charging)</td></tr><tr><td class='when'>28.6.2026</td><td>Tereza O</td><td class='n'>86837</td><td class='n'>124507</td><td class='n'>2084</td><td class='muted'>[notebook]</td></tr><tr><td class='when'>3.7.2026</td><td>Edita P</td><td class='n'>86837,2</td><td class='n'>124507,9</td><td class='n'></td><td class='muted'>[notebook+app] app event 23 (deleted there)</td></tr><tr><td class='when'>6.7.2026</td><td>Edita O</td><td class='n'>86841</td><td class='n'>124552</td><td class='n'>2084</td><td class='muted'>[notebook] garage ditto</td></tr><tr><td class='when'>10.7.2026</td><td>Kristina P</td><td class='n'>86841</td><td class='n'>124552</td><td class='n'></td><td class='muted'>[notebook]</td></tr><tr><td class='when'>12.7.2026</td><td>Kristina O</td><td class='n'>86841</td><td class='n'>124564</td><td class='n'>2084</td><td class='muted'>[notebook] garage ditto</td></tr><tr><td class='when'>17.7.2026</td><td>Jirka P</td><td class='n'>86841</td><td class='n'>124564</td><td class='n'></td><td class='muted'>[notebook]</td></tr><tr><td class='when'>17.7.2026</td><td>Kristina P</td><td class='n'>86841</td><td class='n'>124567</td><td class='n'></td><td class='muted'>[notebook]</td></tr><tr><td class='when'>18.7.2026</td><td>Petr P</td><td class='n'>86843</td><td class='n'>124582</td><td class='n'></td><td class='muted'>[notebook]</td></tr><tr><td class='when'>19.7.2026</td><td>Petr O</td><td class='n'>86845</td><td class='n'>124605</td><td class='n'>2100</td><td class='muted'>[notebook]</td></tr><tr><td class='when'>19.7.2026</td><td>Jirka O</td><td class='n'>86845</td><td class='n'>124605</td><td class='n'>2100</td><td class='muted'>[notebook]</td></tr><tr><td class='when'>19.7.2026</td><td>Kristina O</td><td class='n'>86845</td><td class='n'>124605</td><td class='n'>2100</td><td class='muted'>[assumed] departure not written; assumed with the others</td></tr><tr><td class='when'>24.7.2026</td><td>Kristina P</td><td class='n'>86845</td><td class='n'>124605</td><td class='n'>2100</td><td class='muted'>[notebook]</td></tr><tr><td class='when'>24.7.2026</td><td>Jirka P</td><td class='n'>86845</td><td class='n'>124605</td><td class='n'>2100</td><td class='muted'>[estimate] notebook row without readings; same as Kristina&#x27;s</td></tr><tr><td class='when'>26.7.2026</td><td>Jirka O</td><td class='n'>86850</td><td class='n'>124662</td><td class='n'>2117</td><td class='muted'>[estimate] VT/NT not written - odhad by nights (garage 17 kWh real)</td></tr><tr><td class='when'>29.7.2026</td><td>Kristina O</td><td class='n'>86855</td><td class='n'>124725</td><td class='n'>2117</td><td class='muted'>[notebook]</td></tr><tr><td class='when'>7.8.2026</td><td>Marek P</td><td class='n'>86855</td><td class='n'>124725</td><td class='n'></td><td class='muted'>[notebook] NT written &#x27;124752?&#x27; - swapped digits</td></tr><tr><td class='when'>9.8.2026</td><td>Marek O</td><td class='n'>86856</td><td class='n'>124738</td><td class='n'></td><td class='muted'>[notebook] NT written &#x27;124783?&#x27; - swapped digits</td></tr><tr><td class='when'>28.8.2026</td><td>elektroměr odečet</td><td class='n'>86856</td><td class='n'>124738</td><td class='n'>2117</td><td class='muted'>[invoice] PPAS end reading (distributor</td></tr></tbody>
+  </table>
+  </div>
+</details>
+
+<footer>Přepis sešitu nezávisle ověřen několika modely (Claude, GPT, Gemini, Qwen) a porovnán s počátečním a konečným stavem na faktuře. Pobyty po 28.&#8239;8.&#8239;2026 (Kristina 4.–6.&#8239;9., Jirka od 19.&#8239;9.) patří do příštího vyúčtování.</footer>
+</div>

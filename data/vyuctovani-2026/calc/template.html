@@ -1,0 +1,183 @@
+<title>Elektřina Suchá 2025/26</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#F6F7F5; --sheet:#FFFFFF; --ink:#18212B; --muted:#5E6873; --rule:#D6DBDF;
+  --accent:#1D5E8C; --accent-soft:#E4EEF6; --warn:#8A5A0B; --warn-soft:#FBF1DE;
+  --body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --head:"Archivo","Source Sans 3",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#12171D; --sheet:#1A2129; --ink:#E6EAEE; --muted:#9AA5B0; --rule:#2E3843;
+    --accent:#7FB6E0; --accent-soft:#1D2E3D; --warn:#E7B868; --warn-soft:#2E2616;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#12171D; --sheet:#1A2129; --ink:#E6EAEE; --muted:#9AA5B0; --rule:#2E3843;
+  --accent:#7FB6E0; --accent-soft:#1D2E3D; --warn:#E7B868; --warn-soft:#2E2616;
+}
+body{background:var(--paper);color:var(--ink);font:16px/1.55 var(--body);padding:0 16px}
+.wrap{max-width:920px;margin:0 auto;padding-block:40px 64px;display:grid;gap:40px}
+h1,h2{font-family:var(--head);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:clamp(28px,5vw,40px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:21px;font-weight:700}
+p{margin:0;max-width:65ch}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+section{display:grid;gap:14px}
+header{display:grid;gap:14px}
+.facts{display:flex;flex-wrap:wrap;gap:8px 28px;margin:4px 0 0;padding:0;list-style:none;font-size:15px}
+.facts b{font-family:var(--mono);font-weight:500}
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--sheet)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--rule);vertical-align:top;text-align:left}
+thead th{font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper)}
+thead th.n{text-align:right}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+tfoot td,tfoot th{border-top:2px solid var(--ink);border-bottom:0;font-weight:600}
+.total{font-weight:600;color:var(--accent)}
+.sym{display:inline-block;width:1.3em;font-family:var(--mono);color:var(--accent)}
+.summary th[scope=row]{font-weight:600;white-space:nowrap}
+.note{font-size:14px;color:var(--muted)}
+.method{display:grid;gap:10px;padding-left:1.2em;margin:0;max-width:70ch}
+.prices{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.price{border:1px solid var(--rule);border-radius:6px;background:var(--sheet);padding:12px 14px;display:grid;gap:4px}
+.price .n{text-align:left;font-size:15px}
+.price span:first-child{font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ledger td.when{white-space:nowrap;font-family:var(--mono);font-size:14px}
+.ledger tr.empty td{background:var(--paper)}
+.split{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.split li{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline}
+.split li .n{margin-left:auto;font-size:14px}
+.split li .muted{font-size:14px}
+.flags{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.flags li{background:var(--warn-soft);border-left:3px solid var(--warn);padding:10px 14px;border-radius:0 6px 6px 0;max-width:75ch}
+.flags b{color:var(--warn)}
+details{border:1px solid var(--rule);border-radius:6px;background:var(--sheet)}
+summary{cursor:pointer;padding:12px 14px;font-weight:600}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+details .scroll{border:0;border-top:1px solid var(--rule);border-radius:0}
+.log td{font-size:14px}
+footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);padding-top:14px}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Suchá 18 · EAN 859182400890771603</span>
+  <h1>Vyúčtování elektřiny 2025/26</h1>
+  <p>Rozpočet faktury PPAS mezi rodiny podle papírového sešitu s odečty. Zúčtovací období <b>27.&#8239;8.&#8239;2025 – 28.&#8239;8.&#8239;2026</b>.</p>
+  <ul class="facts">
+    <li>Faktura <b>1126407855</b></li>
+    <li>Cena celkem vč. DPH <b>13&#8239;904,22 Kč</b></li>
+    <li>Spotřeba <b>117 kWh VT + 1&#8239;008 kWh NT</b></li>
+    <li>Přeplatek od PPAS <b>4&#8239;575,82 Kč</b> (vrací se na účet Petra)</li>
+  </ul>
+</header>
+
+<section>
+  <h2>Kolik kdo platí</h2>
+  <div class="scroll">
+  <table class="summary">
+    <thead><tr><th>Domácnost</th><th class="n">Spotřeba</th><th class="n">Pevné poplatky</th><th class="n">Celkem Kč</th></tr></thead>
+    <tbody>{{SUMMARY}}</tbody>
+    <tfoot><tr><th>Celkem</th><td class="n">{{TOTAL_CONS}}</td><td class="n">{{TOTAL_FIXED}}</td><td class="n">{{TOTAL}}</td></tr></tfoot>
+  </table>
+  </div>
+  <p class="note">Částky jsou podíly na ceně faktury vč. DPH. Zálohy, které jednotlivé domácnosti během roku zaplatily, tu odečtené nejsou: přeplatek nebo nedoplatek = zaplacené zálohy − částka v posledním sloupci. Symboly △ ○ □ odpovídají legendě v sešitě.</p>
+</section>
+
+<section>
+  <h2>Pevné poplatky</h2>
+  <p>Platí se měsíčně bez ohledu na to, jestli je v domě někdo. Nesou je rovným dílem tři domácnosti: Jiří, Kristina a Petr. Edita a Marek platí jen svou spotřebu.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Položka z faktury</th><th class="n">2025 (27.&#8239;8.–31.&#8239;12.)</th><th class="n">2026 (1.&#8239;1.–28.&#8239;8.)</th><th class="n">Bez DPH</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Jistič 3×25&#8239;A (distribuce, sazba D45d)</th><td class="n">469,00 Kč/měs.</td><td class="n">555,00 Kč/měs.</td><td class="n">6&#8239;337,68</td></tr>
+      <tr><th scope="row">Stálý měsíční plat (dodavatel)</th><td class="n">99,00 Kč/měs.</td><td class="n">99,00 Kč/měs.</td><td class="n">1&#8239;194,39</td></tr>
+      <tr><th scope="row">Provoz nesíťové infrastruktury</th><td class="n">12,45 Kč/měs.</td><td class="n">12,87 Kč/měs.</td><td class="n">153,26</td></tr>
+      <tr><th scope="row">DPH 21&#8239;%</th><td></td><td></td><td class="n">1&#8239;613,92</td></tr>
+    </tbody>
+    <tfoot><tr><th>Celkem vč. DPH (12,06 měsíce)</th><td></td><td></td><td class="n total">9&#8239;299,25</td></tr></tfoot>
+  </table>
+  </div>
+  <div class="scroll">
+  <table class="summary">
+    <thead><tr><th>Domácnost</th><th class="n">Podíl</th><th class="n">Kč</th></tr></thead>
+    <tbody>{{FIXED_SPLIT}}</tbody>
+  </table>
+  </div>
+  <p class="note">Jistič tvoří 82&#8239;% pevných poplatků a od ledna 2026 zdražil o 18&#8239;%. Pevné poplatky jsou 67&#8239;% celé faktury: při letošní spotřebě 1&#8239;125 kWh vychází 1 kWh na 12,36 Kč, z toho 4,09 Kč energie a 8,27 Kč pevné poplatky.</p>
+</section>
+
+<section>
+  <h2>Spotřeba</h2>
+  <p>Energie podle odečtů při pobytech. Prázdný dům (spotřeba mezi pobyty) se dělí na třetiny mezi tři domácnosti.</p>
+  <div class="scroll">
+  <table class="summary">
+    <thead><tr><th>Kdo</th><th class="n">VT kWh</th><th class="n">NT kWh</th><th class="n">Za pobyty</th><th class="n">Prázdný dům</th><th class="n">Spotřeba Kč</th></tr></thead>
+    <tbody>{{CONSUMPTION}}</tbody>
+    <tfoot><tr><th>Celkem</th><td class="n" colspan="2">{{TOTAL_KWH}} kWh</td><td></td><td></td><td class="n">{{TOTAL_CONS}}</td></tr></tfoot>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>Jak se počítalo</h2>
+  <ol class="method">
+    <li><b>Pevné poplatky</b> (9&#8239;299,25 Kč vč. DPH) se dělí na třetiny mezi Jiřího, Kristinu a Petra, viz výše.</li>
+    <li><b>Spotřeba při pobytu</b> se bere z rozdílu odečtů při příjezdu (P) a odjezdu (O). Když je v domě víc rodin najednou, dělí se ten úsek rovným dílem mezi přítomné rodiny.</li>
+    <li><b>Garáž</b> je podružný elektroměr za hlavním. Točil se jen při pobytech Jirkovy rodiny (celkem 105 kWh), takže ve společných úsecích jde garáž celá Jirkovi a zbytek se dělí.</li>
+    <li><b>Nabíjení auta</b> (Tereza 4.&#8239;4. 47 kWh a 27.&#8239;6. 50 kWh) jde celé Potužníkům.</li>
+    <li><b>Prázdný dům</b>: mezi pobyty se spotřebovalo jen {{EMPTY_KWH}} kWh ({{EMPTY_KC}} Kč). Dělí se na třetiny.</li>
+    <li><b>Cena za kWh</b> podle faktury: silová elektřina 2&#8239;790 Kč/MWh, distribuce, systémové služby, daň z elektřiny a v roce 2025 i POZE. V roce 2026 se POZE za MWh neúčtuje, proto je levnější. Dodavatel si ale konec roku 2025 odhadl vyšší spotřebou, než ukazuje sešit, takže podle skutečných dat vychází proměnná část o {{SCALE}}&nbsp;% levněji, než je na faktuře. Aby součet seděl na korunu, jsou všechny částky za spotřebu tímto poměrem navýšené.</li>
+  </ol>
+  <div class="prices">
+    <div class="price"><span>2025 · VT</span><span class="n">{{P25VT}} Kč/kWh</span></div>
+    <div class="price"><span>2025 · NT</span><span class="n">{{P25NT}} Kč/kWh</span></div>
+    <div class="price"><span>2026 · VT</span><span class="n">{{P26VT}} Kč/kWh</span></div>
+    <div class="price"><span>2026 · NT</span><span class="n">{{P26NT}} Kč/kWh</span></div>
+  </div>
+  <p class="note">Ceny vč. 21&#8239;% DPH, před dorovnáním na fakturu.</p>
+</section>
+
+<section>
+  <h2>Nejasnosti v sešitě</h2>
+  <ul class="flags">
+    <li><b>Jirka 24.–26.&#8239;7.</b> nemá zapsané stavy. Úsek 24.–29.&#8239;7. (10 VT + 120 NT) jsem rozdělil podle nocí: garáž 17 kWh Jirkovi, zbytek 2 noci napůl s Kristinou a 3 noci jen Kristina.</li>
+    <li><b>Kristina 17.&#8239;7.</b> má zapsaný příjezd, ale ne odjezd. Počítám, že odjela 19.&#8239;7. s ostatními, protože 24.&#8239;7. znovu přijíždí.</li>
+    <li><b>Marek 7.–9.&#8239;8.</b> má u NT zapsáno „124752?“ a „124783?“. Jsou to prohozené poslední dvě číslice (124725 a 124738). Oprava sedí přesně na konečný odečet distributora 124&#8239;738 k 28.&#8239;8.</li>
+    <li><b>Pobyty zapsané jen v aplikaci:</b> Marek 8.–10.&#8239;5. (34 kWh) a Petr od 5.&#8239;4. V sešitě chybí. Editin příjezd 18.&#8239;6. má v aplikaci stav 86&#8239;827 / 124&#8239;414, zatímco řádek v sešitě („19.6. 86826 / 124380“) je opsaný z dubna. Použita data z aplikace.</li>
+    <li><b>Jirka + Kristina 19.–21.&#8239;9.</b>: sešit dělí úsek „J 17, K 26“, tedy Jirkovi jen garáž a zbytek Kristině. Já dělím dům napůl, takže Jirka 31 kWh a Kristina 12 kWh. Podle sešitu by Kristina platila asi o 65 Kč víc a Jirka o 65 Kč méně.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Rozpis po úsecích</h2>
+  <div class="scroll">
+  <table class="ledger">
+    <thead><tr><th>Úsek</th><th class="n">VT</th><th class="n">NT</th><th colspan="2">Rozdělení (kWh · Kč po dorovnání)</th></tr></thead>
+    <tbody>{{LEDGER}}</tbody>
+  </table>
+  </div>
+</section>
+
+<details>
+  <summary>Přepis sešitu (odečty použité ve výpočtu)</summary>
+  <div class="scroll">
+  <table class="log">
+    <thead><tr><th>Datum</th><th>Kdo</th><th class="n">I (VT)</th><th class="n">II (NT)</th><th class="n">Garáž</th><th>Poznámka</th></tr></thead>
+    <tbody>{{LOG}}</tbody>
+  </table>
+  </div>
+</details>
+
+<footer>Přepis sešitu nezávisle ověřen několika modely (Claude, GPT, Gemini, Qwen) a porovnán s počátečním a konečným stavem na faktuře. Pobyty po 28.&#8239;8.&#8239;2026 (Kristina 4.–6.&#8239;9., Jirka od 19.&#8239;9.) patří do příštího vyúčtování.</footer>
+</div>

@@ -1,0 +1,32 @@
+Settlement published: **https://claude.ai/artifact/DuevLhdptaoQVkYgtYYCn2**
+
+## Summary
+
+The invoice (`FAKTURA_Petr_Potuznik_BI33_1.pdf`, period 27.08.2025–28.08.2026, total **13,904.22 Kč** incl. DPH, 117 kWh VT + 1,008 kWh NT) reconciles exactly against a reconstructed visitor timeline built from two sources:
+
+- **App data** (DB) for 19.09.2025 → 06.04.2026 — verified reliable (its last check-in reading matches the paper log exactly).
+- **Paper logbook** (3 photos in `/Users/tomas/Downloads/vyuctovani Sucha`) for everything after — the app started silently pre-filling stale meter readings on Petr's and Bára's check-ins around 5–6 April 2026 (the bug that made everyone switch to paper), so paper is authoritative from that point on.
+
+I transcribed the handwriting myself directly (the `llm` OCR calls via OpenRouter — both my own `gpt-6-sol-pro` call and an earlier `gemini-3.1-pro-preview` call already running in the background — timed out / never produced output, so I did not rely on them). The reconstruction used the same equal-split algorithm already in the spec (`artifacts/specification/electricity-tracker-spec.md` §7): overlapping stays split equally, solo stays billed to that person, empty-house gaps split equally among everyone who stayed in the period. Two of the margin notes handwritten on page 1 of the logbook (`J 10+69=79`, `P 12+94=106`) independently matched my computed per-stay deltas, which cross-validates the reading.
+
+**Result per person** (variable VT/NT cost + equal share of the 9,299.25 Kč fixed/standing charge):
+
+| Person | Total (Kč) |
+|---|---|
+| Tereza | 3,157.08 |
+| Jirka | 1,918.24 |
+| Petr | 1,753.22 |
+| Kristina | 1,670.31 |
+| Edita | 1,641.47 |
+| Johana | 1,284.67 |
+| Bára | 1,284.67 |
+| Marek | 1,194.57 |
+| **Total** | **13,904.22** ✓ matches invoice exactly |
+
+**Flagged for family sign-off** (documented in the artifact's "Co je nejisté" section):
+1. Jirka's 26.7.2026 departure reading is illegible in the log (marked with "?") — the 24.7–29.7 block (10 kWh VT / 120 kWh NT) is an equal-split estimate between Jirka and Kristina.
+2. Marek's NT digits (7.–9.8.2026) are uncertain and, taken literally, would make the meter go backward relative to the utility's official 28.8 reading — I used the utility's reading as ground truth and estimated the tail split between Kristina and Marek.
+3. The 4–6 April transition (when the app bug hit) assumes Tereza's "47 kWh" note is EV charging on the NT meter, split the remainder 4 ways.
+4. Both "dobíjení" (EV charging) notes are assumed to be Tereza's personal load and billed to her directly rather than split.
+
+Source files referenced: `/Users/tomas/Downloads/vyuctovani Sucha/FAKTURA_Petr_Potuznik_BI33_1.pdf` and the three logbook photos in that same folder. No `.xls` files existed anywhere on disk (`find . -iname "*.xls"` found none) — the only invoice format was the PDF.

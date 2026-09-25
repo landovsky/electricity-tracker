@@ -1,0 +1,51 @@
+at,visitor,action,vt,nt,garage,kwh,source,status,note
+2025-08-27 00:00,,reading,86739,123730,1934,,invoice,,PPAS start reading 27.8.2025; garage 1934 = notebook 24.8.2025
+2025-09-19 10:00,Jirka,check_in,86740,123733,1934,,notebook+app,,app event 2 (and 'initial' event 1)
+2025-09-19 10:01,Kristina,check_in,86740,123735,,,notebook+app,,app event 3
+2025-09-21 10:00,Jirka,check_out,86744,123772,1951,,notebook+app,,
+2025-09-21 10:01,Kristina,check_out,86744,123772,,,notebook+app,,
+2025-10-09 10:00,Jirka,check_in,86744,123773,1951,,notebook+app,,notebook NT digit under stain; app confirms 123773
+2025-10-12 10:00,Jirka,check_out,86754,123842,2029,,notebook+app,,
+2025-11-17 11:00,Tereza,check_in,86754,123842,2029,,notebook+app,,notebook VT overwritten; app confirms 86754 (margin 'T 14' is wrong)
+2025-11-20 11:00,Tereza,check_out,86761,123901,2029,,notebook+app,,
+2026-01-19 11:00,Petr,check_in,86761,123901,2029,,notebook+app,,
+2026-01-20 11:00,Petr,check_out,86773,123995,2029,,notebook+app,,
+2026-01-30 11:00,Tereza,check_in,86773,123995,2029,,notebook+app,,
+2026-02-01 11:00,Tereza,check_out,86789,124122,2029,,notebook+app,,
+2026-04-02 10:00,Tereza,check_in,86789,124123,2029,,notebook+app,,
+2026-04-04 10:00,Johana,check_in,86809,124235,2029,,notebook+app,,
+2026-04-04 10:01,Tereza,manual_kwh,,,,47,notebook+app,,nabíjení auta (EV charging)
+2026-04-05 19:46,Petr,check_in,86823,124349,,,app,,not in notebook; app event 16
+2026-04-05 19:47,Bára,check_in,86823,124349,,,app,,app event 17 was entered 6.4. 19:57 with Petr's 5.4. reading - assumed she arrived with Petr
+2026-04-06 20:00,Johana,check_out,86826,124380,2084,,notebook,,app check-out (event 18) was deleted
+2026-04-06 20:01,Tereza,check_out,86826,124380,2084,,notebook,,ditto marks in notebook
+2026-04-06 20:02,Petr,check_out,86826,124380,2084,,assumed,,not in notebook; assumed left with the others
+2026-04-06 20:03,Bára,check_out,86826,124380,2084,,notebook,,ditto marks in notebook
+2026-05-08 15:47,Marek,check_in,86826,124381,2084,,app,,not in notebook; app visitor 15 'djakma@gmail.com' = Marek
+2026-05-10 16:06,Marek,check_out,86827,124414,2084,,app,,
+2026-06-18 19:18,Edita,check_in,86827,124414,,,app,,notebook says 19.6. 86826/124380 (copied from the 6.4. row); app reading used
+2026-06-21 10:00,Edita,check_out,86830,124445,,,notebook,,
+2026-06-27 10:00,Tereza,check_in,86830,124445,,,notebook,,
+2026-06-27 10:01,Tereza,manual_kwh,,,,50,notebook,,nabíjení auta (EV charging)
+2026-06-28 10:00,Tereza,check_out,86837,124507,2084,,notebook,,
+2026-07-03 18:15,Edita,check_in,86837.2,124507.9,,,notebook+app,,app event 23 (deleted there)
+2026-07-06 10:00,Edita,check_out,86841,124552,2084,,notebook,,garage ditto
+2026-07-10 10:00,Kristina,check_in,86841,124552,,,notebook,,
+2026-07-12 10:00,Kristina,check_out,86841,124564,2084,,notebook,,garage ditto
+2026-07-17 10:00,Jirka,check_in,86841,124564,,,notebook,,
+2026-07-17 10:01,Kristina,check_in,86841,124567,,,notebook,,
+2026-07-18 10:00,Petr,check_in,86843,124582,,,notebook,,
+2026-07-19 10:00,Petr,check_out,86845,124605,2100,,notebook,,
+2026-07-19 10:01,Jirka,check_out,86845,124605,2100,,notebook,,
+2026-07-19 10:02,Kristina,check_out,86845,124605,2100,,assumed,,departure not written; assumed with the others
+2026-07-24 10:00,Kristina,check_in,86845,124605,2100,,notebook,,
+2026-07-24 10:01,Jirka,check_in,86845,124605,2100,,estimate,,notebook row without readings; same as Kristina's
+2026-07-26 10:00,Jirka,check_out,86850,124662,2117,,estimate,,VT/NT not written - odhad by nights (garage 17 kWh real)
+2026-07-29 10:00,Kristina,check_out,86855,124725,2117,,notebook,,
+2026-08-07 10:00,Marek,check_in,86855,124725,,,notebook,,NT written '124752?' - swapped digits
+2026-08-09 10:00,Marek,check_out,86856,124738,,,notebook,,NT written '124783?' - swapped digits
+2026-08-28 12:00,,reading,86856,124738,2117,,invoice,,PPAS end reading (distributor, method 01)
+2026-09-04 10:00,Kristina,check_in,86856,124738,,,notebook,,next period; NT written '124783?'
+2026-09-06 10:00,Kristina,check_out,86857,124751,2117,,notebook,,next period
+2026-09-19 10:00,Jirka,check_in,86857,124751,2117,,notebook,,next period
+2026-09-20 12:00,Jirka,check_out,86857,124751,2117,,assumed,,next period; left 20.9. per Tomáš - readings not written, arrival values used (his use will land in the empty-house pool at the next reading)

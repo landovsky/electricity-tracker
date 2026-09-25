@@ -1,0 +1,14 @@
+{
+  "supplier": "Pražská plynárenská a.s.", "invoice": "1126407855", "period": ["2025-08-27", "2026-08-28"],
+  "meter": "69354548", "ean": "859182400890771603", "tariff": "D45D", "breaker": "3x25A", "product": "FIX NA 2 ROKY 05_24",
+  "readings": {"start": {"VT": 86739, "NT": 123730}, "end": {"VT": 86856, "NT": 124738}},
+  "consumption_kwh": {"VT": 117, "NT": 1008},
+  "total_excl_vat": 11491.09, "total_incl_vat": 13904.22, "vat": 0.21,
+  "fixed_incl_vat": 9299.25, "fixed_excl_vat": 7685.33, "variable_incl_vat": 4604.97,
+  "advances_paid": 18480.00, "overpayment_refund": 4575.82,
+  "unit_prices_excl_vat_kc_per_mwh": {
+    "2025": {"supply": 2790, "dist_VT": 721.45, "dist_NT": 206.00, "poze": 495, "system_services": 170.92, "electricity_tax": 28.30},
+    "2026": {"supply": 2790, "dist_VT": 754.77, "dist_NT": 116.50, "poze": 0, "system_services": 164.24, "electricity_tax": 28.30}
+  },
+  "next_advances": 1440.00
+}

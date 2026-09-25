@@ -1,0 +1,36 @@
+date,who,event,vt_kwh,nt_kwh,garage_kwh,present_after,vt_as_written,nt_as_written,note
+2025-08-27,invoice,start,86739.0,123730,,,86739,123730,PPAS invoice start reading; = Tereza O / Jirka O 24.8.2025 (86739.6 / 123730)
+2025-09-19,Jirka,P,86740,123733,1934,Jirka,86740,1237JJ,writer's J = 3
+2025-09-19,Kristina,P,86740,123735,,Jirka|Kristina,86740,123735,
+2025-09-21,Jirka+Kristina,O,86744,123772,1951,,86744,123772,both departed
+2025-10-09,Jirka,P,86744,123773,1951,Jirka,86744,12√7?J,5th digit under stain; margin calc 69 confirms 123773
+2025-10-12,Jirka,O,86754,123842,2029,,867√4,123842,writer's √ = 5; margin J 10+69=79
+2025-11-17,Tereza,P,86754,123842,2029,Tereza,867754,123842,VT overwritten 7/5; margin says T 14 VT (would imply 86747) - used readings (7 VT)
+2025-11-20,Tereza,O,86761.0,123901,2029,,867610,123901,trailing digit = tenths
+2026-01-19,Petr,P,86761,123901,2029,Petr,86761,123901,
+2026-01-20,Petr,O,86773,123995,2029,,86773,123995,
+2026-01-30,Tereza,P,86773,123995,2029,Tereza,86773,123995,
+2026-02-01,Tereza,O,86789,124122,2029,,86789,124122,
+2026-04-02,Tereza,P,86789,124123,2029,Tereza,86789,124123,
+2026-04-04,Johana,P,86809,124235,2029,Tereza|Johana,86809,124235,Johana = Jirka's family; Tereza EV charging 47 kWh same day
+2026-04-06,Johana+Tereza+Bára,O,86826,124380,2084,,86826,124380,Tereza and Bára via ditto marks
+2026-06-19,Edita,P,86826,124380,,Edita,86826,124380,day digit overwritten 18/19
+2026-06-21,Edita,O,86830,124445,,,86830,124445,
+2026-06-27,Tereza,P,86830,124445,,Tereza,86830,124445,EV charging 50 kWh same day
+2026-06-28,Tereza,O,86837,124507,2084,,86837,124507,
+2026-07-03,Edita,P,86837.2,124507.9,,Edita,"86837,2","124507,9",
+2026-07-06,Edita,O,86841,124552,,,86841,124552,
+2026-07-10,Kristina,P,86841,124552,,Kristina,86841,124552,
+2026-07-12,Kristina,O,86841,124564,,,86841,124564,
+2026-07-17,Jirka,P,86841,124564,,Jirka,86841,124564,
+2026-07-17,Kristina,P,86841,124567,,Jirka|Kristina,86841,124567,Kristina departure not recorded - assumed 19.7.
+2026-07-18,Petr,P,86843,124582,,Jirka|Kristina|Petr,86843,124582,
+2026-07-19,Petr+Jirka(+Kristina assumed),O,86845,124605,2100,,86845,124605,
+2026-07-24,Kristina,P,86845,124605,,SPECIAL_2407,86845,124605,Jirka P 24.7. and O 26.7. written with ? - no readings; garage 2117 at 26.7.
+2026-07-29,Kristina,O,86855,124725,2117,,086855,124725,
+2026-08-07,Marek,P,86855,124725,,Marek,086855,124752?,NT last two digits swapped (writer marked ?)
+2026-08-09,Marek,O,86856,124738,,,086856,124783?,NT last two digits swapped; matches invoice end 124738
+2026-08-28,invoice,end,86856,124738,,,86856,124738,PPAS invoice end reading (third-party read)
+2026-09-04,Kristina,P,86856,124738,,,868856,124783?,next billing period; NT digits swapped
+2026-09-06,Kristina,O,86857,124751,,,868857,1247(8→5)1,next billing period
+2026-09-19,Jirka,P,86857,124751,2117,,868√7,124751,next billing period
