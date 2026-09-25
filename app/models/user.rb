@@ -21,6 +21,12 @@ class User < ApplicationRecord
     end
   end
 
+  # Blank form fields must be stored as NULL: the uniqueness validations skip
+  # only nil, so a second user saved with "" would collide with the first.
+  # Emails are downcased because login looks them up downcased.
+  normalizes :email, with: ->(email) { email.strip.downcase.presence }
+  normalizes :phone_number, with: ->(phone) { phone.strip.presence }
+
   # Validations
   validates :email, uniqueness: true, allow_nil: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
