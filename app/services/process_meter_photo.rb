@@ -97,6 +97,7 @@ class ProcessMeterPhoto < ApplicationService
   end
 
   def build_detections(matches)
+    return [ mark_no_reading ] if matches.blank?
     return [ update_single_detection(matches.first) ] if matches.size <= 1
 
     detections = []
@@ -113,6 +114,20 @@ class ProcessMeterPhoto < ApplicationService
     end
 
     detections
+  end
+
+  # The matcher may legitimately return no readings (unreadable display, or
+  # implausible numbers it was told to drop). That is a meter photo without a
+  # usable value, not a pipeline failure — the user picks the meter manually.
+  def mark_no_reading
+    detection.update!(
+      meter: nil,
+      detected_value: nil,
+      confidence: 0.0,
+      status: :low_confidence,
+      llm_response: { "readings" => [] }
+    )
+    detection
   end
 
   def update_single_detection(match)

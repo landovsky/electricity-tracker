@@ -59,7 +59,8 @@
       <% if show_meter_select? %>
         <select class="mt-1.5 w-full text-xs font-mono px-2 py-1.5 border rounded-md <%= meter_select_classes %>"
                 data-action="change->camera-session#reassignMeter"
-                data-detection-id="<%= detection.id %>">
+                data-detection-id="<%= detection.id %>"
+                data-saved-meter-id="<%= detection.meter_id %>">
           <% if detection.meter_id.blank? %>
             <option value="" selected><%= t("camera_sessions.detection.select_meter") %></option>
           <% end %>
