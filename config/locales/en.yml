@@ -266,6 +266,15 @@ en:
       recently: "recently"
       since: "since %{date}"
 
+  # Camera session (meter photo) messages
+  camera_sessions:
+    upload_errors:
+      missing: "No photo was selected"
+      too_large: "The photo is too large (max %{max_mb} MB)"
+      not_image: "The file is not a supported image"
+    upload_failed: "Photo upload failed, please try again"
+    reassign_failed: "The meter assignment could not be saved, please try again"
+
   # Service error messages
   services:
     check_in_visitor:

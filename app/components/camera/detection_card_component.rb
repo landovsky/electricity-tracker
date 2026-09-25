@@ -45,8 +45,11 @@ class Camera::DetectionCardComponent < ApplicationComponent
     end
   end
 
+  # Only variable images get a thumbnail; anything else (e.g. an SVG stored
+  # before uploads were validated) falls back to the placeholder instead of
+  # raising ActiveStorage::InvariableError and breaking the whole page.
   def has_photo?
-    detection.photo.attached?
+    detection.photo.attached? && detection.photo.variable?
   end
 
   def photo_url

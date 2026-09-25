@@ -1,0 +1,10 @@
+<%# Re-render the reassigned card and any card it displaced for the same meter %>
+<% @changed_with_positions.each do |detection, position| %>
+  <%= turbo_stream.replace "detection-#{detection.id}" do %>
+    <%= render Camera::DetectionCardComponent.new(detection: detection, meters: @meters, position: position) %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace "usable-count" do %>
+  <span class="hidden" id="usable-count" data-camera-session-target="readingCount"><%= @usable_count %></span>
+<% end %>

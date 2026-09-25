@@ -8,7 +8,10 @@ export default class extends Controller {
   static values = {
     uploadUrl: String,
     reassignUrl: String,
-    sessionId: String
+    sessionId: String,
+    eventType: String,
+    uploadErrorMessage: String,
+    reassignErrorMessage: String
   }
 
   openCamera() {
@@ -71,11 +74,16 @@ export default class extends Controller {
         Turbo.renderStreamMessage(html)
         // Update button after turbo stream renders
         requestAnimationFrame(() => this.updateContinueButton())
+      } else {
+        // 422 responses carry a user-facing reason as plain text
+        const reason = response.status === 422 ? (await response.text()).trim() : ""
+        this.showUploadError(container, reason || this.uploadErrorMessageValue)
       }
     } catch (error) {
       console.error("Upload failed:", error)
       document.getElementById(placeholderId)?.remove()
       URL.revokeObjectURL(thumbUrl)
+      this.showUploadError(container, this.uploadErrorMessageValue)
     }
 
     // Reset file input so same file can be re-selected
@@ -89,22 +97,42 @@ export default class extends Controller {
     if (!meterId) return
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
+    const body = new URLSearchParams({ detection_id: detectionId, meter_id: meterId })
 
+    let response = null
     try {
-      await fetch(this.reassignUrlValue, {
+      response = await fetch(this.reassignUrlValue, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": "text/vnd.turbo-stream.html",
           "X-CSRF-Token": csrfToken
         },
-        body: `detection_id=${detectionId}&meter_id=${meterId}`
+        body
       })
-      // Visual feedback — update border color to green
-      select.classList.remove("border-amber-300", "bg-amber-50")
-      select.classList.add("border-emerald-300", "bg-emerald-50")
     } catch (error) {
       console.error("Reassign failed:", error)
     }
+
+    if (response?.ok) {
+      // Server re-renders the card (and any card it replaced) with the saved state
+      Turbo.renderStreamMessage(await response.text())
+      requestAnimationFrame(() => this.updateContinueButton())
+    } else {
+      // Not saved — restore the previous choice so the UI never claims a save that didn't happen
+      // (data-saved-meter-id is rendered by the server with the persisted meter)
+      select.value = select.dataset.savedMeterId ?? ""
+      select.classList.remove("border-emerald-300", "bg-emerald-50")
+      select.classList.add("border-red-300", "bg-red-50")
+      window.alert(this.reassignErrorMessageValue)
+    }
+  }
+
+  showUploadError(container, message) {
+    const card = document.createElement("div")
+    card.className = "flex items-start gap-3 p-3 border-2 rounded-xl mb-2 border-red-200 bg-red-50 text-sm text-red-600"
+    card.setAttribute("role", "alert")
+    card.textContent = message
+    container.appendChild(card)
   }
 
   // Update the continue button and its label based on usable count
@@ -115,21 +143,30 @@ export default class extends Controller {
     const bar = this.bottomBarTarget
 
     if (count > 0) {
-      // Re-render the bottom bar to show continue button with correct count
-      const sessionId = this.sessionIdValue
-      const eventType = new URLSearchParams(window.location.search).get("event_type") || "check_in"
-      const continueUrl = `/?camera_session_id=${sessionId}&event_type=${eventType}`
-      const label = count === 1
-        ? `Pokračovat do formuláře (1 odečet) →`
+      // Built with DOM APIs, never innerHTML: session id and event type come from the URL
+      const url = new URL("/", window.location.origin)
+      url.searchParams.set("camera_session_id", this.sessionIdValue)
+      url.searchParams.set("event_type", this.eventTypeValue === "check_out" ? "check_out" : "check_in")
+
+      const link = document.createElement("a")
+      link.href = url.pathname + url.search
+      link.className = "block w-full text-center py-3.5 rounded-xl bg-white text-blue-600 border-2 border-blue-600 font-medium text-sm hover:bg-blue-50 transition-colors"
+      link.dataset.cameraSessionTarget = "continueBtn"
+      link.textContent = count === 1
+        ? "Pokračovat do formuláře (1 odečet) →"
         : `Pokračovat do formuláře (${count} odečty) →`
 
-      bar.innerHTML = `
-        <a href="${continueUrl}" class="block w-full text-center py-3.5 rounded-xl bg-white text-blue-600 border-2 border-blue-600 font-medium text-sm hover:bg-blue-50 transition-colors" data-camera-session-target="continueBtn">
-          ${label}
-        </a>
-        <div class="text-center text-xs font-mono text-gray-400 mt-1.5">Před uložením zkontrolujete</div>
-        <span class="hidden" id="usable-count" data-camera-session-target="readingCount">${count}</span>
-      `
+      const hint = document.createElement("div")
+      hint.className = "text-center text-xs font-mono text-gray-400 mt-1.5"
+      hint.textContent = "Před uložením zkontrolujete"
+
+      const counter = document.createElement("span")
+      counter.className = "hidden"
+      counter.id = "usable-count"
+      counter.dataset.cameraSessionTarget = "readingCount"
+      counter.textContent = String(count)
+
+      bar.replaceChildren(link, hint, counter)
     }
   }
 }

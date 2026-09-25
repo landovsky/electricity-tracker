@@ -86,13 +86,12 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
   end
 
-  config.before(:each) do
-    DatabaseCleaner.strategy = :transaction
+  # JS system specs run the app in a separate server thread that cannot see
+  # uncommitted data, so they must use deletion. The strategy has to be chosen
+  # before DatabaseCleaner.start, otherwise a transaction is already open.
+  config.before(:each) do |example|
+    DatabaseCleaner.strategy = example.metadata[:js] ? :deletion : :transaction
     DatabaseCleaner.start
-  end
-
-  config.before(:each, type: :system, js: true) do
-    DatabaseCleaner.strategy = :deletion
   end
 
   config.after(:each) do

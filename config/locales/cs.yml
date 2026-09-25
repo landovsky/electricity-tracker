@@ -307,6 +307,12 @@ cs:
       unknown_meter: "Neznámý měřič"
       replaced: "Nahrazeno novějším odečtem"
       select_meter: "Měřič nebyl přiřazen — vyberte..."
+    upload_errors:
+      missing: "Nebyla vybrána žádná fotka"
+      too_large: "Fotka je příliš velká (max. %{max_mb} MB)"
+      not_image: "Soubor není podporovaný obrázek"
+    upload_failed: "Nahrání fotky selhalo, zkuste to znovu"
+    reassign_failed: "Přiřazení měřiče se nepodařilo uložit, zkuste to znovu"
 
   # Service error messages
   services:
