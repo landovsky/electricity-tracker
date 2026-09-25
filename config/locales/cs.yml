@@ -87,6 +87,11 @@ cs:
     errors:
       messages:
         missing: "musí být vyplněno"
+    attributes:
+      create_manual_consumption_entry:
+        kwh: "kWh"
+      check_out_visitor:
+        recorded_at: "Datum a čas odjezdu"
 
   errors:
     messages:
@@ -315,6 +320,16 @@ cs:
       not_visitors_mode: "Tato nemovitost nepoužívá sledování návštěvníků"
     check_out_visitor:
       not_visitors_mode: "Tato nemovitost nepoužívá sledování návštěvníků"
+      not_chronological: "musí být po předchozí události nebo roven (%{timestamp})"
+      main_meter_missing: "Nemovitost nemá hlavní elektroměr"
+      visitor_or_stay_required: "Musí být zadán návštěvník nebo pobyt"
+      no_open_stay: "Návštěvník %{name} nemá otevřený pobyt v %{property}"
+      stay_not_found: "Pobyt nenalezen"
+      stay_already_closed: "Pobyt je již ukončen"
+      reading_not_monotonic: "Odečet %{label} (%{value} kWh) musí být větší nebo roven předchozímu odečtu (%{previous} kWh)"
+      reading_below_check_in: "Odečet %{label} při odjezdu (%{value} kWh) musí být větší nebo roven odečtu při příjezdu (%{check_in} kWh)"
+    create_manual_consumption_entry:
+      kwh_not_positive: "musí být kladné číslo"
     record_meter_reading:
       not_meter_only: "Tato nemovitost nepoužívá režim pouze odečtů"
       no_readings: "Musí být zadán alespoň jeden odečet"

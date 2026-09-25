@@ -64,7 +64,7 @@ class CreateManualConsumptionEntry < ApplicationService
     # C7: Manual entries must have positive kWh values
     return if kwh.nil?
 
-    errors.add(:kwh, "must be positive") if kwh <= 0
+    errors.add(:kwh, I18n.t("services.create_manual_consumption_entry.kwh_not_positive")) if kwh <= 0
   end
 
   def check_period_consumption_warning

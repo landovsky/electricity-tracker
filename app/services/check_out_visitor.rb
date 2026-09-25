@@ -27,6 +27,7 @@ class CheckOutVisitor < ApplicationService
   validate :validate_main_reading_provided
   validate :visitor_or_stay_provided
   validate :stay_exists_and_is_open
+  validate :validate_chronological_consistency
 
   def execute
     ActiveRecord::Base.transaction do
@@ -36,7 +37,7 @@ class CheckOutVisitor < ApplicationService
       # Verify at least one main meter exists when using legacy params
       if meter_readings.blank?
         main_meter = property.meters.kept.find_by(meter_type: "main")
-        errors.add(:base, "Main meter not found for property") and return unless main_meter
+        errors.add(:base, I18n.t("services.check_out_visitor.main_meter_missing")) and return unless main_meter
       end
 
       # Resolve readings
@@ -99,7 +100,7 @@ class CheckOutVisitor < ApplicationService
 
   def visitor_or_stay_provided
     if visitor.nil? && stay.nil?
-      errors.add(:base, "Either visitor or stay must be provided")
+      errors.add(:base, I18n.t("services.check_out_visitor.visitor_or_stay_required"))
     end
   end
 
@@ -110,12 +111,34 @@ class CheckOutVisitor < ApplicationService
 
     if target_stay.nil?
       if visitor
-        errors.add(:base, "Visitor #{visitor.name} does not have an open stay at #{property.name}")
+        errors.add(:base, I18n.t("services.check_out_visitor.no_open_stay", name: visitor.name, property: property.name))
       else
-        errors.add(:base, "Stay not found")
+        errors.add(:base, I18n.t("services.check_out_visitor.stay_not_found"))
       end
     elsif target_stay.closed?
-      errors.add(:base, "Stay is already closed")
+      errors.add(:base, I18n.t("services.check_out_visitor.stay_already_closed"))
+    end
+  end
+
+  # C6: a check-out must not be recorded before the property's latest event
+  # (which includes the stay's own check-in). A backdated check-out would
+  # otherwise close the stay before it opened, or wedge a higher reading
+  # between two older ones and produce a negative-delta period.
+  def validate_chronological_consistency
+    return if errors.any? # stay/property must be resolved first
+    return unless recorded_at.present?
+
+    last_event = MeterReadingEvent.kept
+                                   .joins(meter_readings: :meter)
+                                   .where(meters: { property_id: property.id })
+                                   .order(recorded_at: :desc)
+                                   .first
+    check_in_event = find_open_stay.check_in_event
+    latest = [ last_event&.recorded_at, check_in_event&.recorded_at ].compact.max
+    return unless latest
+
+    if recorded_at < latest
+      errors.add(:recorded_at, I18n.t("services.check_out_visitor.not_chronological", timestamp: I18n.l(latest)))
     end
   end
 
@@ -184,7 +207,8 @@ class CheckOutVisitor < ApplicationService
     if new_reading < last_reading.value_kwh
       errors.add(
         :base,
-        "#{label} reading (#{new_reading} kWh) must be greater than or equal to the previous reading (#{last_reading.value_kwh} kWh)"
+        I18n.t("services.check_out_visitor.reading_not_monotonic",
+               label: label, value: new_reading, previous: last_reading.value_kwh)
       )
     end
   end
@@ -198,7 +222,8 @@ class CheckOutVisitor < ApplicationService
     if new_reading < check_in_reading.value_kwh
       errors.add(
         :base,
-        "#{label} reading at check-out (#{new_reading} kWh) must be greater than or equal to check-in reading (#{check_in_reading.value_kwh} kWh)"
+        I18n.t("services.check_out_visitor.reading_below_check_in",
+               label: label, value: new_reading, check_in: check_in_reading.value_kwh)
       )
     end
   end

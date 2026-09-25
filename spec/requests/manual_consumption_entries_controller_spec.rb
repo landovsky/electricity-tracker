@@ -159,6 +159,16 @@ RSpec.describe "ManualConsumptionEntries", type: :request do
         expect(flash[:error]).to match(/must be positive/)
       end
 
+      context "the user works in the Czech UI" do
+        before { I18n.locale = :cs }
+
+        it "shows the rejection in Czech instead of an English sentence in the toast" do
+          post manual_consumption_entries_path, params: valid_params.merge(kwh: 0)
+
+          expect(flash[:error]).to eq("kWh musí být kladné číslo")
+        end
+      end
+
       it "allows very small positive values" do
         params = valid_params.merge(kwh: 0.01)
 
