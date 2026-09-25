@@ -12,8 +12,12 @@ class DeleteMeterReadingEvent < ApplicationService
   validate :validate_no_checkout_exists
 
   def execute
-    event.stay_as_check_in&.update_column(:check_in_event_id, nil)
-    event.stay_as_check_out&.update_column(:check_out_event_id, nil)
+    if event.check_in? && event.stay_as_check_in&.open?
+      event.stay_as_check_in.discard!
+    elsif event.check_out? && event.stay_as_check_out
+      Stay.where(id: event.stay_as_check_out.id).update_all(check_out_event_id: nil)
+    end
+
     event.discard!
     event
   end

@@ -24,6 +24,7 @@ class Property < ApplicationRecord
   def current_visitors
     visitors.kept
             .joins(:stays)
+            .merge(Stay.kept)
             .where(stays: { check_out_event_id: nil, property_id: id })
             .distinct
             .order(:name)
