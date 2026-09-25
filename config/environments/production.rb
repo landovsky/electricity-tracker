@@ -6,7 +6,9 @@ Rails.application.configure do
   # Keep users logged in for 1 year (default session cookie expires on browser close)
   # Share session cookie across all subdomains (sucha.kopernici.cz, sepot.kopernici.cz, etc.)
   # Custom key avoids collisions with other Rails apps on the same domain.
-  config.session_store :cookie_store, key: "electricity_meter", expire_after: 1.year, domain: :all
+  # secure: the 1-year session cookie must never travel over plain HTTP (e.g. a
+  # typed http:// URL before Traefik's redirect answers).
+  config.session_store :cookie_store, key: "electricity_meter", expire_after: 1.year, domain: :all, secure: true
 
   # Code is not reloaded between requests.
   config.enable_reloading = false
@@ -30,13 +32,14 @@ Rails.application.configure do
   config.active_storage.service = :digital_ocean_production
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # config.assume_ssl = true
+  # Traefik terminates TLS and forwards plain HTTP to Thruster/Puma.
+  config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  config.force_ssl = true
 
   # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]
@@ -89,12 +92,16 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
+  # Hosts the app is served on (see artifacts/gitops.md). Also used by
+  # SessionsController to decide which host an emailed magic link may point to.
+  config.x.app_hosts = [ "sepot.kopernici.cz", "tymlova.kopernici.cz" ]
+  config.x.app_hosts << URI.parse(ENV["APP_HOST"]).host if ENV["APP_HOST"].present?
+  config.x.app_hosts.uniq!
+
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  #
-  # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  config.hosts = config.x.app_hosts.dup
+
+  # Skip DNS rebinding protection for the default health check endpoint
+  # (kubelet probes hit the pod IP directly).
+  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end
