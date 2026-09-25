@@ -12,7 +12,12 @@ class PropertyUser < ApplicationRecord
 
   private
 
+  # A user whose default visitor already belongs to this property (e.g. an
+  # admin picked an existing visitor when creating the user) is represented
+  # there already; creating another visitor would duplicate them.
   def create_visitor_for_user
+    return if user.default_visitor&.property_id == property_id
+
     visitor_name = user.name.presence || user.email.presence || "User ##{user.id}"
     visitor = property.visitors.create!(name: visitor_name, status: :active)
     user.update_column(:default_visitor_id, visitor.id) if user.default_visitor_id.nil?
