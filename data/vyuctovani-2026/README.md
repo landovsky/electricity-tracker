@@ -28,11 +28,12 @@ cd calc && python3 settle.py > out.json && python3 build.py && mv vyuctovani-suc
 
 ## Allocation rules
 
-- Fixed charges (9 299,25 Kč) split ⅓ each: Jirka (+Johana), Kristina, Potužníci (Petr, Tereza, Bára). Edita and Marek pay only their own consumption.
-- Interval consumption between consecutive readings is split equally among the families present.
-- Garage sub-meter is behind the main meter and only moved during Jirka-family stays; in shared intervals its kWh go to Jirka before the split.
-- EV charging goes to the charging person's family.
-- Empty-house consumption (7 kWh) split ⅓ among the three families.
+- Three payers (family branches), each collecting from its own members: **Jiří**; **Kristina** (Kristina, Edita, Marek); **Petr** (Petr, Tereza, Bára, Johana).
+- Fixed charges (9 299,25 Kč) and empty-house consumption split ⅓ per branch.
+- Interval consumption between consecutive readings is split equally among the branches present.
+- Garage sub-meter is behind the main meter. When Jiří shares the house with another branch, the garage kWh go to him before the split; otherwise they are ordinary consumption of that interval.
+- EV charging goes to the charging person's branch.
+- Per-member breakdown (for each branch's internal split, direct consumption only): a branch's share of an interval is split equally among its members present; EV charging goes to the person charging; garage kWh go to whoever used Jirka's part (Jirka, or Johana 4.–6.4.2026 per "JOHANA (JIRKA)"). Fixed charges and empty-house share stay at branch level.
 - kWh priced with the invoice's 2025 / 2026 unit prices, then scaled (+3.6 %) so the variable part equals the invoice exactly (PPAS estimated a higher 2025 share than the notebook shows).
 - Advances (zálohy) are **not** netted here.
 

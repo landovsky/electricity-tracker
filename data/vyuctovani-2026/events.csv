@@ -13,7 +13,7 @@ at,visitor,action,vt,nt,garage,kwh,source,status,note
 2026-01-30 11:00,Tereza,check_in,86773,123995,2029,,notebook+app,,
 2026-02-01 11:00,Tereza,check_out,86789,124122,2029,,notebook+app,,
 2026-04-02 10:00,Tereza,check_in,86789,124123,2029,,notebook+app,,
-2026-04-04 10:00,Johana,check_in,86809,124235,2029,,notebook+app,,
+2026-04-04 10:00,Johana,check_in,86809,124235,2029,,notebook+app,,notebook "JOHANA (JIRKA)" = stayed in Jirka's part (garage meter +55 kWh); billed to Petr's branch
 2026-04-04 10:01,Tereza,manual_kwh,,,,47,notebook+app,,nabíjení auta (EV charging)
 2026-04-05 19:46,Petr,check_in,86823,124349,,,app,,not in notebook; app event 16
 2026-04-05 19:47,Bára,check_in,86823,124349,,,app,,app event 17 was entered 6.4. 19:57 with Petr's 5.4. reading - assumed she arrived with Petr

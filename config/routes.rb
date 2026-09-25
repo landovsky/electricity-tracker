@@ -63,6 +63,9 @@ Rails.application.routes.draw do
   # Consumption Report (S2)
   get "prehled-spotreby", to: "consumption_reports#index", as: :consumption_reports
 
+  get "vyuctovani/:property/:year", to: "settlements#show", as: :settlement,
+                                   constraints: { property: /[a-z]+/, year: /\d{4}/ }
+
   # Meter Reading Events
   resources :odecty, controller: "meter_reading_events", only: [ :destroy ], as: :meter_reading_events
 

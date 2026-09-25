@@ -22,7 +22,7 @@
   --paper:#12171D; --sheet:#1A2129; --ink:#E6EAEE; --muted:#9AA5B0; --rule:#2E3843;
   --accent:#7FB6E0; --accent-soft:#1D2E3D; --warn:#E7B868; --warn-soft:#2E2616;
 }
-body{background:var(--paper);color:var(--ink);font:16px/1.55 var(--body);padding:0 16px}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 var(--body);padding:0 16px}
 .wrap{max-width:920px;margin:0 auto;padding-block:40px 64px;display:grid;gap:40px}
 h1,h2{font-family:var(--head);text-wrap:balance;margin:0;line-height:1.2}
 h1{font-size:clamp(28px,5vw,40px);font-weight:700;letter-spacing:-.01em}
@@ -51,6 +51,9 @@ tfoot td,tfoot th{border-top:2px solid var(--ink);border-bottom:0;font-weight:60
 .price{border:1px solid var(--rule);border-radius:6px;background:var(--sheet);padding:12px 14px;display:grid;gap:4px}
 .price .n{text-align:left;font-size:15px}
 .price span:first-child{font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.members .branch-head th{background:var(--paper);font-family:var(--head);font-size:15px;padding-top:14px}
+.members th.member{font-weight:400;padding-left:2.2em}
+.members tr.subtotal th,.members tr.subtotal td{font-weight:600;border-bottom:2px solid var(--rule)}
 .ledger td.when{white-space:nowrap;font-family:var(--mono);font-size:14px}
 .ledger tr.empty td{background:var(--paper)}
 .split{list-style:none;margin:0;padding:0;display:grid;gap:4px}
@@ -83,19 +86,20 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);paddin
 
 <section>
   <h2>Kolik kdo platí</h2>
+  <p>Platí tři větve rodiny. Každá vybírá od svých členů. Jak si částku rozdělí uvnitř, je na ní. Podklad pro to je rozpis přímé spotřeby po členech níže.</p>
   <div class="scroll">
   <table class="summary">
-    <thead><tr><th>Domácnost</th><th class="n">Spotřeba</th><th class="n">Pevné poplatky</th><th class="n">Celkem Kč</th></tr></thead>
+    <thead><tr><th>Větev</th><th class="n">Přímá spotřeba</th><th class="n">Prázdný dům ⅓</th><th class="n">Pevné poplatky ⅓</th><th class="n">Celkem Kč</th></tr></thead>
     <tbody>{{SUMMARY}}</tbody>
-    <tfoot><tr><th>Celkem</th><td class="n">{{TOTAL_CONS}}</td><td class="n">{{TOTAL_FIXED}}</td><td class="n">{{TOTAL}}</td></tr></tfoot>
+    <tfoot><tr><th>Celkem</th><td class="n">{{TOTAL_OWN}}</td><td class="n">{{TOTAL_EMPTY}}</td><td class="n">{{TOTAL_FIXED}}</td><td class="n">{{TOTAL}}</td></tr></tfoot>
   </table>
   </div>
-  <p class="note">Částky jsou podíly na ceně faktury vč. DPH. Zálohy, které jednotlivé domácnosti během roku zaplatily, tu odečtené nejsou: přeplatek nebo nedoplatek = zaplacené zálohy − částka v posledním sloupci. Symboly △ ○ □ odpovídají legendě v sešitě.</p>
+  <p class="note">Částky jsou podíly na ceně faktury vč. DPH. Zálohy, které větve během roku zaplatily, tu odečtené nejsou: přeplatek nebo nedoplatek = zaplacené zálohy − částka v posledním sloupci. Symboly △ ○ □ odpovídají legendě v sešitě.</p>
 </section>
 
 <section>
   <h2>Pevné poplatky</h2>
-  <p>Platí se měsíčně bez ohledu na to, jestli je v domě někdo. Nesou je rovným dílem tři domácnosti: Jiří, Kristina a Petr. Edita a Marek platí jen svou spotřebu.</p>
+  <p>Platí se měsíčně bez ohledu na to, jestli je v domě někdo. Nesou je rovným dílem tři platící větve rodiny: Jiří, Kristina a Petr.</p>
   <div class="scroll">
   <table>
     <thead><tr><th>Položka z faktury</th><th class="n">2025 (27.&#8239;8.–31.&#8239;12.)</th><th class="n">2026 (1.&#8239;1.–28.&#8239;8.)</th><th class="n">Bez DPH</th></tr></thead>
@@ -118,13 +122,12 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);paddin
 </section>
 
 <section>
-  <h2>Spotřeba</h2>
-  <p>Energie podle odečtů při pobytech. Prázdný dům (spotřeba mezi pobyty) se dělí na třetiny mezi tři domácnosti.</p>
+  <h2>Přímá spotřeba po členech</h2>
+  <p>Energie naměřená při pobytech, přiřazená tomu, kdo byl v domě. Když byly v domě dvě nebo tři větve, dělí se úsek nejdřív rovným dílem mezi větve a podíl větve pak rovným dílem mezi její přítomné členy. Nabíjení auta jde tomu, kdo nabíjel (Tereza). Garáž jde tomu, kdo bydlel v Jiřího části. Pevné poplatky a prázdný dům tu nejsou: platí je větev jako celek (viz tabulka nahoře).</p>
   <div class="scroll">
-  <table class="summary">
-    <thead><tr><th>Kdo</th><th class="n">VT kWh</th><th class="n">NT kWh</th><th class="n">Za pobyty</th><th class="n">Prázdný dům</th><th class="n">Spotřeba Kč</th></tr></thead>
-    <tbody>{{CONSUMPTION}}</tbody>
-    <tfoot><tr><th>Celkem</th><td class="n" colspan="2">{{TOTAL_KWH}} kWh</td><td></td><td></td><td class="n">{{TOTAL_CONS}}</td></tr></tfoot>
+  <table class="members">
+    <thead><tr><th>Člen</th><th class="n">VT kWh</th><th class="n">NT kWh</th><th class="n">Celkem kWh</th><th class="n">Kč</th></tr></thead>
+    {{CONSUMPTION}}
   </table>
   </div>
 </section>
@@ -134,8 +137,9 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);paddin
   <ol class="method">
     <li><b>Pevné poplatky</b> (9&#8239;299,25 Kč vč. DPH) se dělí na třetiny mezi Jiřího, Kristinu a Petra, viz výše.</li>
     <li><b>Spotřeba při pobytu</b> se bere z rozdílu odečtů při příjezdu (P) a odjezdu (O). Když je v domě víc rodin najednou, dělí se ten úsek rovným dílem mezi přítomné rodiny.</li>
-    <li><b>Garáž</b> je podružný elektroměr za hlavním. Točil se jen při pobytech Jirkovy rodiny (celkem 105 kWh), takže ve společných úsecích jde garáž celá Jirkovi a zbytek se dělí.</li>
-    <li><b>Nabíjení auta</b> (Tereza 4.&#8239;4. 47 kWh a 27.&#8239;6. 50 kWh) jde celé Potužníkům.</li>
+    <li><b>Platí tři větve rodiny</b>: Jiří; Kristina (za sebe, Editu a Marka); Petr (za sebe, Terezu, Báru a Johanu). Pobyt kohokoli z větve se počítá jí. Jak si větev částku rozdělí uvnitř, je na ní.</li>
+    <li><b>Garáž</b> je podružný elektroměr za hlavním, takže její spotřeba už je v hlavním elektroměru. Když je Jiří v domě s jinou větví, jde garáž jemu a zbytek se dělí. Jinak je garáž běžnou součástí spotřeby toho úseku. Například 4.–6.&#8239;4. bydlela Johana v Jiřího části („JOHANA (JIRKA)“ v sešitě), garáž naběhla 55 kWh a platí to Petrova větev.</li>
+    <li><b>Nabíjení auta</b> (Tereza 4.&#8239;4. 47 kWh a 27.&#8239;6. 50 kWh) jde celé Petrově větvi.</li>
     <li><b>Prázdný dům</b>: mezi pobyty se spotřebovalo jen {{EMPTY_KWH}} kWh ({{EMPTY_KC}} Kč). Dělí se na třetiny.</li>
     <li><b>Cena za kWh</b> podle faktury: silová elektřina 2&#8239;790 Kč/MWh, distribuce, systémové služby, daň z elektřiny a v roce 2025 i POZE. V roce 2026 se POZE za MWh neúčtuje, proto je levnější. Dodavatel si ale konec roku 2025 odhadl vyšší spotřebou, než ukazuje sešit, takže podle skutečných dat vychází proměnná část o {{SCALE}}&nbsp;% levněji, než je na faktuře. Aby součet seděl na korunu, jsou všechny částky za spotřebu tímto poměrem navýšené.</li>
   </ol>
@@ -149,13 +153,16 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);paddin
 </section>
 
 <section>
-  <h2>Nejasnosti v sešitě</h2>
+  <h2>Úpravy a předpoklady v datech</h2>
+  <p>Kde sešit a aplikace nestačily, jsou data doplněná nebo opravená takto. Vše je dohledatelné v <code>events.csv</code> (sloupec source).</p>
   <ul class="flags">
-    <li><b>Jirka 24.–26.&#8239;7.</b> nemá zapsané stavy. Úsek 24.–29.&#8239;7. (10 VT + 120 NT) jsem rozdělil podle nocí: garáž 17 kWh Jirkovi, zbytek 2 noci napůl s Kristinou a 3 noci jen Kristina.</li>
-    <li><b>Kristina 17.&#8239;7.</b> má zapsaný příjezd, ale ne odjezd. Počítám, že odjela 19.&#8239;7. s ostatními, protože 24.&#8239;7. znovu přijíždí.</li>
-    <li><b>Marek 7.–9.&#8239;8.</b> má u NT zapsáno „124752?“ a „124783?“. Jsou to prohozené poslední dvě číslice (124725 a 124738). Oprava sedí přesně na konečný odečet distributora 124&#8239;738 k 28.&#8239;8.</li>
-    <li><b>Pobyty zapsané jen v aplikaci:</b> Marek 8.–10.&#8239;5. (34 kWh) a Petr od 5.&#8239;4. V sešitě chybí. Editin příjezd 18.&#8239;6. má v aplikaci stav 86&#8239;827 / 124&#8239;414, zatímco řádek v sešitě („19.6. 86826 / 124380“) je opsaný z dubna. Použita data z aplikace.</li>
-    <li><b>Jirka + Kristina 19.–21.&#8239;9.</b>: sešit dělí úsek „J 17, K 26“, tedy Jirkovi jen garáž a zbytek Kristině. Já dělím dům napůl, takže Jirka 31 kWh a Kristina 12 kWh. Podle sešitu by Kristina platila asi o 65 Kč víc a Jirka o 65 Kč méně.</li>
+    <li><b>Opravené prohozené číslice</b>: Marek 7.–9.&#8239;8. a Kristina 4.&#8239;9. mají u NT zapsáno „124752?“ a „124783?“. Opraveno na 124&#8239;725 a 124&#8239;738. Oprava sedí přesně na konečný odečet distributora 124&#8239;738 k 28.&#8239;8.</li>
+    <li><b>Odhadnuté stavy</b>: Jiří 24.–26.&#8239;7. nemá zapsané stavy. Odjezd 26.&#8239;7. má odhad 86&#8239;850 / 124&#8239;662 podle nocí (garáž 2117 je skutečná). Úsek 24.–29.&#8239;7. se tím dělí: garáž 17 kWh Jiřímu, zbytek 2 noci napůl s Kristinou a 3 noci jen Kristina.</li>
+    <li><b>Doplněné odjezdy</b>: Kristina po příjezdu 17.&#8239;7. odjezd nezapsala, počítá se 19.&#8239;7. s ostatními. Petr (příjezd 5.&#8239;4. jen v aplikaci) odjíždí 6.&#8239;4. s ostatními.</li>
+    <li><b>Pobyty jen z aplikace</b>: Marek 8.–10.&#8239;5. a Petr od 5.&#8239;4. v sešitě chybí. Editin příjezd 18.&#8239;6. je podle aplikace (86&#8239;827 / 124&#8239;414). Řádek v sešitě „19.6. 86826 / 124380“ je opsaný z dubna. Bára měla v aplikaci příjezd zadaný 6.&#8239;4. se stavem z 5.&#8239;4., počítá se od 5.&#8239;4.</li>
+    <li><b>Přepisované číslice</b>: Tereza 17.&#8239;11. VT 86&#8239;754 (aplikace potvrzuje). Jiří 9.&#8239;10. NT 123&#8239;773 (skvrna, potvrzuje aplikace i marginálie).</li>
+    <li><b>Časy</b>: sešit časy nemá. Pro pořadí jsou doplněné (10:00, 10:01 …) ve stejném pořadí jako v sešitě.</li>
+    <li><b>Marginálie v sešitě se nepoužívají</b>: „J 17, K 26“ pro 19.–21.&#8239;9. dává Jiřímu jen garáž. Tady se dům dělí napůl, takže Jiří 31 kWh a Kristina 12 kWh. „T 14“ pro Terezu 17.–20.&#8239;11. je v rozporu se stavy (vychází 7).</li>
   </ul>
 </section>
 
@@ -179,5 +186,5 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);paddin
   </div>
 </details>
 
-<footer>Přepis sešitu nezávisle ověřen několika modely (Claude, GPT, Gemini, Qwen) a porovnán s počátečním a konečným stavem na faktuře. Pobyty po 28.&#8239;8.&#8239;2026 (Kristina 4.–6.&#8239;9., Jirka od 19.&#8239;9.) patří do příštího vyúčtování.</footer>
+<footer>Přepis sešitu nezávisle ověřen několika modely (Claude, GPT, Gemini, Qwen) a porovnán s počátečním a konečným stavem na faktuře. Pobyty po 28.&#8239;8.&#8239;2026 (Kristina 4.–6.&#8239;9., Jiří 19.–20.&#8239;9.) patří do příštího vyúčtování.</footer>
 </div>

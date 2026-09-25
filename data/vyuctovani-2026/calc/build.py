@@ -3,9 +3,8 @@ from collections import OrderedDict
 
 d = json.load(open("out.json"))
 scale = d["check"]["scale"]
-SYM = {"Jirka": "△", "Kristina": "○", "Potužníci": "□", "Edita": "◇", "Marek": "◇", "prázdný dům": "·"}
-LABEL = {"Jirka": "Jiří (Jirka, Johana)", "Kristina": "Kristina", "Potužníci": "Petr (Petr, Tereza, Bára)",
-         "Edita": "Edita", "Marek": "Marek"}
+SYM = {"Jiří": "△", "Kristina": "○", "Petr": "□", "prázdný dům": "·"}
+LABEL = {"Jiří": "Jiří", "Kristina": "Kristina (Kristina, Edita, Marek)", "Petr": "Petr (Petr, Tereza, Bára, Johana)"}
 
 
 def kc(x, dec=2):
@@ -29,7 +28,7 @@ def dshort(s):
 
 # ---- summary rows: consumption, fixed charges and totals kept apart
 rows = d["rows"]
-FAM = ("Jirka", "Kristina", "Potužníci")
+FAM = ("Jiří", "Kristina", "Petr")
 
 
 def who(p):
@@ -37,22 +36,30 @@ def who(p):
 
 
 consumption = summary = fixed_split = ""
+members = d["members"]
 for r in rows:
     fam = r["payer"] in FAM
-    cons_kc = r["own_kc"] + r["empty_kc"]
-    consumption += f"""<tr>{who(r['payer'])}
-<td class="n">{kwh(r['VT'])}</td><td class="n">{kwh(r['NT'])}</td>
-<td class="n">{kc(r['own_kc'])}</td>
-<td class="n">{kc(r['empty_kc']) if fam else '–'}</td>
-<td class="n total">{kc(cons_kc)}</td></tr>"""
     summary += f"""<tr>{who(r['payer'])}
-<td class="n">{kc(cons_kc)}</td>
-<td class="n">{kc(r['fixed_kc']) if fam else '–'}</td>
+<td class="n">{kc(r['own_kc'])}</td>
+<td class="n">{kc(r['empty_kc'])}</td>
+<td class="n">{kc(r['fixed_kc'])}</td>
 <td class="n total">{kc(r['total_kc'])}</td></tr>"""
-    if fam:
-        fixed_split += f"""<tr>{who(r['payer'])}<td class="n">⅓</td><td class="n total">{kc(r['fixed_kc'])}</td></tr>"""
+    fixed_split += f"""<tr>{who(r['payer'])}<td class="n">⅓</td><td class="n total">{kc(r['fixed_kc'])}</td></tr>"""
+    ms = [m for m in members if m["payer"] == r["payer"]]
+    consumption += f"""<tbody class="branch"><tr class="branch-head"><th colspan="5" scope="rowgroup">
+<span class="sym" aria-hidden="true">{SYM[r['payer']]}</span>{r['payer']}</th></tr>"""
+    for m in ms:
+        consumption += f"""<tr><th scope="row" class="member">{m['member']}</th>
+<td class="n">{kwh(m['VT'])}</td><td class="n">{kwh(m['NT'])}</td><td class="n">{kwh(m['kwh'])}</td>
+<td class="n">{kc(m['kc'])}</td></tr>"""
+    consumption += f"""<tr class="subtotal"><th scope="row">Přímá spotřeba celkem</th>
+<td class="n">{kwh(r['VT'])}</td><td class="n">{kwh(r['NT'])}</td><td class="n">{kwh(r['kwh'])}</td>
+<td class="n total">{kc(r['own_kc'])}</td></tr></tbody>"""
+tot_own = sum(r["own_kc"] for r in rows)
+tot_empty = sum(r["empty_kc"] for r in rows)
 tot = sum(r["total_kc"] for r in rows)
 tot_cons = tot - sum(r["fixed_kc"] for r in rows)  # per-row rounding would show 4 604,98
+tot_own = tot_cons - tot_empty
 tot_fixed = sum(r["fixed_kc"] for r in rows)
 tot_kwh = sum(r["kwh"] for r in rows) + (d["empty"]["VT"] + d["empty"]["NT"])
 
@@ -100,7 +107,7 @@ p = d["prices"]
 page = open("template.html").read()
 for k, v in {
     "{{SUMMARY}}": summary, "{{CONSUMPTION}}": consumption, "{{FIXED_SPLIT}}": fixed_split,
-    "{{TOTAL}}": kc(tot), "{{TOTAL_CONS}}": kc(tot_cons), "{{TOTAL_FIXED}}": kc(tot_fixed), "{{TOTAL_KWH}}": kwh(tot_kwh),
+    "{{TOTAL}}": kc(tot), "{{TOTAL_OWN}}": kc(tot_own), "{{TOTAL_EMPTY}}": kc(tot_empty), "{{TOTAL_CONS}}": kc(tot_cons), "{{TOTAL_FIXED}}": kc(tot_fixed), "{{TOTAL_KWH}}": kwh(tot_kwh),
     "{{LEDGER}}": ledger, "{{LOG}}": logrows,
     "{{P25VT}}": kc(p["2025"]["VT"], 3), "{{P25NT}}": kc(p["2025"]["NT"], 3),
     "{{P26VT}}": kc(p["2026"]["VT"], 3), "{{P26NT}}": kc(p["2026"]["NT"], 3),
@@ -108,5 +115,11 @@ for k, v in {
     "{{EMPTY_KC}}": kc(d["empty"]["Kc"] * scale),
 }.items():
     page = page.replace(k, v)
+# full standalone document (served by the app at /vyuctovani/sucha/2026, also opens from disk)
+head, body = page.split('<div class="wrap">', 1)
+page = ('<!doctype html>\n<html lang="cs">\n<head>\n<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+        '<meta name="robots" content="noindex, nofollow">\n' + head.strip() + '\n</head>\n<body>\n<div class="wrap">'
+        + body.rstrip() + '\n</body>\n</html>\n')
 open("vyuctovani-sucha-2026.html", "w").write(page)
 print("ok", kc(tot))

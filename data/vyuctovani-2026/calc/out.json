@@ -24,59 +24,103 @@
  },
  "rows": [
   {
-   "payer": "Jirka",
-   "VT": 27.3,
-   "NT": 235.6,
-   "kwh": 262.9,
-   "own_kc": 1122.67,
+   "payer": "Jiří",
+   "VT": 18.5,
+   "NT": 159.4,
+   "kwh": 177.9,
+   "own_kc": 785.31,
    "empty_kwh": 2.7,
    "empty_kc": 12.0,
    "fixed_kc": 3099.75,
-   "total_kc": 4234.42
+   "total_kc": 3897.06
   },
   {
+   "payer": "Kristina",
+   "VT": 17.9,
+   "NT": 237.7,
+   "kwh": 255.6,
+   "own_kc": 1016.73,
+   "empty_kwh": 2.7,
+   "empty_kc": 12.0,
+   "fixed_kc": 3099.75,
+   "total_kc": 4128.48
+  },
+  {
+   "payer": "Petr",
+   "VT": 79.4,
+   "NT": 603.9,
+   "kwh": 683.4,
+   "own_kc": 2766.93,
+   "empty_kwh": 2.7,
+   "empty_kc": 12.0,
+   "fixed_kc": 3099.75,
+   "total_kc": 5878.68
+  }
+ ],
+ "members": [
+  {
+   "member": "Jirka",
+   "payer": "Jiří",
+   "VT": 18.5,
+   "NT": 159.4,
+   "kwh": 177.9,
+   "kc": 785.31
+  },
+  {
+   "member": "Kristina",
    "payer": "Kristina",
    "VT": 9.1,
    "NT": 116.6,
    "kwh": 125.7,
-   "own_kc": 504.91,
-   "empty_kwh": 2.7,
-   "empty_kc": 12.0,
-   "fixed_kc": 3099.75,
-   "total_kc": 3616.66
+   "kc": 504.91
   },
   {
-   "payer": "Potužníci",
-   "VT": 70.6,
-   "NT": 527.8,
-   "kwh": 598.4,
-   "own_kc": 2429.58,
-   "empty_kwh": 2.7,
-   "empty_kc": 12.0,
-   "fixed_kc": 3099.75,
-   "total_kc": 5541.32
-  },
-  {
-   "payer": "Edita",
+   "member": "Edita",
+   "payer": "Kristina",
    "VT": 6.8,
    "NT": 75.1,
    "kwh": 81.9,
-   "own_kc": 323.7,
-   "empty_kwh": 0,
-   "empty_kc": 0,
-   "fixed_kc": 0,
-   "total_kc": 323.7
+   "kc": 323.7
   },
   {
-   "payer": "Marek",
+   "member": "Marek",
+   "payer": "Kristina",
    "VT": 2.0,
    "NT": 46.0,
    "kwh": 48.0,
-   "own_kc": 188.12,
-   "empty_kwh": 0,
-   "empty_kc": 0,
-   "fixed_kc": 0,
-   "total_kc": 188.12
+   "kc": 188.12
+  },
+  {
+   "member": "Tereza",
+   "payer": "Petr",
+   "VT": 57.7,
+   "NT": 423.7,
+   "kwh": 481.4,
+   "kc": 1964.64
+  },
+  {
+   "member": "Petr",
+   "payer": "Petr",
+   "VT": 12.9,
+   "NT": 104.1,
+   "kwh": 117.0,
+   "kc": 464.94
+  },
+  {
+   "member": "Johana",
+   "payer": "Petr",
+   "VT": 8.3,
+   "NT": 71.1,
+   "kwh": 79.4,
+   "kc": 315.15
+  },
+  {
+   "member": "Bára",
+   "payer": "Petr",
+   "VT": 0.5,
+   "NT": 5.1,
+   "kwh": 5.6,
+   "kc": 22.21
   }
  ],
  "detail": [
@@ -92,7 +136,7 @@
   {
    "from": "2025-09-19 10:00",
    "to": "2025-09-19 10:01",
-   "payer": "Jirka",
+   "payer": "Jiří",
    "VT": 0.0,
    "NT": 2.0,
    "Kc_tariff": 8.93,
@@ -101,7 +145,7 @@
   {
    "from": "2025-09-19 10:01",
    "to": "2025-09-21 10:00",
-   "payer": "Jirka",
+   "payer": "Jiří",
    "VT": 1.58,
    "NT": 14.63,
    "Kc_tariff": 73.36,
@@ -110,11 +154,11 @@
   {
    "from": "2025-09-19 10:01",
    "to": "2025-09-21 10:00",
-   "payer": "Jirka",
+   "payer": "Jiří",
    "VT": 1.21,
    "NT": 11.19,
    "Kc_tariff": 56.1,
-   "why": "sdíleno Jirka+Kristina"
+   "why": "sdíleno Jiří+Kristina"
   },
   {
    "from": "2025-09-19 10:01",
@@ -123,7 +167,7 @@
    "VT": 1.21,
    "NT": 11.19,
    "Kc_tariff": 56.1,
-   "why": "sdíleno Jirka+Kristina"
+   "why": "sdíleno Jiří+Kristina"
   },
   {
    "from": "2025-09-21 10:01",
@@ -137,7 +181,7 @@
   {
    "from": "2025-10-09 10:00",
    "to": "2025-10-12 10:00",
-   "payer": "Jirka",
+   "payer": "Jiří",
    "VT": 10.0,
    "NT": 69.0,
    "Kc_tariff": 358.99,
@@ -146,7 +190,7 @@
   {
    "from": "2025-11-17 11:00",
    "to": "2025-11-20 11:00",
-   "payer": "Potužníci",
+   "payer": "Petr",
    "VT": 7.0,
    "NT": 59.0,
    "Kc_tariff": 299.07,
@@ -155,7 +199,7 @@
   {
    "from": "2026-01-19 11:00",
    "to": "2026-01-20 11:00",
-   "payer": "Potužníci",
+   "payer": "Petr",
    "VT": 12.0,
    "NT": 94.0,
    "Kc_tariff": 406.75,
@@ -164,7 +208,7 @@
   {
    "from": "2026-01-30 11:00",
    "to": "2026-02-01 11:00",
-   "payer": "Potužníci",
+   "payer": "Petr",
    "VT": 16.0,
    "NT": 127.0,
    "Kc_tariff": 548.58,
@@ -182,7 +226,7 @@
   {
    "from": "2026-04-02 10:00",
    "to": "2026-04-04 10:00",
-   "payer": "Potužníci",
+   "payer": "Petr",
    "VT": 20.0,
    "NT": 112.0,
    "Kc_tariff": 510.42,
@@ -191,65 +235,47 @@
   {
    "from": "2026-04-04 10:00",
    "to": "2026-04-05 19:46",
-   "payer": "Potužníci",
+   "payer": "Petr",
    "VT": 5.14,
    "NT": 41.86,
    "Kc_tariff": 180.21,
-   "why": "nabíjení auta 47 kWh"
+   "why": "nabíjení auta 47 kWh (Tereza)"
   },
   {
    "from": "2026-04-04 10:00",
    "to": "2026-04-05 19:46",
-   "payer": "Jirka",
+   "payer": "Petr",
    "VT": 4.75,
    "NT": 38.7,
    "Kc_tariff": 166.63,
-   "why": "garáž 43.5 kWh"
+   "why": "garáž 43.5 kWh (Johana)"
   },
   {
    "from": "2026-04-04 10:00",
    "to": "2026-04-05 19:46",
-   "payer": "Jirka",
-   "VT": 2.05,
-   "NT": 16.72,
-   "Kc_tariff": 71.98,
-   "why": "sdíleno Jirka+Potužníci"
-  },
-  {
-   "from": "2026-04-04 10:00",
-   "to": "2026-04-05 19:46",
-   "payer": "Potužníci",
-   "VT": 2.05,
-   "NT": 16.72,
-   "Kc_tariff": 71.98,
-   "why": "sdíleno Jirka+Potužníci"
+   "payer": "Petr",
+   "VT": 4.11,
+   "NT": 33.44,
+   "Kc_tariff": 143.95,
+   "why": "sám/sama"
   },
   {
    "from": "2026-04-05 19:47",
    "to": "2026-04-06 20:00",
-   "payer": "Jirka",
+   "payer": "Petr",
    "VT": 1.02,
    "NT": 10.52,
    "Kc_tariff": 44.07,
-   "why": "garáž 11.5 kWh"
+   "why": "garáž 11.5 kWh (Johana)"
   },
   {
    "from": "2026-04-05 19:47",
    "to": "2026-04-06 20:00",
-   "payer": "Jirka",
-   "VT": 0.99,
-   "NT": 10.24,
-   "Kc_tariff": 42.87,
-   "why": "sdíleno Jirka+Potužníci"
-  },
-  {
-   "from": "2026-04-05 19:47",
-   "to": "2026-04-06 20:00",
-   "payer": "Potužníci",
-   "VT": 0.99,
-   "NT": 10.24,
-   "Kc_tariff": 42.87,
-   "why": "sdíleno Jirka+Potužníci"
+   "payer": "Petr",
+   "VT": 1.98,
+   "NT": 20.48,
+   "Kc_tariff": 85.74,
+   "why": "sám/sama"
   },
   {
    "from": "2026-04-06 20:03",
@@ -263,7 +289,7 @@
   {
    "from": "2026-05-08 15:47",
    "to": "2026-05-10 16:06",
-   "payer": "Marek",
+   "payer": "Kristina",
    "VT": 1.0,
    "NT": 33.0,
    "Kc_tariff": 128.27,
@@ -272,7 +298,7 @@
   {
    "from": "2026-06-18 19:18",
    "to": "2026-06-21 10:00",
-   "payer": "Edita",
+   "payer": "Kristina",
    "VT": 3.0,
    "NT": 31.0,
    "Kc_tariff": 129.81,
@@ -281,16 +307,16 @@
   {
    "from": "2026-06-27 10:00",
    "to": "2026-06-28 10:00",
-   "payer": "Potužníci",
+   "payer": "Petr",
    "VT": 5.07,
    "NT": 44.93,
    "Kc_tariff": 191.41,
-   "why": "nabíjení auta 50 kWh"
+   "why": "nabíjení auta 50 kWh (Tereza)"
   },
   {
    "from": "2026-06-27 10:00",
    "to": "2026-06-28 10:00",
-   "payer": "Potužníci",
+   "payer": "Petr",
    "VT": 1.93,
    "NT": 17.07,
    "Kc_tariff": 72.74,
@@ -308,7 +334,7 @@
   {
    "from": "2026-07-03 18:15",
    "to": "2026-07-06 10:00",
-   "payer": "Edita",
+   "payer": "Kristina",
    "VT": 3.8,
    "NT": 44.1,
    "Kc_tariff": 182.55,
@@ -326,7 +352,7 @@
   {
    "from": "2026-07-17 10:00",
    "to": "2026-07-17 10:01",
-   "payer": "Jirka",
+   "payer": "Jiří",
    "VT": 0.0,
    "NT": 3.0,
    "Kc_tariff": 11.25,
@@ -335,7 +361,7 @@
   {
    "from": "2026-07-17 10:01",
    "to": "2026-07-18 10:00",
-   "payer": "Jirka",
+   "payer": "Jiří",
    "VT": 0.71,
    "NT": 5.33,
    "Kc_tariff": 23.21,
@@ -344,11 +370,11 @@
   {
    "from": "2026-07-17 10:01",
    "to": "2026-07-18 10:00",
-   "payer": "Jirka",
+   "payer": "Jiří",
    "VT": 0.64,
    "NT": 4.83,
    "Kc_tariff": 21.04,
-   "why": "sdíleno Jirka+Kristina"
+   "why": "sdíleno Jiří+Kristina"
   },
   {
    "from": "2026-07-17 10:01",
@@ -357,12 +383,12 @@
    "VT": 0.64,
    "NT": 4.83,
    "Kc_tariff": 21.04,
-   "why": "sdíleno Jirka+Kristina"
+   "why": "sdíleno Jiří+Kristina"
   },
   {
    "from": "2026-07-18 10:00",
    "to": "2026-07-19 10:00",
-   "payer": "Jirka",
+   "payer": "Jiří",
    "VT": 0.71,
    "NT": 8.18,
    "Kc_tariff": 33.88,
@@ -371,11 +397,11 @@
   {
    "from": "2026-07-18 10:00",
    "to": "2026-07-19 10:00",
-   "payer": "Jirka",
+   "payer": "Jiří",
    "VT": 0.43,
    "NT": 4.94,
    "Kc_tariff": 20.47,
-   "why": "sdíleno Jirka+Kristina+Potužníci"
+   "why": "sdíleno Jiří+Kristina+Petr"
   },
   {
    "from": "2026-07-18 10:00",
@@ -384,21 +410,21 @@
    "VT": 0.43,
    "NT": 4.94,
    "Kc_tariff": 20.47,
-   "why": "sdíleno Jirka+Kristina+Potužníci"
+   "why": "sdíleno Jiří+Kristina+Petr"
   },
   {
    "from": "2026-07-18 10:00",
    "to": "2026-07-19 10:00",
-   "payer": "Potužníci",
+   "payer": "Petr",
    "VT": 0.43,
    "NT": 4.94,
    "Kc_tariff": 20.47,
-   "why": "sdíleno Jirka+Kristina+Potužníci"
+   "why": "sdíleno Jiří+Kristina+Petr"
   },
   {
    "from": "2026-07-24 10:01",
    "to": "2026-07-26 10:00",
-   "payer": "Jirka",
+   "payer": "Jiří",
    "VT": 1.37,
    "NT": 15.63,
    "Kc_tariff": 64.81,
@@ -407,11 +433,11 @@
   {
    "from": "2026-07-24 10:01",
    "to": "2026-07-26 10:00",
-   "payer": "Jirka",
+   "payer": "Jiří",
    "VT": 1.81,
    "NT": 20.69,
    "Kc_tariff": 85.77,
-   "why": "sdíleno Jirka+Kristina"
+   "why": "sdíleno Jiří+Kristina"
   },
   {
    "from": "2026-07-24 10:01",
@@ -420,7 +446,7 @@
    "VT": 1.81,
    "NT": 20.69,
    "Kc_tariff": 85.77,
-   "why": "sdíleno Jirka+Kristina"
+   "why": "sdíleno Jiří+Kristina"
   },
   {
    "from": "2026-07-26 10:00",
@@ -434,7 +460,7 @@
   {
    "from": "2026-08-07 10:00",
    "to": "2026-08-09 10:00",
-   "payer": "Marek",
+   "payer": "Kristina",
    "VT": 1.0,
    "NT": 13.0,
    "Kc_tariff": 53.27,

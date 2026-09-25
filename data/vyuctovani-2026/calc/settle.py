@@ -21,11 +21,16 @@ for y, u in INV["unit_prices_excl_vat_kc_per_mwh"].items():
     base = u["supply"] + u["poze"] + u["system_services"] + u["electricity_tax"]
     PRICE[int(y)] = {"VT": (base + u["dist_VT"]) / 1000 * VAT, "NT": (base + u["dist_NT"]) / 1000 * VAT}
 
-FAMILIES = ["Jirka", "Kristina", "Potužníci"]     # share fixed charges + empty-house consumption
-PAYER = {"Jirka": "Jirka", "Johana": "Jirka", "Kristina": "Kristina",
-         "Petr": "Potužníci", "Tereza": "Potužníci", "Bára": "Potužníci",
-         "Edita": "Edita", "Marek": "Marek"}
-GARAGE_OWNER = "Jirka"   # garage sub-meter sits behind the main meter; only Jirka's family uses it
+# Three payers (family branches); each collects from its own members. They share the fixed
+# charges and empty-house consumption equally.
+FAMILIES = ["Jiří", "Kristina", "Petr"]
+PAYER = {"Jirka": "Jiří",
+         "Kristina": "Kristina", "Edita": "Kristina", "Marek": "Kristina",
+         "Petr": "Petr", "Tereza": "Petr", "Bára": "Petr", "Johana": "Petr"}
+# Garage sub-meter sits behind the main meter (already inside main consumption). Jiří uses
+# the garage, so when he shares the house with another branch the garage kWh are his;
+# in any other interval the garage is simply part of that interval's consumption.
+GARAGE_OWNER = "Jiří"
 
 start = INV["period"][0] + " 00:00"
 end = INV["period"][1] + " 23:59"
@@ -55,7 +60,7 @@ for (a, vt0, nt0, _, pres), (b, vt1, nt1, _, _) in zip(points, points[1:]):
     vt, nt = vt1 - vt0, nt1 - nt0
     assert vt >= 0 and nt >= 0, f"meter went backwards {a}->{b}"
     intervals.append({"from": a, "to": b, "VT": vt, "NT": nt,
-                      "payers": sorted({PAYER[v] for v in pres}), "garage": 0.0, "ev": []})
+                      "payers": sorted({PAYER[v] for v in pres}), "members": sorted(pres), "garage": 0.0, "ev": []})
 
 # garage: spread each delta between written garage readings over the Jirka-family
 # intervals inside that span, proportional to their consumption
@@ -64,8 +69,10 @@ for (i0, g0), (i1, g1) in zip(known, known[1:]):
     delta = g1 - g0
     if delta <= 0:
         continue
-    span = [iv for iv in intervals[i0:i1] if GARAGE_OWNER in iv["payers"]]
-    assert span, f"garage moved {points[i0][0]}->{points[i1][0]} without {GARAGE_OWNER} present"
+    span = ([iv for iv in intervals[i0:i1] if GARAGE_OWNER in iv["payers"]]
+            or [iv for iv in intervals[i0:i1] if iv["payers"]])   # someone else used Jirka's part
+    if not span:
+        continue
     tot = sum(iv["VT"] + iv["NT"] for iv in span)
     for iv in span:
         iv["garage"] += delta * (iv["VT"] + iv["NT"]) / tot
@@ -77,6 +84,10 @@ for at, visitor, kwh in charges:   # EV charging -> interval containing its time
 
 # --- allocate ------------------------------------------------------------------------
 alloc = defaultdict(lambda: {"VT": 0.0, "NT": 0.0, "Kc": 0.0})
+member_alloc = defaultdict(lambda: {"VT": 0.0, "NT": 0.0, "Kc": 0.0})   # for the branches' internal split
+GARAGE_MEMBER = "Jirka"
+# who used Jirka's part (garage meter) when he wasn't there: (from, to, member) - internal split only
+GARAGE_OCCUPANTS = [("2026-04-04", "2026-04-07", "Johana")]   # notebook "JOHANA (JIRKA)"
 empty = {"VT": 0.0, "NT": 0.0, "Kc": 0.0}
 detail = []
 
@@ -92,11 +103,16 @@ for iv in intervals:
     year = int(iv["from"][:4])
     fv, fn = vt / (vt + nt), nt / (vt + nt)
 
-    def charge(payer, v, n, why):
+    def charge(payer, v, n, why, members=None):
+        """Book a branch share; members = who within the branch it is split among (equally)."""
         a = alloc[payer]
         a["VT"] += v; a["NT"] += n; a["Kc"] += price(year, v, n)
         detail.append({"from": iv["from"], "to": iv["to"], "payer": payer,
                        "VT": round(v, 2), "NT": round(n, 2), "Kc_tariff": round(price(year, v, n), 2), "why": why})
+        members = members or [m for m in iv["members"] if PAYER[m] == payer]
+        for m in members:
+            ma = member_alloc[m]
+            ma["VT"] += v / len(members); ma["NT"] += n / len(members); ma["Kc"] += price(year, v, n) / len(members)
 
     if not iv["payers"]:
         empty["VT"] += vt; empty["NT"] += nt; empty["Kc"] += price(year, vt, nt)
@@ -105,11 +121,16 @@ for iv in intervals:
         continue
     rv, rn = vt, nt
     for visitor, kwh in iv["ev"]:
-        charge(PAYER[visitor], kwh * fv, kwh * fn, f"nabíjení auta {kwh:g} kWh")
+        charge(PAYER[visitor], kwh * fv, kwh * fn, f"nabíjení auta {kwh:g} kWh ({visitor})", [visitor])
         rv -= kwh * fv; rn -= kwh * fn
-    if iv["garage"] and len(iv["payers"]) > 1:
+    occupant = next((m for a, b, m in GARAGE_OCCUPANTS if a <= iv["from"] < b and m in iv["members"]), None)
+    if iv["garage"] and GARAGE_OWNER not in iv["payers"] and occupant:
         g = iv["garage"]
-        charge(GARAGE_OWNER, g * fv, g * fn, f"garáž {g:.1f} kWh")
+        charge(PAYER[occupant], g * fv, g * fn, f"garáž {g:.1f} kWh ({occupant})", [occupant])
+        rv -= g * fv; rn -= g * fn
+    elif iv["garage"] and len(iv["payers"]) > 1:
+        g = iv["garage"]
+        charge(GARAGE_OWNER, g * fv, g * fn, f"garáž {g:.1f} kWh", [GARAGE_MEMBER])
         rv -= g * fv; rn -= g * fn
     n = len(iv["payers"])
     for p in iv["payers"]:
@@ -119,7 +140,7 @@ attributed = sum(a["Kc"] for a in alloc.values()) + empty["Kc"]
 scale = VARIABLE / attributed   # PPAS priced more kWh at 2025 rates (estimated split); reconcile to invoice
 
 out_rows = []
-for p in FAMILIES + ["Edita", "Marek"]:
+for p in FAMILIES:
     a = alloc[p]
     fam = p in FAMILIES
     own, emp, fix = a["Kc"] * scale, (empty["Kc"] * scale / 3 if fam else 0), (FIXED / 3 if fam else 0)
@@ -130,10 +151,16 @@ for p in FAMILIES + ["Edita", "Marek"]:
 tot_vt = sum(a["VT"] for a in alloc.values()) + empty["VT"]
 tot_nt = sum(a["NT"] for a in alloc.values()) + empty["NT"]
 assert abs(tot_vt - INV["consumption_kwh"]["VT"]) < 0.01 and abs(tot_nt - INV["consumption_kwh"]["NT"]) < 0.01
+members_out = [{"member": m, "payer": PAYER[m], "VT": round(v["VT"], 1), "NT": round(v["NT"], 1),
+                "kwh": round(v["VT"] + v["NT"], 1), "kc": round(v["Kc"] * scale, 2)}
+               for m, v in sorted(member_alloc.items(), key=lambda kv: (FAMILIES.index(PAYER[kv[0]]), -kv[1]["Kc"]))]
+for p in FAMILIES:   # member split must add up to the branch's direct consumption
+    assert abs(sum(v["Kc"] for m, v in member_alloc.items() if PAYER[m] == p) - alloc[p]["Kc"]) < 1e-6, p
+
 print(json.dumps({
     "check": {"VT": round(tot_vt, 3), "NT": round(tot_nt, 3), "tariff_kc": round(attributed, 2),
               "invoice_variable_kc": VARIABLE, "scale": round(scale, 5),
               "sum_total": round(sum(r["total_kc"] for r in out_rows), 2)},
     "prices": {y: {k: round(v, 4) for k, v in d.items()} for y, d in PRICE.items()},
     "empty": {k: round(v, 2) for k, v in empty.items()},
-    "rows": out_rows, "detail": detail}, ensure_ascii=False, indent=1))
+    "rows": out_rows, "members": members_out, "detail": detail}, ensure_ascii=False, indent=1))
