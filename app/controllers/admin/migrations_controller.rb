@@ -6,6 +6,11 @@ module Admin
 
     # POST /admin/migrations/xls
     def xls
+      unless XlsDataMigration.allowed?
+        return redirect_back fallback_location: root_path,
+                             alert: t("admin.migrations.xls_refused", env: XlsDataMigration::OPT_IN_ENV)
+      end
+
       XlsDataMigration.run
       redirect_back fallback_location: root_path, notice: t("admin.migrations.xls_success")
     rescue => e

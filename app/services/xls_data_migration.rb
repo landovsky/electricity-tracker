@@ -32,7 +32,15 @@
 #   ~122xxx register (CEZ_V columns) → NT (nízký tarif) — large values, off-peak
 #
 # Usage: bundle exec rails runner "XlsDataMigration.run"
+#
+# DESTRUCTIVE: wipes all properties, meters, visitors, stays, readings, manual
+# entries, audits and non-admin users before importing. Refuses to run when the
+# database already holds tracked consumption data (stays, meter reading events
+# or manual entries) unless ALLOW_DESTRUCTIVE_XLS_MIGRATION=true is set.
 class XlsDataMigration
+  class Refused < StandardError; end
+
+  OPT_IN_ENV = "ALLOW_DESTRUCTIVE_XLS_MIGRATION"
   XLS_PATH = Rails.root.join("data/ELEKTRIKA-SUCHA-2025.xls")
   DATA_ROWS = (6..89) # XLS rows 6-89 (0-indexed) contain visit data
 
@@ -68,20 +76,40 @@ class XlsDataMigration
     new.run
   end
 
+  # True when the database already holds real tracked data that the wipe would destroy.
+  def self.existing_data?
+    Stay.exists? || MeterReadingEvent.exists? || ManualConsumptionEntry.exists?
+  end
+
+  def self.opted_in?
+    ENV[OPT_IN_ENV] == "true"
+  end
+
+  def self.allowed?
+    !existing_data? || opted_in?
+  end
+
   def run
+    unless self.class.allowed?
+      raise Refused, "Database already contains stays/readings; refusing to wipe them. " \
+                     "Set #{OPT_IN_ENV}=true to force the XLS migration."
+    end
+
     puts "=" * 60
     puts "XLS Data Migration: #{XLS_PATH}"
     puts "=" * 60
 
-    clear_database!
-
+    # The wipe and the import run in ONE transaction: if parsing, validation or
+    # verification fails, the deletes roll back too and the existing data survives.
     ActiveRecord::Base.transaction do
+      clear_database!
       setup_property_and_meters!
       create_visitors!
       create_admin_user!
       visits = parse_xls!
       create_records!(visits)
       verify!
+      verify_foreign_keys!
     end
 
     puts "\n#{'=' * 60}"
@@ -91,23 +119,34 @@ class XlsDataMigration
 
   private
 
+  # Must run inside the import transaction. `PRAGMA foreign_keys` cannot be
+  # toggled inside a transaction in SQLite, so FK checks are deferred to COMMIT
+  # instead, and every row referencing a deleted record is removed or nulled.
   def clear_database!
     puts "\nClearing database..."
     conn = ActiveRecord::Base.connection
-    conn.execute("PRAGMA foreign_keys = OFF")
+    conn.execute("PRAGMA defer_foreign_keys = ON")
+    conn.execute("DELETE FROM active_storage_attachments WHERE record_type = 'MeterPhotoDetection'")
     %w[audits meter_readings stays meter_reading_events manual_consumption_entries
-       meters visitors properties].each do |table|
+       meter_photo_detections property_users meters].each do |table|
       conn.execute("DELETE FROM #{table}")
     end
     # Preserve admin users, delete the rest
     conn.execute("DELETE FROM users WHERE role != 'admin'")
-    conn.execute("PRAGMA foreign_keys = ON")
+    conn.execute("UPDATE users SET default_visitor_id = NULL")
+    conn.execute("DELETE FROM visitors")
+    conn.execute("DELETE FROM properties")
     puts "  Done."
+  end
+
+  def verify_foreign_keys!
+    violations = ActiveRecord::Base.connection.select_rows("PRAGMA foreign_key_check")
+    raise "Foreign key violations after XLS import: #{violations.inspect}" if violations.any?
   end
 
   def setup_property_and_meters!
     puts "\nCreating property and meters..."
-    @property = Property.create!(name: "Suchá", subdomain: "sucha")
+    @property = Property.create!(name: "Suchá", subdomain: "sepot")
 
     @meter_vt = Meter.create!(
       property: @property,
