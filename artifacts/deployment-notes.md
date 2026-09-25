@@ -9,7 +9,7 @@
 
 ## CI/CD Pipeline (`.github/workflows/ci.yml`)
 
-- Triggers on: `main`, `main-rails` branch pushes + `v*` tags + PRs
+- Triggers on: `main` branch pushes + `v*` tags + PRs
 - Jobs: `scan_ruby`, `scan_js`, `lint`, `test`, `docker`
 - Docker job builds multi-platform image, pushes to GHCR on push events
 - Docker build uses Buildx with GitHub Actions cache
@@ -72,7 +72,7 @@ RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
 ```bash
 # After committing changes:
-git push origin main-rails
+git push origin main
 git tag v0.0.X
 git push origin v0.0.X
 # CI builds image → Flux detects new tag → auto-deploys

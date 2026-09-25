@@ -61,7 +61,7 @@ git push origin v0.2.9
 
 ### `.github/workflows/ci.yml`
 
-Triggers on: PRs, pushes to `main`/`main-rails`, `v*` tags.
+Triggers on: PRs, pushes to `main`, `v*` tags.
 
 | Job | What it does |
 |-----|-------------|
