@@ -51,7 +51,7 @@ class DashboardController < ApplicationController
   def load_camera_detections(camera_session_id)
     return [] unless camera_session_id.present?
 
-    MeterPhotoDetection
+    @property.meter_photo_detections
       .for_session(camera_session_id)
       .usable
       .where.not(meter_id: nil)
@@ -62,7 +62,7 @@ class DashboardController < ApplicationController
   def build_prefilled_readings(camera_session_id)
     return {} unless camera_session_id.present?
 
-    MeterPhotoDetection
+    @property.meter_photo_detections
       .for_session(camera_session_id)
       .usable
       .where.not(meter_id: nil)

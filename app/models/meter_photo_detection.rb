@@ -20,4 +20,12 @@ class MeterPhotoDetection < ApplicationRecord
   scope :for_session, ->(sid) { where(session_id: sid) }
   scope :active, -> { where.not(status: :replaced) }
   scope :usable, -> { where(status: %i[detected low_confidence]) }
+
+  # Only variable images can be resized into thumbnails. Photos stored before
+  # uploads were validated may be SVG/PDF blobs, and calling #variant on them
+  # raises ActiveStorage::InvariableError — which would 500 every page that
+  # lists them. Views must check this before rendering a variant.
+  def thumbnailable?
+    photo.attached? && photo.variable?
+  end
 end
