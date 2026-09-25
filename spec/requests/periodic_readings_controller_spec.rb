@@ -30,6 +30,29 @@ RSpec.describe PeriodicReadingsController, type: :request do
       end
     end
 
+    context "a Turbo submit is rejected because NT is typed below its previous reading" do
+      def form_frame(body)
+        body[/<turbo-stream action="replace" target="periodic-reading-form">.*?<\/turbo-stream>/m]
+      end
+
+      it "leaves the form untouched, so the valid VT value and the rest of the input survive and only NT needs retyping" do
+        post periodic_readings_path,
+             params: { recorded_at: Time.current.iso8601, meter_readings: { vt.id.to_s => "1100", nt.id.to_s => "450" } },
+             as: :turbo_stream
+
+        expect(response.body).to include("toast-container")
+        expect(form_frame(response.body)).to be_nil
+      end
+
+      it "still resets the form once the reading is recorded" do
+        post periodic_readings_path,
+             params: { recorded_at: Time.current.iso8601, meter_readings: { vt.id.to_s => "1100", nt.id.to_s => "520" } },
+             as: :turbo_stream
+
+        expect(form_frame(response.body)).to be_present
+      end
+    end
+
     context "both meters are read correctly" do
       it "records one event with both readings" do
         expect {

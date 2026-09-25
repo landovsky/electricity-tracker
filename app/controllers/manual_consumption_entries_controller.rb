@@ -22,7 +22,8 @@ class ManualConsumptionEntriesController < ApplicationController
   # - note (required)
   #
   # On success: redirects to root with success flash
-  # On failure: redirects to root with error flash and params for form repopulation
+  # On failure: redirects to root with error flash (Turbo: toast only; the form
+  #   is left untouched so the picked visitor and typed values survive)
   # On C8 warning: redirects to root with warning flash (soft validation)
   def create
     property = find_property
@@ -48,6 +49,7 @@ class ManualConsumptionEntriesController < ApplicationController
           end
           format.turbo_stream do
             flash.now[:warning] = outcome.consumption_warning
+            @succeeded = true
             load_dashboard_data
           end
         else
@@ -57,6 +59,7 @@ class ManualConsumptionEntriesController < ApplicationController
           end
           format.turbo_stream do
             flash.now[:notice] = t("manual_entries.success", kwh: helpers.number_with_precision(entry.kwh, precision: 2, strip_insignificant_zeros: true), name: entry.visitor.name)
+            @succeeded = true
             load_dashboard_data
           end
         end
