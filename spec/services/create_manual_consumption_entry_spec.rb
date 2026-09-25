@@ -3,8 +3,8 @@
 require "rails_helper"
 
 RSpec.describe CreateManualConsumptionEntry, type: :service do
-  let(:visitor) { create(:visitor) }
   let(:property) { create(:property) }
+  let(:visitor) { create(:visitor, property: property) }
   let(:user) { create(:user) }
   let(:valid_params) do
     {
@@ -165,38 +165,57 @@ RSpec.describe CreateManualConsumptionEntry, type: :service do
       end
     end
 
-    context "constraint C8: period consumption warning (soft validation)" do
-      # This test is a placeholder for when period analysis service is implemented
-      # C8 should add a warning (not a blocking error) when the manual entry kWh
-      # exceeds the unattributed consumption for the enclosing period.
-      #
-      # Once we have the period analysis service, this test should:
-      # 1. Set up a period with known total consumption (e.g., 100 kWh)
-      # 2. Create manual entries or stays that consume most of it (e.g., 95 kWh)
-      # 3. Attempt to create a manual entry for 10 kWh
-      # 4. Verify a warning is added to errors[:consumption_warning]
-      # 5. Verify the entry is still created (soft validation)
+    context "constraint C8: an EV charge logged for more kWh than the house used in that period" do
+      # Period 1 Jan 18:00 -> 3 Jan 10:00 measured 20 kWh on the main meter.
+      let(:period_start) { Time.zone.local(2026, 1, 1, 18, 0) }
+      let(:period_end) { Time.zone.local(2026, 1, 3, 10, 0) }
 
-      it "adds a warning when exceeding period consumption (placeholder)" do
-        # TODO: Implement when PeriodAnalysisService is available
-        # For now, verify that the service doesn't block on this
-        params = valid_params.merge(kwh: 1000) # Unrealistically high value
-        outcome = described_class.run(params)
-
-        expect(outcome).to be_valid
-        expect(outcome.result).to be_persisted
-        # TODO: Once implemented, verify:
-        # expect(outcome.errors[:consumption_warning]).to be_present
+      before do
+        create(:meter_reading_event, :check_in, property: property, recorded_at: period_start, main_reading: 1000)
+        create(:meter_reading_event, :check_out, property: property, recorded_at: period_end, main_reading: 1020)
       end
 
-      it "does not add warning when within period consumption (placeholder)" do
-        # TODO: Implement when PeriodAnalysisService is available
-        outcome = described_class.run(valid_params)
+      it "still saves the entry but warns, because C8 is a soft validation" do
+        outcome = described_class.run(valid_params.merge(date: Date.new(2026, 1, 2), kwh: 500))
 
         expect(outcome).to be_valid
         expect(outcome.result).to be_persisted
-        # TODO: Once implemented, verify:
-        # expect(outcome.errors[:consumption_warning]).to be_empty
+        expect(outcome.consumption_warning).to include("500")
+        expect(outcome.consumption_warning).to include("20")
+      end
+
+      it "stays quiet when the entry fits into the period's measured consumption" do
+        outcome = described_class.run(valid_params.merge(date: Date.new(2026, 1, 2), kwh: 15))
+
+        expect(outcome).to be_valid
+        expect(outcome.consumption_warning).to be_nil
+      end
+
+      it "counts entries already logged in the period, so two small charges that together overshoot warn" do
+        create(:manual_consumption_entry, visitor: visitor, property: property, date: Date.new(2026, 1, 1), kwh: 15)
+
+        outcome = described_class.run(valid_params.merge(date: Date.new(2026, 1, 2), kwh: 10))
+
+        expect(outcome.consumption_warning).to be_present
+      end
+
+      it "does not warn for an entry after the last reading, because that period is still open" do
+        outcome = described_class.run(valid_params.merge(date: Date.new(2026, 1, 5), kwh: 500))
+
+        expect(outcome).to be_valid
+        expect(outcome.consumption_warning).to be_nil
+      end
+    end
+
+    context "the visitor belongs to a different property than the entry" do
+      it "refuses, so one property's pool is never billed to another property's visitor" do
+        foreign_visitor = create(:visitor, property: create(:property))
+
+        outcome = described_class.run(valid_params.merge(visitor: foreign_visitor))
+
+        expect(outcome).not_to be_valid
+        expect(outcome.errors[:visitor]).to be_present
+        expect(ManualConsumptionEntry.count).to eq(0)
       end
     end
 

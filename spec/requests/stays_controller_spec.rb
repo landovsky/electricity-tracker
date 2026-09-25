@@ -383,6 +383,88 @@ RSpec.describe StaysController, type: :request do
     end
   end
 
+  describe "Turbo Stream re-render of the dashboard forms" do
+    # Isolated property so the meter layout under test is the only one in play
+    let(:tariff_property) { create(:property) }
+    let!(:vt_meter) { create(:meter, :main_vt, property: tariff_property) }
+    let!(:nt_meter) { create(:meter, :main_nt, property: tariff_property) }
+    let(:babicka) { create(:visitor, name: "Babička", property: tariff_property) }
+    let!(:dedecek) { create(:visitor, name: "Dědeček", property: tariff_property) }
+    let!(:archived_visitor) { create(:visitor, :archived, name: "Archivní host", property: tariff_property) }
+
+    def readings(vt, nt)
+      { vt_meter.id => vt, nt_meter.id => nt }
+    end
+
+    def frame(body, id)
+      body[/<turbo-stream action="replace" target="#{id}">.*?<\/turbo-stream>/m]
+    end
+
+    before { patch switch_property_path, params: { property_id: tariff_property.id } }
+
+    context "a check-in fails validation (e.g. a reading below the previous one)" do
+      before do
+        post stays_path, params: { visitor_id: dedecek.id, meter_readings: readings(100, 50) }
+      end
+
+      it "leaves the forms untouched, so the picked visitor and typed readings survive and a retry does not check in someone else" do
+        post stays_path, params: { visitor_id: babicka.id, meter_readings: readings(1, 1) }, as: :turbo_stream
+
+        expect(response.body).to include("toast-container")
+        expect(frame(response.body, "check-in-form")).to be_nil
+        expect(frame(response.body, "check-out-form")).to be_nil
+      end
+    end
+
+    context "a check-out fails validation" do
+      let!(:stay) do
+        post stays_path, params: { visitor_id: babicka.id, meter_readings: readings(100, 50) }
+        Stay.last
+      end
+
+      it "leaves the forms untouched, so a retry closes the same stay and not the default visitor's" do
+        patch check_out_stay_path(stay), params: { meter_readings: readings(1, 1) }, as: :turbo_stream
+
+        expect(response.body).to include("toast-container")
+        expect(frame(response.body, "check-out-form")).to be_nil
+        expect(frame(response.body, "check-in-form")).to be_nil
+        expect(stay.reload).to be_open
+      end
+    end
+
+    context "a visitor has just checked in" do
+      it "no longer offers them (nor archived visitors) for check-in, matching the full dashboard" do
+        post stays_path, params: { visitor_id: babicka.id, meter_readings: readings(100, 50) }, as: :turbo_stream
+
+        check_in_form = frame(response.body, "check-in-form")
+        expect(check_in_form).to include("Dědeček")
+        expect(check_in_form).not_to include("Babička")
+        expect(check_in_form).not_to include("Archivní host")
+      end
+
+      it "keeps VT before NT, so habitual typing does not swap the tariffs" do
+        post stays_path, params: { visitor_id: babicka.id, meter_readings: readings(100, 50) }, as: :turbo_stream
+
+        check_in_form = frame(response.body, "check-in-form")
+        expect(check_in_form.index("meter_readings[#{vt_meter.id}]")).to be < check_in_form.index("meter_readings[#{nt_meter.id}]")
+      end
+    end
+
+    context "a visitor has just checked out" do
+      let!(:stay) do
+        post stays_path, params: { visitor_id: babicka.id, meter_readings: readings(100, 50) }
+        Stay.last
+      end
+
+      it "offers them for check-in again without a page reload" do
+        patch check_out_stay_path(stay), params: { meter_readings: readings(110, 55) }, as: :turbo_stream
+
+        expect(stay.reload).to be_closed
+        expect(frame(response.body, "check-in-form")).to include("Babička")
+      end
+    end
+  end
+
   context "when not authenticated" do
     before do
       # Undo the auto-sign-in from authentication_helpers.rb

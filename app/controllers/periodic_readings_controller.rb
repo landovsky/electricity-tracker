@@ -5,6 +5,8 @@
 # Actions:
 # - create (POST /odecty-mericu) - Record meter readings without a visitor/stay
 class PeriodicReadingsController < ApplicationController
+  before_action :require_property
+
   # POST /odecty-mericu
   def create
     outcome = RecordMeterReading.run(
@@ -57,7 +59,7 @@ class PeriodicReadingsController < ApplicationController
         meter_group: meter.meter_group
       }
     end
-    @meters = @property.meters.kept.order(:meter_type, :meter_group, :label)
+    @meters = @property.meters.kept.form_order
     @recent_events = MeterReadingEvent.kept
                                       .joins(meter_readings: :meter)
                                       .where(meters: { property_id: @property.id })

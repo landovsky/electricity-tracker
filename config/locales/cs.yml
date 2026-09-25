@@ -33,7 +33,7 @@ cs:
         manual_consumption_entry:
           attributes:
             kwh:
-              exceeds_period: "Upozornění: Ruční záznam kWh (%{kwh}) překračuje nepřiřazenou spotřebu za období"
+              exceeds_period: "Upozornění: Ruční záznam (%{kwh} kWh) překračuje nepřiřazenou spotřebu za období (%{available} kWh). Záznam byl uložen."
     attributes:
       visitor:
         name: "Jméno"
@@ -508,7 +508,9 @@ cs:
 
   # Meter reading events
   meter_reading_events:
+    admin_required: "Mazat odečty může pouze administrátor."
     destroy:
+      not_found: "Událost nebyla nalezena."
       success: "Událost byla úspěšně smazána."
       has_checkout: "Nelze smazat příjezd, ke kterému existuje odjezd. Nejprve smažte odjezd."
       confirm: "Opravdu chcete smazat tuto událost? Tato akce je nevratná."
@@ -523,6 +525,7 @@ cs:
     logged: "zaznamenal/a %{kwh} kWh"
     checked_in: "příjezd"
     checked_out: "odjezd"
+    periodic_reading: "Odečet měřičů"
     amount: "Množství:"
     note: "Poznámka:"
     recorded_by: "Zaznamenal/a: %{name}"

@@ -29,6 +29,7 @@ class CheckInVisitor < ApplicationService
 
   # Custom validations
   validate :validate_visitors_tracking_mode
+  validate :validate_visitor_belongs_to_property
   validate :validate_main_reading_provided
   validate :validate_no_open_stay
   validate :validate_chronological_consistency
@@ -163,6 +164,14 @@ class CheckInVisitor < ApplicationService
     return if property&.visitors?
 
     errors.add(:base, I18n.t("services.check_in_visitor.not_visitors_mode"))
+  end
+
+  # A stay must never open on another property's meters for this visitor.
+  def validate_visitor_belongs_to_property
+    return unless visitor && property
+    return if visitor.property_id == property.id
+
+    errors.add(:visitor, :invalid)
   end
 
   def create_stay!(event)

@@ -33,7 +33,7 @@ en:
         manual_consumption_entry:
           attributes:
             kwh:
-              exceeds_period: "Warning: Manual entry kWh (%{kwh}) exceeds unallocated consumption for period"
+              exceeds_period: "Warning: Manual entry (%{kwh} kWh) exceeds unallocated consumption for the period (%{available} kWh). The entry was saved."
     attributes:
       visitor:
         name: "Name"
@@ -443,7 +443,9 @@ en:
 
   # Meter reading events
   meter_reading_events:
+    admin_required: "Only admins can delete readings."
     destroy:
+      not_found: "Event not found."
       success: "Event deleted successfully."
       has_checkout: "Cannot delete check-in with associated check-out. Delete check-out first."
       confirm: "Are you sure you want to delete this event? This action cannot be undone."

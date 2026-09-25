@@ -19,6 +19,9 @@ class Meter < ApplicationRecord
   scope :main, -> { where(meter_type: "main") }
   scope :secondary, -> { where(meter_type: "secondary") }
   scope :grouped, ->(group) { where(meter_group: group) }
+  # Order used by every reading form (full page and Turbo Stream re-renders),
+  # so e.g. "Hlavní - VT" always renders before "Hlavní - NT".
+  scope :form_order, -> { order(:meter_type, :meter_group, label: :desc) }
 
   # Returns the last recorded reading for this meter
   def last_reading

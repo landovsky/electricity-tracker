@@ -15,6 +15,8 @@
 # On success: redirects to root with success flash
 # On failure: re-renders form with errors (for now, redirects with error flash)
 class StaysController < ApplicationController
+  before_action :require_property
+
   # POST /stays
   # Check-in action - creates a new stay with meter readings
   def create
@@ -25,6 +27,7 @@ class StaysController < ApplicationController
         format.html { redirect_to root_path, notice: t("stays.check_in_success", name: outcome.result.visitor.name) }
         format.turbo_stream do
           flash.now[:notice] = t("stays.check_in_success", name: outcome.result.visitor.name)
+          @succeeded = true
           load_dashboard_data
         end
       else
@@ -40,7 +43,9 @@ class StaysController < ApplicationController
   # PATCH /stays/:id/check_out
   # Check-out action - closes an existing stay with meter readings
   def check_out
-    stay = Stay.kept.find(params[:id])
+    # Only stays of properties the user can reach; ids are sequential and guessable.
+    stay = Stay.kept.where(property: available_properties).find(params[:id])
+    @property = stay.property
     outcome = CheckOutVisitor.run(check_out_params(stay))
 
     respond_to do |format|
@@ -48,6 +53,7 @@ class StaysController < ApplicationController
         format.html { redirect_to root_path, notice: t("stays.check_out_success", name: stay.visitor.name) }
         format.turbo_stream do
           flash.now[:notice] = t("stays.check_out_success", name: stay.visitor.name)
+          @succeeded = true
           load_dashboard_data
         end
       else
@@ -66,9 +72,10 @@ class StaysController < ApplicationController
 
   # Strong parameters for check-in
   def check_in_params
+    property = find_property
     result = {
-      visitor: find_visitor,
-      property: find_property,
+      visitor: find_visitor(property),
+      property: property,
       recorded_by_user: current_user,
       recorded_at: parse_recorded_at(params[:recorded_at]),
       note: params[:note]
@@ -104,20 +111,21 @@ class StaysController < ApplicationController
     result
   end
 
-  def find_visitor
-    current_property.visitors.kept.find(params[:visitor_id])
-  rescue ActiveRecord::RecordNotFound
-    nil
+  # The visitor must belong to the property the stay is recorded on.
+  def find_visitor(property)
+    property&.visitors&.kept&.find_by(id: params[:visitor_id])
   end
 
+  # An explicit property_id is honoured only for properties the user can access
+  # (membership + subdomain filter); anything else resolves to nil and fails validation.
   def find_property
-    if params[:property_id].present?
-      Property.kept.find(params[:property_id])
+    return @property if defined?(@property)
+
+    @property = if params[:property_id].present?
+      available_properties.find_by(id: params[:property_id])
     else
       current_property
     end
-  rescue ActiveRecord::RecordNotFound
-    nil
   end
 
   def parse_recorded_at(timestamp)
@@ -149,14 +157,17 @@ class StaysController < ApplicationController
 
   # Load dashboard data for Turbo Stream responses
   def load_dashboard_data
-    property = find_property
+    property = find_property || current_property
     @property_name = property.name
     @current_visitors = property.current_visitors.includes(:stays)
-    @visitors_for_checkin = property.visitors.kept.order(:name)
+    # Same list as the dashboard: active visitors without an open stay
+    @visitors_for_checkin = property.visitors.kept.active
+                                    .where.not(id: @current_visitors.pluck(:id))
+                                    .order(:name)
     @visitors_for_checkout = @current_visitors
     @default_visitor_id = current_user&.default_visitor_id
     @last_meter_readings = build_last_meter_readings_hash(property)
-    @meters = property.meters.kept.order(:meter_type, :meter_group, :label)
+    @meters = property.meters.kept.form_order
     @recent_events = MeterReadingEvent.kept
                                       .joins(meter_readings: :meter)
                                       .where(meters: { property_id: property.id })

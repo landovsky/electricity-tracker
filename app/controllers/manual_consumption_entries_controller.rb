@@ -8,13 +8,15 @@
 # Routes:
 # - POST /manual_consumption_entries - Create a new manual consumption entry
 class ManualConsumptionEntriesController < ApplicationController
+  before_action :require_property
+
   # POST /manual_consumption_entries
   #
   # Creates a manual consumption entry via CreateManualConsumptionEntry service.
   #
   # Params:
   # - visitor_id (required)
-  # - property_id (optional, defaults to Property.first)
+  # - property_id (optional, defaults to current_property; must be accessible to the user)
   # - date (optional, defaults to Date.current)
   # - kwh (required)
   # - note (required)
@@ -23,9 +25,10 @@ class ManualConsumptionEntriesController < ApplicationController
   # On failure: redirects to root with error flash and params for form repopulation
   # On C8 warning: redirects to root with warning flash (soft validation)
   def create
+    property = find_property
     outcome = CreateManualConsumptionEntry.run(
-      visitor: find_visitor,
-      property: find_property,
+      visitor: find_visitor(property),
+      property: property,
       date: parse_date,
       kwh: params[:kwh],
       note: params[:note],
@@ -37,14 +40,14 @@ class ManualConsumptionEntriesController < ApplicationController
         # Entry was created successfully
         entry = outcome.result
 
-        # Check for C8 soft validation warning
-        if outcome.errors[:consumption_warning].any?
+        # C8 soft validation: the entry is saved, but the user is warned
+        if outcome.consumption_warning
           format.html do
-            flash[:warning] = outcome.errors[:consumption_warning].first
+            flash[:warning] = outcome.consumption_warning
             redirect_to root_path
           end
           format.turbo_stream do
-            flash.now[:warning] = outcome.errors[:consumption_warning].first
+            flash.now[:warning] = outcome.consumption_warning
             load_dashboard_data
           end
         else
@@ -73,20 +76,21 @@ class ManualConsumptionEntriesController < ApplicationController
 
   private
 
-  def find_visitor
-    current_property.visitors.kept.find(params[:visitor_id])
-  rescue ActiveRecord::RecordNotFound
-    nil
+  # The visitor must belong to the property the entry is recorded on.
+  def find_visitor(property)
+    property&.visitors&.kept&.find_by(id: params[:visitor_id])
   end
 
+  # An explicit property_id is honoured only for (kept) properties the user can
+  # access; anything else resolves to nil and fails validation.
   def find_property
-    if params[:property_id].present?
-      Property.find(params[:property_id])
+    return @property if defined?(@property)
+
+    @property = if params[:property_id].present?
+      available_properties.find_by(id: params[:property_id])
     else
       current_property
     end
-  rescue ActiveRecord::RecordNotFound
-    nil
   end
 
   def parse_date
@@ -104,25 +108,12 @@ class ManualConsumptionEntriesController < ApplicationController
     errors.full_messages.join(", ")
   end
 
-  # Load dashboard data for Turbo Stream responses
+  # Load dashboard data for Turbo Stream responses.
+  # Only what manual_consumption_entries/create.turbo_stream.erb renders.
   def load_dashboard_data
-    property = find_property
-    @current_visitors = property.current_visitors.includes(:stays)
-    @visitors_for_checkin = property.visitors.kept.order(:name)
-    @visitors_for_checkout = @current_visitors
+    property = find_property || current_property
     @all_visitors = property.visitors.kept.order(:name)
     @default_visitor_id = current_user&.default_visitor_id
-    @last_meter_readings = property.meters.map do |meter|
-      reading = meter.meter_readings.kept.joins(:meter_reading_event).order("meter_reading_events.recorded_at DESC").first
-      next unless reading
-
-      [ meter.meter_type, {
-        label: meter.label,
-        value: reading.value_kwh,
-        date: reading.meter_reading_event.recorded_at
-      } ]
-    end.compact.to_h
-    @meters = property.meters.kept.order(meter_type: :asc)
     @recent_events = MeterReadingEvent.kept
                                       .joins(meter_readings: :meter)
                                       .where(meters: { property_id: property.id })

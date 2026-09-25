@@ -13,7 +13,7 @@
 # - end_date: show readings up to this date
 class ReadingsHistoryController < ApplicationController
   before_action :set_property
-  helper_method :year_filter_options
+  helper_method :year_filter_options, :selected_year
 
   # GET /readings_history
   # Lists all meter reading events and manual consumption entries
@@ -39,9 +39,19 @@ class ReadingsHistoryController < ApplicationController
     years + [ [ t("history.all_time"), "" ] ]
   end
 
+  # The year the filter shows and the list uses. Without any filter params the
+  # current year is used (the dropdown shows it, so the list must match); an
+  # explicit blank year is the "all time" option.
+  def selected_year
+    return params[:year].to_s if params.key?(:year)
+    return "" if params[:start_date].present? || params[:end_date].present?
+
+    Date.current.year.to_s
+  end
+
   def date_range_from_params
-    if params[:year].present?
-      year = params[:year].to_i
+    if selected_year.present?
+      year = selected_year.to_i
       [ Date.new(year, 1, 1), Date.new(year, 12, 31) ]
     else
       start_date = params[:start_date].present? ? Date.parse(params[:start_date]) : nil
@@ -55,7 +65,8 @@ class ReadingsHistoryController < ApplicationController
     events = MeterReadingEvent.kept
                                .joins(meter_readings: :meter)
                                .where(meters: { property_id: @property.id })
-                               .includes(:stay_as_check_in, :stay_as_check_out, :meter_readings, :recorded_by_user)
+                               .includes({ stay_as_check_in: :visitor }, { stay_as_check_out: :visitor },
+                                         { meter_readings: :meter }, :recorded_by_user)
                                .distinct
                                .order(recorded_at: :desc)
 
@@ -67,10 +78,12 @@ class ReadingsHistoryController < ApplicationController
                             params[:visitor_id], params[:visitor_id])
     end
 
-    # Filter by date range
+    # Filter by date range. recorded_at is stored in UTC; compare against local
+    # (app time zone) day bounds so an event just after local midnight lands in
+    # the same year/day it is displayed under.
     start_date, end_date = date_range_from_params
-    events = events.where("DATE(recorded_at) >= ?", start_date) if start_date
-    events = events.where("DATE(recorded_at) <= ?", end_date) if end_date
+    events = events.where(meter_reading_events: { recorded_at: start_date.in_time_zone.beginning_of_day.. }) if start_date
+    events = events.where(meter_reading_events: { recorded_at: ..end_date.in_time_zone.end_of_day }) if end_date
 
     events
   rescue ArgumentError => e

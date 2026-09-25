@@ -1,19 +1,21 @@
 # frozen_string_literal: true
 
 class CameraSessionsController < ApplicationController
+  before_action :require_property
+
   def show
     @property = current_property
     @session_id = params[:id]
     @event_type = params[:event_type] || "check_in"
     @visitor_name = params[:visitor_name] || ""
-    @meters = @property.meters.kept.order(:meter_type, :meter_group, :label)
+    @meters = @property.meters.kept.form_order
     @detections = MeterPhotoDetection.for_session(@session_id).order(:created_at)
   end
 
   def upload
     @property = current_property
     @session_id = params[:id]
-    @meters = @property.meters.kept.order(:meter_type, :meter_group, :label)
+    @meters = @property.meters.kept.form_order
 
     detection = MeterPhotoDetection.create!(
       property: @property,
