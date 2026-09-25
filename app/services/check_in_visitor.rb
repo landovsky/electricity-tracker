@@ -78,7 +78,7 @@ class CheckInVisitor < ApplicationService
   def validate_no_open_stay
     return unless visitor.present?
 
-    if visitor.stays.kept.open.exists?
+    if visitor.stays.live.open.exists?
       errors.add(:visitor, I18n.t("services.check_in_visitor.visitor_has_open_stay"))
     end
   end

@@ -106,7 +106,7 @@ class CheckOutVisitor < ApplicationService
   def stay_exists_and_is_open
     return if errors.any? # Skip if previous validations failed
 
-    target_stay = stay || (visitor && property ? visitor.stays.kept.where(property: property).open.first : nil)
+    target_stay = stay || (visitor && property ? visitor.stays.live.where(property: property).open.first : nil)
 
     if target_stay.nil?
       if visitor
@@ -123,7 +123,7 @@ class CheckOutVisitor < ApplicationService
     if stay.present?
       stay
     else
-      visitor.stays.kept.where(property: property).open.first
+      visitor.stays.live.where(property: property).open.first
     end
   end
 
@@ -204,10 +204,6 @@ class CheckOutVisitor < ApplicationService
   end
 
   def find_last_meter_reading(meter)
-    MeterReading.kept
-                 .joins(:meter_reading_event)
-                 .where(meter: meter)
-                 .order("meter_reading_events.recorded_at DESC")
-                 .first
+    meter.last_reading
   end
 end

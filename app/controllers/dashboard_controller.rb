@@ -29,12 +29,7 @@ class DashboardController < ApplicationController
   private
 
   def load_visitors_data
-    @current_visitors = @property.visitors.kept
-                               .joins(:stays)
-                               .where(stays: { check_out_event_id: nil })
-                               .includes(stays: [ :check_in_event ])
-                               .distinct
-                               .order(:name)
+    @current_visitors = @property.current_visitors.preload(stays: :check_in_event)
 
     @recent_manual_entries = ManualConsumptionEntry.kept
                                                    .where(property_id: @property.id)

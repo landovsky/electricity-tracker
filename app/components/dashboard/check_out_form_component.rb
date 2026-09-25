@@ -52,7 +52,7 @@ class Dashboard::CheckOutFormComponent < ApplicationComponent
 
   def visitor_options
     current_visitors.map do |visitor|
-      stay = visitor.stays.find { |s| s.open? }
+      stay = visitor.current_stay
       checkin_date = stay&.check_in_event&.recorded_at ? I18n.l(stay.check_in_event.recorded_at.to_date, format: :short) : "?"
       [ "#{visitor.name} (#{I18n.t('dashboard.check_out_form.since', date: checkin_date)})", stay&.id ]
     end
@@ -60,7 +60,7 @@ class Dashboard::CheckOutFormComponent < ApplicationComponent
 
   def visitor_options_with_data
     current_visitors.map do |visitor|
-      stay = visitor.stays.find { |s| s.open? }
+      stay = visitor.current_stay
       checkin_date = stay&.check_in_event&.recorded_at ? I18n.l(stay.check_in_event.recorded_at.to_date, format: :short) : "?"
       label = "#{visitor.name} (#{I18n.t('dashboard.check_out_form.since', date: checkin_date)})"
       [ label, stay&.id, { "data-stay-id": stay&.id } ]
@@ -71,7 +71,7 @@ class Dashboard::CheckOutFormComponent < ApplicationComponent
     return visitor_options.first&.last unless selected_visitor_id
 
     visitor = current_visitors.find { |v| v.id == selected_visitor_id }
-    stay = visitor&.stays&.find { |s| s.open? }
+    stay = visitor&.current_stay
     stay&.id || visitor_options.first&.last
   end
 end

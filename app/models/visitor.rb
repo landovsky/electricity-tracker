@@ -17,4 +17,10 @@ class Visitor < ApplicationRecord
   # Scopes
   scope :active, -> { where(status: "active") }
   scope :archived, -> { where(status: "archived") }
+
+  # The open stay that makes this visitor "currently here". Works on preloaded
+  # stays and skips discarded or orphaned (check-in deleted) stays.
+  def current_stay
+    stays.find { |stay| stay.open? && stay.live? }
+  end
 end
