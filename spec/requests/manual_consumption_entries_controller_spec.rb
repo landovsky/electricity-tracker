@@ -48,6 +48,14 @@ RSpec.describe "ManualConsumptionEntries", type: :request do
         expect(flash[:success]).to match(/#{visitor.name}/)
       end
 
+      context "the family uses the Czech UI" do
+        it "shows the logged amount with a decimal comma in the toast" do
+          I18n.with_locale(:cs) { post manual_consumption_entries_path, params: valid_params }
+
+          expect(flash[:success]).to include("15,5 kWh")
+        end
+      end
+
       it "records the entry in audit log" do
         post manual_consumption_entries_path, params: valid_params
 

@@ -40,7 +40,7 @@
           <% @stays.each do |stay| %>
             <li class="flex items-center gap-2 text-sm text-gray-700">
               <i class="fa-solid fa-calendar-day text-gray-400 text-xs"></i>
-              <%= t("visitors.show.stay_from", date: I18n.l(stay.created_at, format: :short)) %>
+              <%= t("visitors.show.stay_from", date: I18n.l((stay.check_in_event&.recorded_at || stay.created_at).to_date)) %>
             </li>
           <% end %>
         </ul>
@@ -61,7 +61,7 @@
           <% @manual_entries.each do |entry| %>
             <li class="flex items-center gap-2 text-sm text-gray-700">
               <i class="fa-solid fa-bolt text-yellow-500 text-xs"></i>
-              <%= t("visitors.show.entry_format", date: I18n.l(entry.date), kwh: entry.kwh) %>
+              <%= t("visitors.show.entry_format", date: I18n.l(entry.date), kwh: number_with_precision(entry.kwh, precision: 2, strip_insignificant_zeros: true)) %>
             </li>
           <% end %>
         </ul>

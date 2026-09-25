@@ -65,4 +65,38 @@ RSpec.describe Dashboard::RecentActivityComponent, type: :component do
 
     expect(page).to have_text("Main: 12,487 kWh")
   end
+
+  context "an admin gave the secondary meter a label containing HTML" do
+    let(:secondary_meter) do
+      instance_double("Meter", meter_type: "secondary", label: "<img src=x onerror=alert(1)>", unit: "<b>kWh</b>")
+    end
+    let(:secondary_reading) { instance_double("MeterReading", meter: secondary_meter, value_kwh: 500) }
+    let(:event) do
+      instance_double("Event", event_type: "periodic", recorded_at: 1.day.ago, meter_readings: [ meter_reading, secondary_reading ])
+    end
+
+    it "shows the label as text instead of running it as markup on every member's dashboard" do
+      render_inline(described_class.new(recent_events: [ event ], recent_manual_entries: []))
+
+      expect(page).not_to have_css("img")
+      expect(page).not_to have_css("b")
+      expect(page).to have_text("<img src=x onerror=alert(1)>: 500 <b>kWh</b>")
+      expect(page).to have_text("Main: 12,487 kWh · ")
+    end
+  end
+
+  context "a manual entry was logged with a decimal amount in the Czech UI" do
+    let(:manual_entry) do
+      instance_double("ManualConsumptionEntry", visitor: visitor, kwh: BigDecimal("12.5"), date: 1.day.ago, note: nil)
+    end
+
+    it "formats kWh with a decimal comma, matching the history page" do
+      I18n.with_locale(:cs) do
+        render_inline(described_class.new(recent_events: [], recent_manual_entries: [ manual_entry ]))
+      end
+
+      expect(page).to have_text("12,5 kWh")
+      expect(page).not_to have_text("12.5")
+    end
+  end
 end

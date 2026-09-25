@@ -30,7 +30,12 @@ class VisitorsController < ApplicationController
   # GET /visitors/:id
   # Shows visitor details with stay history
   def show
-    @stays = @visitor.stays.kept.order(created_at: :desc).includes(:check_in_event, :check_out_event)
+    # Order by the real arrival (check-in recorded_at, which may be backdated),
+    # not by when the row was created — imported stays share one created_at.
+    @stays = @visitor.stays.kept
+      .left_joins(:check_in_event)
+      .order(Arel.sql("COALESCE(meter_reading_events.recorded_at, stays.created_at) DESC"))
+      .preload(:check_in_event, :check_out_event)
     @manual_entries = @visitor.manual_consumption_entries.kept.order(date: :desc)
     @has_usage_records = @stays.any? || @manual_entries.any?
   end
