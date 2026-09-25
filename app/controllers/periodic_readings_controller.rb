@@ -22,6 +22,7 @@ class PeriodicReadingsController < ApplicationController
         format.html { redirect_to root_path, notice: t("periodic_readings.success") }
         format.turbo_stream do
           flash.now[:notice] = t("periodic_readings.success")
+          @succeeded = true
           load_dashboard_data
         end
       else

@@ -79,20 +79,24 @@ class CreateManualConsumptionEntry < ApplicationService
     errors.add(:visitor, :invalid)
   end
 
-  # C8: warn when the manual entries of the enclosing period (including this
-  # one) exceed what the main meter measured in that period, i.e. this entry
-  # exceeds the consumption still unattributed to other manual entries.
+  # C8: warn when the manual entries of the period this entry is billed to
+  # (including this one) exceed what the main meter measured in that period,
+  # i.e. this entry exceeds the consumption still unattributed to other manual
+  # entries.
   #
-  # The enclosing period uses AnalyzePeriods' own rule: an entry dated D belongs
-  # to the period whose start event is on or before D and whose end event is on
-  # a later day. The end event is therefore the first event from D+1 onwards and
-  # the first event of its own day, so analysing just that day (plus the boundary
-  # event AnalyzePeriods prepends) yields the enclosing period first.
+  # The period is not re-derived from the date: AnalyzePeriods decides which
+  # period an entry belongs to (a check-out day touches both the stay period
+  # and the following one, and the entry's own stay wins), so the warning takes
+  # the period whose manual_entries actually contain this entry. The analysed
+  # range runs from the entry date to the day of the first event after it, so
+  # every period touching the entry date is returned — including a stay period
+  # that ends on the entry date itself (e.g. an entry logged on today's
+  # check-out day, when no later event exists yet).
   #
-  # When no event exists after D yet, the period is still open and cannot be
+  # When no period contains the entry, its period is still open and cannot be
   # checked.
   def period_consumption_warning(entry)
-    period = enclosing_period(entry.date)
+    period = billed_period(entry)
     return nil unless period
 
     manual_kwh = period[:manual_entries].sum(&:kwh)
@@ -103,20 +107,19 @@ class CreateManualConsumptionEntry < ApplicationService
            available: [ period[:primary_delta] - (manual_kwh - entry.kwh), 0 ].max.to_f.round(2))
   end
 
-  def enclosing_period(entry_date)
-    end_event_at = MeterReadingEvent.kept
-                                    .joins(meter_readings: :meter)
-                                    .where(meters: { property_id: property.id })
-                                    .where("meter_reading_events.recorded_at >= ?", (entry_date + 1).in_time_zone.beginning_of_day)
-                                    .minimum(:recorded_at)
-    return nil unless end_event_at
+  def billed_period(entry)
+    next_event_at = MeterReadingEvent.kept
+                                     .joins(meter_readings: :meter)
+                                     .where(meters: { property_id: property.id })
+                                     .where("meter_reading_events.recorded_at >= ?", (entry.date + 1).in_time_zone.beginning_of_day)
+                                     .minimum(:recorded_at)
+    end_day = next_event_at ? next_event_at.in_time_zone.to_date : entry.date
 
-    end_day = end_event_at.in_time_zone.to_date
-    outcome = AnalyzePeriods.run(property: property, date_range: { start_date: end_day, end_date: end_day })
+    outcome = AnalyzePeriods.run(property: property, date_range: { start_date: entry.date, end_date: end_day })
     return nil unless outcome.valid?
 
     outcome.result.find do |period|
-      period[:start_time].to_date <= entry_date && entry_date < period[:end_time].to_date
+      period[:manual_entries].any? { |assigned| assigned.id == entry.id }
     end
   end
 end

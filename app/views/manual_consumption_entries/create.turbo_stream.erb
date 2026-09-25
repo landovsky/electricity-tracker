@@ -8,16 +8,20 @@
   ) %>
 <% end %>
 
-<%# Reset manual entry form %>
-<%= turbo_stream.replace "manual-entry-form" do %>
-  <turbo-frame id="manual-entry-form" data-action-forms-target="formPanel" data-form-type="manual">
-    <div class="p-4">
-      <%= render Dashboard::ManualEntryFormComponent.new(
-        visitors: @all_visitors,
-        selected_visitor_id: @default_visitor_id
-      ) %>
-    </div>
-  </turbo-frame>
+<%# The form is only reset on success. On failure it is left untouched so the
+    visitor the user picked, the date and the typed kWh/note survive the error
+    and a retry is not booked to the default visitor. %>
+<% if @succeeded %>
+  <%= turbo_stream.replace "manual-entry-form" do %>
+    <turbo-frame id="manual-entry-form" data-action-forms-target="formPanel" data-form-type="manual">
+      <div class="p-4">
+        <%= render Dashboard::ManualEntryFormComponent.new(
+          visitors: @all_visitors,
+          selected_visitor_id: @default_visitor_id
+        ) %>
+      </div>
+    </turbo-frame>
+  <% end %>
 <% end %>
 
 <%# Show toast notification %>

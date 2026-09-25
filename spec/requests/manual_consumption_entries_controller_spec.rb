@@ -234,6 +234,42 @@ RSpec.describe "ManualConsumptionEntries", type: :request do
       end
     end
 
+    context "a Turbo submit fails validation after the user picked a non-default visitor (e.g. kWh typed as 0)" do
+      let(:default_visitor) { create(:visitor, property: property, name: "Výchozí") }
+
+      def form_frame(body)
+        body[/<turbo-stream action="replace" target="manual-entry-form">.*?<\/turbo-stream>/m]
+      end
+
+      before { user.update!(default_visitor_id: default_visitor.id) }
+
+      it "leaves the form untouched, so the picked visitor and typed values survive and a retry is not booked to the default visitor" do
+        post manual_consumption_entries_path, params: valid_params.merge(kwh: 0, date: "2026-01-02"), as: :turbo_stream
+
+        expect(ManualConsumptionEntry.count).to eq(0)
+        expect(response.body).to include("toast-container")
+        expect(form_frame(response.body)).to be_nil
+      end
+
+      it "still resets the form after a successful entry, ready for the next one" do
+        post manual_consumption_entries_path, params: valid_params, as: :turbo_stream
+
+        expect(form_frame(response.body)).to include("manual-entry-form")
+      end
+
+      it "still resets the form after an entry saved with a C8 warning, because the entry is recorded" do
+        create(:meter_reading_event, :check_in, property: property,
+               recorded_at: Time.zone.local(2026, 1, 1, 18), main_reading: 1000)
+        create(:meter_reading_event, :check_out, property: property,
+               recorded_at: Time.zone.local(2026, 1, 3, 10), main_reading: 1020)
+
+        post manual_consumption_entries_path, params: valid_params.merge(date: "2026-01-02", kwh: 500), as: :turbo_stream
+
+        expect(response.body).to include("bg-yellow-50")
+        expect(form_frame(response.body)).to be_present
+      end
+    end
+
     context "with invalid property_id" do
       it "fails when property does not exist" do
         params = valid_params.merge(property_id: 99999)

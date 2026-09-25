@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe CreateManualConsumptionEntry, type: :service do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:property) { create(:property) }
   let(:visitor) { create(:visitor, property: property) }
   let(:user) { create(:user) }
@@ -204,6 +206,56 @@ RSpec.describe CreateManualConsumptionEntry, type: :service do
 
         expect(outcome).to be_valid
         expect(outcome.consumption_warning).to be_nil
+      end
+    end
+
+    context "constraint C8: an EV charge logged on the check-out day, which the report bills to the visitor's own stay" do
+      # Stay 1 Jan -> 5 Jan measured 30 kWh; the house then stays empty until
+      # a reading on 20 Jan. A check-out day touches both periods, and
+      # AnalyzePeriods assigns the visitor's entry to their own stay period.
+      before do
+        create(:stay, :closed, visitor: visitor, property: property,
+               check_in_at: Time.zone.local(2026, 1, 1, 10, 0), main_reading_in: 1000, secondary_reading_in: 500,
+               check_out_at: Time.zone.local(2026, 1, 5, 10, 0), main_reading_out: 1030, secondary_reading_out: 510)
+      end
+
+      it "warns against the stay's 30 kWh, not the empty-house period that follows" do
+        create(:meter_reading_event, property: property, event_type: "periodic",
+               recorded_at: Time.zone.local(2026, 1, 20, 10, 0), main_reading: 1200, secondary_reading: 510)
+
+        outcome = described_class.run(valid_params.merge(date: Date.new(2026, 1, 5), kwh: 100))
+
+        expect(outcome).to be_valid
+        expect(outcome.consumption_warning).to include("100")
+        expect(outcome.consumption_warning).to include("30")
+      end
+
+      it "does not warn because of another visitor's entries in the empty-house period the entry is not billed to" do
+        create(:meter_reading_event, property: property, event_type: "periodic",
+               recorded_at: Time.zone.local(2026, 1, 20, 10, 0), main_reading: 1035, secondary_reading: 510)
+        create(:manual_consumption_entry, visitor: create(:visitor, property: property), property: property,
+               date: Date.new(2026, 1, 10), kwh: 10)
+
+        outcome = described_class.run(valid_params.merge(date: Date.new(2026, 1, 5), kwh: 20))
+
+        expect(outcome.consumption_warning).to be_nil
+      end
+    end
+
+    context "constraint C8: an EV charge logged on today's check-out day, before any later reading exists" do
+      around { |example| travel_to(Time.zone.local(2026, 3, 10, 18, 0)) { example.run } }
+
+      before do
+        create(:stay, :closed, visitor: visitor, property: property,
+               check_in_at: Time.zone.local(2026, 3, 7, 10, 0), main_reading_in: 1000, secondary_reading_in: 500,
+               check_out_at: Time.zone.local(2026, 3, 10, 12, 0), main_reading_out: 1030, secondary_reading_out: 510)
+      end
+
+      it "still checks the entry against the stay that closed today, because that period is already closed" do
+        outcome = described_class.run(valid_params.merge(date: Date.new(2026, 3, 10), kwh: 100))
+
+        expect(outcome).to be_valid
+        expect(outcome.consumption_warning).to include("30")
       end
     end
 

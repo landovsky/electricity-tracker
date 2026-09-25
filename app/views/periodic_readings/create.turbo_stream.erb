@@ -18,14 +18,18 @@
   ) %>
 <% end %>
 
-<%# Reset periodic reading form %>
-<%= turbo_stream.replace "periodic-reading-form" do %>
-  <turbo-frame id="periodic-reading-form" class="block">
-    <%= render Dashboard::PeriodicReadingFormComponent.new(
-      meters: @meters,
-      last_readings: @last_meter_readings
-    ) %>
-  </turbo-frame>
+<%# The form is only reset on success. On failure it is left untouched so every
+    reading the user typed (the valid ones too), the timestamp and the note
+    survive the error and only the rejected value needs fixing. %>
+<% if @succeeded %>
+  <%= turbo_stream.replace "periodic-reading-form" do %>
+    <turbo-frame id="periodic-reading-form" class="block">
+      <%= render Dashboard::PeriodicReadingFormComponent.new(
+        meters: @meters,
+        last_readings: @last_meter_readings
+      ) %>
+    </turbo-frame>
+  <% end %>
 <% end %>
 
 <%# Show toast notification %>
