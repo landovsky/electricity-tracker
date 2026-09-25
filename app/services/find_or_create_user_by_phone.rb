@@ -2,6 +2,11 @@
 
 # Finds an existing user by phone number or creates a new one for self-registration.
 # New users are created with role :member and blank name (filled during onboarding).
+#
+# This runs on an unauthenticated POST, before the person has proven they own
+# the address/number, so it only creates a bare User. Property access (and the
+# Visitor that comes with it) is granted in OnboardingController once the login
+# has been verified and a name entered.
 class FindOrCreateUserByPhone < ApplicationService
   string :phone_number
 
@@ -18,9 +23,7 @@ class FindOrCreateUserByPhone < ApplicationService
     user = User.kept.find_by(phone_number: normalized)
     return user if user
 
-    user = User.create!(phone_number: normalized, name: nil, role: :member)
-    AssignDefaultProperty.run!(user: user)
-    user
+    User.create!(phone_number: normalized, name: nil, role: :member)
   rescue ActiveRecord::RecordInvalid => e
     errors.add(:base, e.record.errors.full_messages.join(", "))
     nil

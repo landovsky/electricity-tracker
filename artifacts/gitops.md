@@ -90,7 +90,7 @@ All manifests in `/Users/tomas/git/k3s/apps/sucha-meter/`.
 
 ### Deployment (`deployment.yaml`)
 
-- Single replica, namespace `default`
+- Single replica, namespace `default` (**keep it at 1 process** — login rate limits are per-process, see Known Issues)
 - Image: `ghcr.io/landovsky/electricity-tracker:<tag>` (auto-updated by Flux)
 - Container port: 80 (Thruster)
 - PVC mount: `/rails/storage` for SQLite persistence
@@ -176,3 +176,5 @@ The admin "Import XLS" action (`XlsDataMigration`) wipes and re-imports all data
 - GHCR package must be **public** for Flux ImageRepository scans to work (or configure `ghcr-secret` in flux-system namespace)
 - Tailwind CSS Docker build requires split `RUN` commands — see `artifacts/deployment-notes.md`
 - `imagePullSecrets: ghcr-secret` must exist in the deployment namespace
+- **Login rate limits are in-process memory.** `SessionsController::RATE_LIMIT_STORE` is an `ActiveSupport::Cache::MemoryStore`, so the throttles on `POST /prihlaseni`, `/prihlaseni/sms` and `/prihlaseni/overeni` (per IP and per e-mail) are counted separately in every Puma worker/pod. They silently weaken (limit × processes) if `WEB_CONCURRENCY` or `replicas` is ever raised above 1 — switch the store to a shared cache (e.g. Solid Cache) before scaling. Per-IP limits also rely on the real client IP reaching Rails (Traefik `externalTrafficPolicy: Local`).
+- **Allowed hosts are hard-coded.** `config.x.app_hosts` in `config/environments/production.rb` lists `sepot.kopernici.cz`, `tymlova.kopernici.cz` and the `APP_HOST` host; any new ingress hostname must be added there or requests get 403 (`/up` is exempt for probes). Magic-link e-mails are only built on these hosts.

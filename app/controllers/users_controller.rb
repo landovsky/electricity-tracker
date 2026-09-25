@@ -22,7 +22,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
-    if @user.save
+    if save_with_property_access(@user)
       redirect_to users_path, notice: t("users.create.success", name: @user.name)
     else
       load_visitor_options
@@ -52,6 +52,20 @@ class UsersController < ApplicationController
   end
 
   private
+
+  # An admin-created member skips onboarding (the admin already set the
+  # name), so this is where they get property access: the property of the
+  # chosen default visitor, otherwise the property the admin is working in.
+  # Without it the member would log in to a dashboard with no property.
+  def save_with_property_access(user)
+    User.transaction do
+      next false unless user.save
+
+      property = user.default_visitor&.property || current_property
+      user.properties << property if property
+      true
+    end
+  end
 
   def set_user
     @user = User.kept.find(params[:id])

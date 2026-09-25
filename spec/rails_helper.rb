@@ -47,6 +47,12 @@ RSpec.configure do |config|
     I18n.locale = :en
   end
 
+  # Login throttling counters live in an in-process store; reset them so one
+  # example's login attempts never throttle the next one.
+  config.before(:each) do
+    SessionsController::RATE_LIMIT_STORE.clear
+  end
+
   # We're using FactoryBot, not fixtures
   config.use_transactional_fixtures = false
 

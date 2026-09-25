@@ -17,6 +17,7 @@ module AuthenticationHelpers
     body = mail.body.to_s
     token_match = body.match(%r{/auth/([^"'\s]+)})
     visit auth_verify_path(token: token_match[1])
+    click_button I18n.t("sessions.confirm.submit")
   end
 end
 
