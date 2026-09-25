@@ -1,32 +1,23 @@
 # Agent Instructions
 
-## Artifacts Registry
+## Artifacts
 
-This project maintains a registry of documentation artifacts at **`artifacts/registry.json`**.
+Read **always** artifacts before any work. Read **decide** artifacts when relevant to your current task.
 
-### How to Use the Registry
+### Always read
+- `artifacts/01-system-builder-instructions.md` — Build cycle, completeness rules, testing philosophy, commit discipline, multi-agent coordination
+- `artifacts/02-technical-requirements.md` — Stack (Rails 8 + SQLite + Tailwind + Stimulus), key gems, auth, testing tools, deployment model
 
-**ALWAYS check `artifacts/registry.json` when:**
-- Starting work on a new feature or bug fix
-- Working with unfamiliar parts of the codebase
-- Debugging code issues
-- Writing or modifying code (frontend, backend, database, tests)
-- Making architectural decisions
-
-### Registry Structure
-
-Each artifact entry contains:
-```json
-{
-  "filename": "path/to/artifact.md",
-  "description": "Brief description of what the artifact covers",
-  "usage": "always" | "decide"
-}
-```
-
-**Usage field:**
-- **`always`** - Must be read before any work (e.g., project overview, core conventions)
-- **`decide`** - Read when the artifact is relevant to your current task (e.g., testing conventions when writing tests, API patterns when building endpoints)
+### Read when relevant
+- `artifacts/specification/electricity-tracker-spec.md` — Product spec: domain model, use cases, allocation algorithm, edge cases, UI designs, roles
+- `artifacts/specification/00-spec-philosophy-how-to-keep-it-up-to-date.md` — Spec maintenance rules and update workflow
+- `prototype/index.html` — Clickable HTML prototype of all end-user screens. Serve via `python3 -m http.server 8080` from prototype/
+- `artifacts/00-project-initiation-guide.md` — One-time bootstrap guide (only if project hasn't been initialized)
+- `artifacts/03-tooling-for-efficiency.md` — Policy for developer automation (Rule of Three, naming, budgets)
+- `artifacts/team-structure.md` — Team roles (Lead, Developer, QA) and expected behaviors
+- `artifacts/deployment-notes.md` — Deployment infrastructure, Tailwind Docker gotcha, bootstrap task, resolved issues
+- `artifacts/gitops.md` — K3s/Flux release flow, CI/CD pipeline, K8s resources, secrets, environment variables
+- `artifacts/frontend-gotchas.md` — Flash/toast rendering, form validation, Stimulus + Turbo patterns
 
 ## Debug Endpoints (development only)
 
