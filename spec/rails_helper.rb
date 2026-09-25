@@ -4,6 +4,9 @@ require 'spec_helper'
 ENV['RAILS_ENV'] = 'test'
 # Unset DATABASE_URL to use database.yml config for SQLite
 ENV.delete('DATABASE_URL')
+# A developer shell may export DISABLE_AUTH=true (see .envrc) for local browsing.
+# Specs must start from real auth; system specs opt in per example.
+ENV.delete('DISABLE_AUTH')
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
