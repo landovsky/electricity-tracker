@@ -84,6 +84,25 @@ RSpec.describe CameraSessionsController, type: :request do
       end
     end
 
+    context "a group has VT and NT meters whose labels differ only by tariff" do
+      let!(:detection) { detection_for(meter: nil) }
+
+      def meter_option_order(body)
+        body.scan(/<option[^>]*value="(#{vt_meter.id}|#{nt_meter.id})"/).flatten.first(2)
+      end
+
+      it "re-renders the card with the session page's VT-before-NT order, so a reassigned card never swaps the tariffs" do
+        get camera_session_path(session_id)
+        show_order = meter_option_order(response.body)
+
+        patch reassign_camera_session_path(session_id),
+              params: { detection_id: detection.id, meter_id: nt_meter.id }, headers: turbo_stream
+
+        expect(show_order).to eq([ vt_meter.id.to_s, nt_meter.id.to_s ])
+        expect(meter_option_order(response.body)).to eq(show_order)
+      end
+    end
+
     context "a replaced card is sent (its select is hidden, only a crafted request can do this)" do
       let!(:replaced) { detection_for(status: :replaced) }
 

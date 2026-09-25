@@ -50,7 +50,7 @@ class CameraSessionsController < ApplicationController
   # same meter and the dashboard prefill would silently pick the newer one.
   def reassign
     @session_id = params[:id]
-    @meters = current_property.meters.kept.order(:meter_type, :meter_group, :label)
+    @meters = current_property.meters.kept.form_order
     detection = session_detections.usable.find(params[:detection_id])
     meter = current_property.meters.kept.find(params[:meter_id])
 
