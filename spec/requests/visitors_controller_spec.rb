@@ -59,6 +59,45 @@ RSpec.describe VisitorsController, type: :request do
       expect(response.body).to include("Alice")
     end
 
+    context "check-ins were entered days after the real arrival, with a backdated time" do
+      let!(:summer_stay) do
+        create(:stay, :closed, visitor: visitor, property: property,
+          check_in_at: Time.zone.local(2025, 8, 1, 18), check_out_at: Time.zone.local(2025, 8, 10, 10),
+          main_reading_in: 2000, secondary_reading_in: 2000, main_reading_out: 2000, secondary_reading_out: 2000)
+          .tap { |s| s.update_column(:created_at, Time.zone.local(2025, 8, 3)) }
+      end
+      let!(:spring_stay) do
+        create(:stay, :closed, visitor: visitor, property: property,
+          check_in_at: Time.zone.local(2025, 4, 4, 18), check_out_at: Time.zone.local(2025, 4, 6, 10),
+          main_reading_in: 2000, secondary_reading_in: 2000, main_reading_out: 2000, secondary_reading_out: 2000)
+          .tap { |s| s.update_column(:created_at, Time.zone.local(2025, 9, 1)) }
+      end
+
+      it "shows the real arrival date with its year, matching the dashboard and report" do
+        get visitor_path(visitor)
+
+        expect(response.body).to include("Stay from 2025-04-04")
+        expect(response.body).to include("Stay from 2025-08-01")
+        expect(response.body).not_to include("Stay from 2025-09-01")
+      end
+
+      it "lists stays by arrival, not by when the rows were entered" do
+        get visitor_path(visitor)
+
+        expect(response.body.index("Stay from 2025-08-01")).to be < response.body.index("Stay from 2025-04-04")
+      end
+    end
+
+    context "a manual entry with a decimal amount, viewed in the Czech UI" do
+      let!(:manual_entry) { create(:manual_consumption_entry, visitor: visitor, property: property, kwh: 12.5, date: Date.today) }
+
+      it "formats kWh with a decimal comma like the rest of the app" do
+        I18n.with_locale(:cs) { get visitor_path(visitor) }
+
+        expect(response.body).to include("12,5 kWh")
+      end
+    end
+
     context "when visitor does not exist" do
       it "redirects to visitors index with alert" do
         get visitor_path(id: 99999)

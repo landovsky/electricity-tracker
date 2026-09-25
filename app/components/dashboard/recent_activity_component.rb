@@ -34,7 +34,7 @@ class Dashboard::RecentActivityComponent < ApplicationComponent
       {
         type: "manual_entry",
         visitor_name: entry.visitor.name,
-        action: I18n.t("dashboard.recent_activity.logged_kwh", kwh: entry.kwh),
+        action: I18n.t("dashboard.recent_activity.logged_kwh", kwh: helpers.number_with_precision(entry.kwh, precision: 2, strip_insignificant_zeros: true)),
         date: entry.date,
         details: entry.note
       }
@@ -56,6 +56,7 @@ class Dashboard::RecentActivityComponent < ApplicationComponent
     parts << I18n.t("dashboard.recent_activity.main_reading", value: helpers.number_with_delimiter(main.value_kwh), unit: main.meter.unit) if main
     parts << "#{secondary.meter.label}: #{helpers.number_with_delimiter(secondary.value_kwh)} #{secondary.meter.unit}" if secondary
 
-    parts.join(" &middot; ").html_safe
+    # Meter label and unit are free-text admin input — safe_join escapes them.
+    helpers.safe_join(parts, " · ")
   end
 end

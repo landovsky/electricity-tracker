@@ -16,7 +16,7 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
-    @visitors = current_property.visitors.kept.active.order(name: :asc)
+    load_visitor_options
   end
 
   def create
@@ -25,20 +25,20 @@ class UsersController < ApplicationController
     if @user.save
       redirect_to users_path, notice: t("users.create.success", name: @user.name)
     else
-      @visitors = current_property.visitors.kept.active.order(name: :asc)
+      load_visitor_options
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @visitors = current_property.visitors.kept.active.order(name: :asc)
+    load_visitor_options
   end
 
   def update
     if @user.update(user_params)
       redirect_to user_path(@user), notice: t("users.update.success", name: @user.name)
     else
-      @visitors = current_property.visitors.kept.active.order(name: :asc)
+      load_visitor_options
       render :edit, status: :unprocessable_entity
     end
   end
@@ -57,6 +57,15 @@ class UsersController < ApplicationController
     @user = User.kept.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to users_path, alert: t("users.not_found")
+  end
+
+  # The user's current default visitor must always be selectable, even when it
+  # is archived or belongs to another property — otherwise the select falls
+  # back to the blank option and saving the form silently clears it.
+  def load_visitor_options
+    @visitors = current_property.visitors.kept.active.order(name: :asc).to_a
+    current_default = @user&.default_visitor
+    @visitors << current_default if current_default && @visitors.exclude?(current_default)
   end
 
   def user_params

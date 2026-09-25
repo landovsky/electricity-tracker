@@ -70,7 +70,7 @@
               </div>
               <span class="text-gray-400 text-xs">
                 <% if meter.last_reading %>
-                  <%= meter.last_reading.value_kwh %> <%= meter.unit %>
+                  <%= number_with_delimiter(meter.last_reading.value_kwh) %> <%= meter.unit %>
                 <% else %>
                   <%= t("meters.section.no_readings") %>
                 <% end %>
