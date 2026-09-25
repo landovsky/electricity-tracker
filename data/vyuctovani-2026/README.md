@@ -59,9 +59,14 @@ bin/rails settlement:import                    # dry run (default)
 APPLY=1 bin/rails settlement:import            # write; re-running is a no-op
 ```
 
-It refuses if the app has live events after the log's last row. Local dev DB: applied
-2026-09-25; pre-import backup at `storage/development.sqlite3.bak.pre-settlement-import`.
-**Not run on production.**
+It refuses if the app has live events after the log's last row, or in-window rows created
+after the snapshot the log was reconciled against (`CREATED_BEFORE`, default 2026-09-21).
+
+**Applied to production 2026-09-25** (v0.2.9, `kubectl exec … env APPLY=1 bin/rails settlement:import`):
+discarded 20 events / 13 stays / 1 manual entry, replayed 50 rows, renamed visitor #15 → Marek;
+period total 1125 kWh = meter delta, no open stays. Pre-import backup (undo = restore it):
+`/rails/storage/production.sqlite3.bak.pre-settlement-import-20260925` on the PVC, local copy in
+`tmp/db/production.bak.pre-settlement-import-20260925.sqlite3`.
 
 The app's own report will not equal the settlement above: it splits per visitor (not per
 household), doesn't carve the garage out for Jirka, and spreads empty-house kWh over all visitors.
