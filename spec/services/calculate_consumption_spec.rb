@@ -562,6 +562,55 @@ RSpec.describe CalculateConsumption, type: :service do
       end
     end
 
+    context "a manual entry is dated on the last reading day of a year, and the next period ends in the following year" do
+      let(:visitor_a) { create(:visitor, name: "Alice") }
+      let(:visitor_b) { create(:visitor, name: "Bob") }
+
+      def manual_kwh_for_year(year)
+        result = CalculateConsumption.run!(property: property, start_date: Date.new(year, 1, 1), end_date: Date.new(year, 12, 31))
+        result[:visitors].sum { |v| v[:manual_entries_kwh] }
+      end
+
+      context "the visitor checks in on New Year's Eve and charges on arrival day" do
+        before do
+          # Dec 1 - Dec 31 10:00: empty house, 100 kWh
+          # Dec 31 10:00 - Jan 5: Alice, 100 kWh, of which 10 kWh is her own charge dated Dec 31
+          create_event(recorded_at: Time.zone.local(2025, 12, 1, 12), main_reading: 1000, secondary_reading: 500, event_type: :periodic)
+          check_in = create_event(recorded_at: Time.zone.local(2025, 12, 31, 10), main_reading: 1100, secondary_reading: 500)
+          check_out = create_event(recorded_at: Time.zone.local(2026, 1, 5, 12), main_reading: 1200, secondary_reading: 500, event_type: :check_out)
+          create(:stay, visitor: visitor_a, property: property, check_in_event: check_in, check_out_event: check_out)
+          create(:manual_consumption_entry, visitor: visitor_a, property: property, date: Date.new(2025, 12, 31), kwh: 10.0)
+        end
+
+        it "counts the charge exactly once across the two yearly reports, in the stay it belongs to" do
+          expect(manual_kwh_for_year(2025)).to eq(0.0)
+          expect(manual_kwh_for_year(2026)).to eq(10.0)
+
+          result = CalculateConsumption.run!(property: property, start_date: Date.new(2026, 1, 1), end_date: Date.new(2026, 12, 31))
+          alice = result[:visitors].find { |v| v[:visitor] == visitor_a }
+          # shared = 100 - 10 = 90, Alice alone; + 10 manual
+          expect(alice[:total_kwh]).to eq(100.0)
+        end
+      end
+
+      context "another visitor's stay ends on New Year's Eve and the entry's visitor was not present in either period" do
+        before do
+          # Dec 1 - Dec 31 10:00: Alice, 100 kWh
+          # Dec 31 10:00 - Jan 5: empty house, 50 kWh; Bob's 10 kWh entry dated Dec 31 falls in both periods by date
+          check_in = create_event(recorded_at: Time.zone.local(2025, 12, 1, 12), main_reading: 1000, secondary_reading: 500)
+          check_out = create_event(recorded_at: Time.zone.local(2025, 12, 31, 10), main_reading: 1100, secondary_reading: 500, event_type: :check_out)
+          create(:stay, visitor: visitor_a, property: property, check_in_event: check_in, check_out_event: check_out)
+          create_event(recorded_at: Time.zone.local(2026, 1, 5, 12), main_reading: 1150, secondary_reading: 500, event_type: :periodic)
+          create(:manual_consumption_entry, visitor: visitor_b, property: property, date: Date.new(2025, 12, 31), kwh: 10.0)
+        end
+
+        it "counts the entry exactly once across the two yearly reports, so Bob is never billed twice" do
+          expect(manual_kwh_for_year(2025) + manual_kwh_for_year(2026)).to eq(10.0)
+          expect(manual_kwh_for_year(2026)).to eq(10.0)
+        end
+      end
+    end
+
     context "validation errors" do
       it "validates that end_date is after start_date" do
         outcome = CalculateConsumption.run(

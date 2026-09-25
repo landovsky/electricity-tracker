@@ -30,13 +30,14 @@ class MeterTimeline
     end
   end
 
-  def initialize(property:, until_time:)
+  # until_time: nil walks the whole timeline
+  def initialize(property:, until_time: nil)
     @property = property
     @until_time = until_time
   end
 
   # Returns [Segment, ...] for every pair of consecutive boundary events
-  # recorded up to until_time, oldest first.
+  # recorded up to until_time (or all of them), oldest first.
   def segments
     meter_ids = @property.meters.kept.pluck(:id).to_set
     main_ids = @property.meters.kept.main.pluck(:id).to_set
@@ -74,13 +75,11 @@ class MeterTimeline
   private
 
   def events
-    MeterReadingEvent.kept
-                     .where(id: MeterReading.joins(:meter)
-                                            .where(meters: { property_id: @property.id })
-                                            .select(:meter_reading_event_id))
-                     .where("meter_reading_events.recorded_at <= ?", @until_time)
-                     .includes(:meter_readings)
-                     .order(:recorded_at, :id)
-                     .to_a
+    scope = MeterReadingEvent.kept
+                             .where(id: MeterReading.joins(:meter)
+                                                    .where(meters: { property_id: @property.id })
+                                                    .select(:meter_reading_event_id))
+    scope = scope.where("meter_reading_events.recorded_at <= ?", @until_time) if @until_time
+    scope.includes(:meter_readings).order(:recorded_at, :id).to_a
   end
 end

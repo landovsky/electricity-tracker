@@ -47,7 +47,17 @@ class AnalyzePeriods < ApplicationService
   end
 
   def execute
-    segments = MeterTimeline.new(property: property, until_time: date_range[:end_date].end_of_day).segments
+    range_start = date_range[:start_date].beginning_of_day
+    range_end = date_range[:end_date].end_of_day
+
+    # The timeline is NOT cut off at range_end: the period that straddles the
+    # range end must exist while manual entries are assigned, otherwise an
+    # entry dated on the last reading day inside the range would be claimed by
+    # the earlier period here, yet by the straddling period in the next range's
+    # report — and be counted in both. Periods starting after range_end can
+    # never contain an entry that matters for this range, so they are skipped.
+    segments = MeterTimeline.new(property: property).segments
+                            .select { |segment| segment.start_event.recorded_at <= range_end }
     return [] if segments.empty?
 
     periods = build_periods(segments)
@@ -56,8 +66,7 @@ class AnalyzePeriods < ApplicationService
     # Periods are attributed by their end event. The first returned period
     # starts at the last event before the range (the boundary event), which
     # captures e.g. empty-house consumption across the range start.
-    range_start = date_range[:start_date].beginning_of_day
-    periods.select { |period| period[:end_time] >= range_start }
+    periods.select { |period| period[:end_time] >= range_start && period[:end_time] <= range_end }
   end
 
   private
