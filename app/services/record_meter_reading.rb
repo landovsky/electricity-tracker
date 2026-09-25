@@ -19,6 +19,9 @@ class RecordMeterReading < ApplicationService
   validate :validate_meter_only_property
   validate :validate_at_least_one_reading
   validate :validate_chronological_consistency
+  # C1 is checked for every meter before anything is written, so a reading
+  # below the previous one never leaves a partial event behind.
+  validate :validate_monotonic_readings
 
   def execute
     ActiveRecord::Base.transaction do
@@ -33,8 +36,6 @@ class RecordMeterReading < ApplicationService
         next if value.blank?
 
         meter = property.meters.kept.find(meter_id)
-        validate_monotonic_reading(meter, value.to_d)
-        return nil if errors.any?
 
         MeterReading.create!(
           meter_reading_event: event,
@@ -78,6 +79,17 @@ class RecordMeterReading < ApplicationService
     if recorded_at < last_event.recorded_at
       errors.add(:recorded_at, I18n.t("services.record_meter_reading.not_chronological",
                                        timestamp: I18n.l(last_event.recorded_at)))
+    end
+  end
+
+  def validate_monotonic_readings
+    return unless property && meter_readings
+
+    meter_readings.each do |meter_id, value|
+      next if value.blank?
+
+      meter = property.meters.kept.find_by(id: meter_id)
+      validate_monotonic_reading(meter, value.to_d) if meter
     end
   end
 

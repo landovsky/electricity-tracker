@@ -54,8 +54,7 @@ class ConsumptionReportsController < ApplicationController
     outcome = CalculateConsumption.run(
       property: @property,
       start_date: @start_date,
-      end_date: @end_date,
-      include_archived_visitors: include_archived?
+      end_date: @end_date
     )
 
     if outcome.valid?
@@ -84,26 +83,32 @@ class ConsumptionReportsController < ApplicationController
   end
 
   def set_date_range
-    if params[:year] == "all"
-      # All time: from earliest event to today
+    year_param = date_param(:year)
+    start_param = date_param(:start_date)
+    end_param = date_param(:end_date)
+
+    if year_param == "all"
+      # All time: from earliest event to today (in the app time zone)
       earliest = MeterReadingEvent.kept
                   .joins(meter_readings: :meter)
                   .where(meters: { property_id: @property.id })
                   .minimum(:recorded_at)&.to_date
-      @start_date = earliest || Date.new(Date.today.year, 1, 1)
-      @end_date = Date.today
-    elsif params[:year].present?
+      @start_date = earliest || Date.new(Date.current.year, 1, 1)
+      @end_date = Date.current
+    elsif year_param.present?
       # Year param: use Jan 1 to Dec 31 of that year
-      year = params[:year].to_i
+      raise ArgumentError, year_param unless year_param.match?(/\A\d{4}\z/)
+
+      year = year_param.to_i
       @start_date = Date.new(year, 1, 1)
       @end_date = Date.new(year, 12, 31)
-    elsif params[:start_date].present? && params[:end_date].present?
+    elsif start_param.present? && end_param.present?
       # Explicit date range
-      @start_date = Date.parse(params[:start_date])
-      @end_date = Date.parse(params[:end_date])
+      @start_date = Date.parse(start_param)
+      @end_date = Date.parse(end_param)
     else
       # Default: current year
-      current_year = Date.today.year
+      current_year = Date.current.year
       @start_date = Date.new(current_year, 1, 1)
       @end_date = Date.new(current_year, 12, 31)
     end
@@ -113,22 +118,30 @@ class ConsumptionReportsController < ApplicationController
     redirect_to root_path
   end
 
+  # Array/hash params (?year[]=2025) must end in the invalid-date redirect,
+  # not a 500 from calling String methods on them.
+  def date_param(key)
+    value = params[key]
+    return value.to_s if value.nil? || value.is_a?(String)
+
+    raise ArgumentError, "#{key}: #{value.inspect}"
+  end
+
   # Up to 3 past years (before current) that have meter reading events
   def past_years_with_data
-    current_year = Date.today.year
+    # Years are taken in the app time zone (recorded_at is stored in UTC), so a
+    # reading at 00:30 on Jan 1 Prague time counts for the new year.
     MeterReadingEvent.kept
       .joins(meter_readings: :meter)
       .where(meters: { property_id: @property.id })
-      .where("meter_reading_events.recorded_at < ?", Date.new(current_year, 1, 1))
-      .select("DISTINCT strftime('%Y', recorded_at) AS yr")
-      .map { |e| e.yr.to_i }
+      .where("meter_reading_events.recorded_at < ?", Time.current.beginning_of_year)
+      .distinct
+      .pluck(:recorded_at)
+      .map(&:year)
+      .uniq
       .sort
       .last(3)
       .reverse
-  end
-
-  def include_archived?
-    params[:include_archived] == "true"
   end
 
   def empty_trends

@@ -26,10 +26,12 @@
 #
 # Business Logic (from spec section 7):
 #
-# Step 1: Build the Timeline
-# - Collect all MeterReadingEvents for the property within date range, sorted by recorded_at
-# - Each consecutive pair of events defines a Period
-# - Return empty array if < 2 events
+# Step 1: Build the Timeline (see MeterTimeline)
+# - Collect all MeterReadingEvents for the property, sorted by recorded_at
+# - Each consecutive pair of boundary events defines a Period; meter deltas
+#   carry each meter's last known reading forward across events that skipped it
+# - Return periods whose end event falls in the range (plus the leading period
+#   from the last event before the range); empty array if < 2 events
 #
 # Step 2: Analyze Each Period
 # - Determine present visitors: A visitor is "present" if they have a stay where:
@@ -45,80 +47,56 @@ class AnalyzePeriods < ApplicationService
   end
 
   def execute
-    events = fetch_meter_reading_events
-    return [] if events.size < 2
+    range_start = date_range[:start_date].beginning_of_day
+    range_end = date_range[:end_date].end_of_day
 
-    build_periods(events)
+    # The timeline is NOT cut off at range_end: the period that straddles the
+    # range end must exist while manual entries are assigned, otherwise an
+    # entry dated on the last reading day inside the range would be claimed by
+    # the earlier period here, yet by the straddling period in the next range's
+    # report — and be counted in both. Periods starting after range_end can
+    # never contain an entry that matters for this range, so they are skipped.
+    segments = MeterTimeline.new(property: property).segments
+                            .select { |segment| segment.start_event.recorded_at <= range_end }
+    return [] if segments.empty?
+
+    periods = build_periods(segments)
+    assign_manual_entries(periods)
+
+    # Periods are attributed by their end event. The first returned period
+    # starts at the last event before the range (the boundary event), which
+    # captures e.g. empty-house consumption across the range start.
+    periods.select { |period| period[:end_time] >= range_start && period[:end_time] <= range_end }
   end
 
   private
 
-  def fetch_meter_reading_events
-    in_range = MeterReadingEvent.kept
-                     .joins(meter_readings: :meter)
-                     .where(meters: { property_id: property.id })
-                     .where(recorded_at: date_range[:start_date].beginning_of_day..date_range[:end_date].end_of_day)
-                     .distinct
+  def build_periods(segments)
+    main_ids = property.meters.kept.main.pluck(:id)
+    secondary_ids = property.meters.kept.secondary.pluck(:id)
 
-    # Include the last event before the date range as a boundary event.
-    # This captures consumption (e.g. empty-house) between the previous
-    # period's last reading and the first event in the current range.
-    boundary_event = MeterReadingEvent.kept
-                       .joins(meter_readings: :meter)
-                       .where(meters: { property_id: property.id })
-                       .where("meter_reading_events.recorded_at < ?", date_range[:start_date].beginning_of_day)
-                       .distinct
-                       .order(recorded_at: :desc)
-                       .first
+    segments.map do |segment|
+      primary = segment.delta_for(main_ids)
+      start_time = segment.start_event.recorded_at
+      end_time = segment.end_event.recorded_at
 
-    events = in_range.chronological.to_a
-    events.unshift(boundary_event) if boundary_event && !events.any? { |e| e.id == boundary_event.id }
-    events
-  end
-
-  def build_periods(events)
-    periods = []
-
-    events.each_cons(2) do |start_event, end_event|
-      primary = calculate_meter_delta(start_event, end_event, :main)
-      secondary = calculate_meter_delta(start_event, end_event, :secondary)
-
-      periods << {
-        start_event: start_event,
-        end_event: end_event,
-        start_time: start_event.recorded_at,
-        end_time: end_event.recorded_at,
-        duration_hours: calculate_duration_hours(start_event.recorded_at, end_event.recorded_at),
+      {
+        start_event: segment.start_event,
+        end_event: segment.end_event,
+        start_time: start_time,
+        end_time: end_time,
+        duration_hours: calculate_duration_hours(start_time, end_time),
         total_kwh: primary,
         primary_delta: primary,
-        secondary_delta: secondary,
-        present_visitors: find_present_visitors(start_event.recorded_at, end_event.recorded_at),
-        manual_entries: find_manual_entries(start_event.recorded_at, end_event.recorded_at)
+        secondary_delta: segment.delta_for(secondary_ids),
+        present_visitors: find_present_visitors(start_time, end_time),
+        manual_entries: []
       }
     end
-
-    periods
   end
 
   def calculate_duration_hours(start_time, end_time)
     ((end_time - start_time) / 1.hour).round(2)
-  end
-
-  # Sum deltas for meters of the given type (:main or :secondary)
-  def calculate_meter_delta(start_event, end_event, meter_type)
-    meters = property.meters.kept.where(meter_type: meter_type)
-    total = BigDecimal("0")
-
-    meters.each do |meter|
-      start_reading = start_event.meter_readings.find_by(meter: meter)
-      end_reading = end_event.meter_readings.find_by(meter: meter)
-
-      next unless start_reading && end_reading
-
-      total += end_reading.value_kwh - start_reading.value_kwh
-    end
-
-    total
   end
 
   def find_present_visitors(period_start, period_end)
@@ -141,13 +119,30 @@ class AnalyzePeriods < ApplicationService
     stays.map(&:visitor).uniq
   end
 
-  def find_manual_entries(period_start, period_end)
-    start_date = period_start.to_date
-    end_date = period_end.to_date
+  # Assign every manual entry to exactly one period.
+  #
+  # An entry's date can touch two periods: a check-out day is both the last
+  # day of the stay period and the first day of the following (often
+  # empty-house) period. Among the periods whose date span contains the entry
+  # date (inclusive at both ends), prefer one in which the entry's visitor was
+  # present (E5: deducted from the shared pool of their own stay); otherwise
+  # take the latest such period. Entries dated after the last reading stay
+  # unassigned until a later reading closes a period around them.
+  def assign_manual_entries(periods)
+    entries = ManualConsumptionEntry.kept
+                                    .where(property_id: property.id)
+                                    .includes(:visitor)
+                                    .order(:date, :id)
 
-    ManualConsumptionEntry.kept
-                          .where(property_id: property.id)
-                          .where("date >= ? AND date < ?", start_date, end_date)
-                          .order(:date)
+    entries.each do |entry|
+      candidates = periods.select do |period|
+        period[:start_time].to_date <= entry.date && entry.date <= period[:end_time].to_date
+      end
+      next if candidates.empty?
+
+      own_stay = candidates.select { |period| period[:present_visitors].include?(entry.visitor) }
+      target = (own_stay.presence || candidates).last
+      target[:manual_entries] << entry
+    end
   end
 end

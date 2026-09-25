@@ -348,6 +348,44 @@ RSpec.describe StaysController, type: :request do
       end
     end
 
+    context "C6: the check-out is backdated before the visitor's own check-in" do
+      it "refuses, so the stay can never close before it opened and drop out of the allocation" do
+        patch check_out_stay_path(open_stay), params: valid_params.merge(recorded_at: 3.days.ago.iso8601)
+
+        expect(response).to redirect_to(root_path)
+        expect(flash[:alert]).to include("must be after or equal to previous event")
+        expect(open_stay.reload.open?).to be true
+      end
+    end
+
+    context "C6: the check-out is backdated before another visitor's later reading" do
+      before do
+        # Bob checked in yesterday with main 1100
+        create(:stay, :open, visitor: create(:visitor), property: property,
+          check_in_at: 1.day.ago, main_reading_in: 1100.0, recorded_by: user)
+      end
+
+      it "refuses, so a higher reading is never wedged before a lower one (negative-delta period)" do
+        expect {
+          patch check_out_stay_path(open_stay), params: valid_params.merge(recorded_at: 36.hours.ago.iso8601, main_meter_reading: 1160.0)
+        }.not_to change(MeterReadingEvent, :count)
+
+        expect(flash[:alert]).to include("must be after or equal to previous event")
+        expect(open_stay.reload.open?).to be true
+      end
+    end
+
+    context "a Czech user enters a check-out reading below the check-in reading" do
+      before { I18n.locale = :cs }
+
+      it "explains the problem in Czech in the toast" do
+        patch check_out_stay_path(open_stay), params: valid_params.merge(main_meter_reading: 900.0)
+
+        expect(flash[:alert]).to include("musí být větší nebo roven odečtu při příjezdu")
+        expect(flash[:alert]).not_to include("must be")
+      end
+    end
+
     context "edge case - E8: secondary meter reading optional" do
       it "allows check-out without secondary meter reading" do
         params_without_secondary = valid_params.except(:secondary_meter_reading)
