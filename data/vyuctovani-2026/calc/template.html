@@ -55,6 +55,7 @@ tfoot td,tfoot th{border-top:2px solid var(--ink);border-bottom:0;font-weight:60
 .settle .pay{color:var(--warn);font-weight:600}
 .members .branch-head th{background:var(--paper);font-family:var(--head);font-size:15px;padding-top:14px}
 .members th.member{font-weight:400;padding-left:2.2em}
+.members tfoot th{white-space:nowrap}
 .members tr.subtotal th,.members tr.subtotal td{font-weight:600;border-bottom:2px solid var(--rule)}
 .ledger td.when{white-space:nowrap;font-family:var(--mono);font-size:14px}
 .ledger tr.empty td{background:var(--paper)}
@@ -70,6 +71,36 @@ summary{cursor:pointer;padding:12px 14px;font-weight:600}
 summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 details .scroll{border:0;border-top:1px solid var(--rule);border-radius:0}
 .log td{font-size:14px}
+a{color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.back{font-size:14px;width:fit-content}
+.branches{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.branch-card{display:grid;gap:4px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet);padding:14px 16px;color:inherit;text-decoration:none}
+.branch-card:hover{border-color:var(--accent)}
+.branch-card b{font-family:var(--head);font-size:17px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:6px;background:var(--accent);color:var(--sheet);font-weight:600;text-decoration:none;width:fit-content}
+.btn:hover{filter:brightness(1.1)}
+.btn .sym{color:inherit;width:auto}
+.branch-nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-top:6px}
+.branch-nav>span{font-weight:600;margin-right:4px}
+.branch-card .btn{margin-top:6px}
+.summary th[scope=row] a{color:inherit;text-decoration-color:var(--rule);text-underline-offset:3px}
+.outcome{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.outcome div{border:1px solid var(--rule);border-radius:6px;background:var(--sheet);padding:12px 14px;display:grid;gap:2px}
+.outcome span:first-child{font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.outcome .n{text-align:left;font-size:20px}
+.outcome .result{border-color:var(--accent);background:var(--accent-soft)}
+.toggle{display:flex;flex-wrap:wrap;border:1px solid var(--accent);border-radius:6px;overflow:hidden;width:fit-content;background:var(--sheet)}
+.toggle input{position:absolute;opacity:0;pointer-events:none}
+.toggle label{padding:9px 16px;cursor:pointer;font-weight:600;color:var(--accent)}
+.toggle input:checked+label{background:var(--accent);color:var(--sheet)}
+.toggle input:focus-visible+label{outline:2px solid var(--ink);outline-offset:-3px}
+.memberbox:not(:has(#mode-sep:checked)) .sep,.memberbox:not(:has(#mode-fold:checked)) .fold,.memberbox:not(:has(#mode-even:checked)) .even{display:none}
+.members label.pick{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.members label.pick input{width:18px;height:18px;accent-color:var(--accent);margin:0}
+.members tr.off td,.members tr.off th{color:var(--muted)}
+.warn{color:var(--warn);font-weight:600}
+.split li.other{opacity:.6}
 footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);padding-top:14px}
 </style>
 
@@ -84,14 +115,15 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);paddin
     <li>Spotřeba <b>117 kWh VT + 1&#8239;008 kWh NT</b></li>
     <li>Přeplatek od PPAS <b>4&#8239;575,82 Kč</b> (vrací se na společný rodinný účet)</li>
   </ul>
+  <nav class="branch-nav" aria-label="Stránky rodin"><span>Rozpis po rodinách:</span>{{BRANCH_BUTTONS}}</nav>
 </header>
 
 <section>
   <h2>Vyrovnání záloh</h2>
-  <p>Všechny tři větve posílají měsíční zálohy na společný rodinný účet, ze kterého se platí PPAS. Od zaplacených záloh se odečte podíl větve na faktuře. Přeplatek pošle společný účet větvi zpět, nedoplatek větev na společný účet doplatí.</p>
+  <p>Všechny tři rodiny posílají měsíční zálohy na společný rodinný účet, ze kterého se platí PPAS. Od zaplacených záloh se odečte podíl rodiny na faktuře. Přeplatek pošle společný účet rodině zpět, nedoplatek rodina na společný účet doplatí.</p>
   <div class="scroll">
   <table class="summary settle">
-    <thead><tr><th>Větev</th><th class="n">Zaplacené zálohy</th><th class="n">Podíl na faktuře</th><th class="n">Rozdíl</th><th>Výsledek</th></tr></thead>
+    <thead><tr><th>Rodina</th><th class="n">Zaplacené zálohy</th><th class="n">Podíl na faktuře</th><th class="n">Rozdíl</th><th>Výsledek</th></tr></thead>
     <tbody>{{SETTLE}}</tbody>
     <tfoot><tr><th scope="row">Celkem</th><td class="n">{{TOTAL_ADV}}</td><td class="n">{{TOTAL}}</td><td class="n">{{TOTAL_BAL}}</td><td></td></tr></tfoot>
   </table>
@@ -101,10 +133,10 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);paddin
 
 <section>
   <h2>Kolik kdo platí</h2>
-  <p>Platí tři větve rodiny. Každá vybírá od svých členů. Jak si částku rozdělí uvnitř, je na ní. Podklad pro to je rozpis přímé spotřeby po členech níže.</p>
+  <p>Platí tři rodiny. Každá vybírá od svých členů. Jak si částku rozdělí uvnitř, je na ní. Podklad pro to je rozpis po členech na stránce každé rodiny.</p>
   <div class="scroll">
   <table class="summary">
-    <thead><tr><th>Větev</th><th class="n">Přímá spotřeba</th><th class="n">Prázdný dům ⅓</th><th class="n">Pevné poplatky ⅓</th><th class="n">Celkem Kč</th></tr></thead>
+    <thead><tr><th>Rodina</th><th class="n">Přímá spotřeba</th><th class="n">Prázdný dům ⅓</th><th class="n">Pevné poplatky ⅓</th><th class="n">Celkem Kč</th></tr></thead>
     <tbody>{{SUMMARY}}</tbody>
     <tfoot><tr><th>Celkem</th><td class="n">{{TOTAL_OWN}}</td><td class="n">{{TOTAL_EMPTY}}</td><td class="n">{{TOTAL_FIXED}}</td><td class="n">{{TOTAL}}</td></tr></tfoot>
   </table>
@@ -114,9 +146,9 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);paddin
 
 <section>
   <h2>Pevné poplatky</h2>
-  <p>Platí se měsíčně bez ohledu na to, jestli je v domě někdo. Nesou je rovným dílem tři platící větve rodiny: Jiří, Kristina a Petr.</p>
+  <p>Platí se měsíčně bez ohledu na to, jestli je v domě někdo. Nesou je rovným dílem tři platící rodiny: Jiří, Kristina a Petr.</p>
   <div class="scroll">
-  <table>
+  <!--FIXED_ITEMS--><table>
     <thead><tr><th>Položka z faktury</th><th class="n">2025 (27.&#8239;8.–31.&#8239;12.)</th><th class="n">2026 (1.&#8239;1.–28.&#8239;8.)</th><th class="n">Bez DPH</th></tr></thead>
     <tbody>
       <tr><th scope="row">Jistič 3×25&#8239;A (distribuce, sazba D45d)</th><td class="n">469,00 Kč/měs.</td><td class="n">555,00 Kč/měs.</td><td class="n">6&#8239;337,68</td></tr>
@@ -125,7 +157,7 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);paddin
       <tr><th scope="row">DPH 21&#8239;%</th><td></td><td></td><td class="n">1&#8239;613,92</td></tr>
     </tbody>
     <tfoot><tr><th>Celkem vč. DPH (12,06 měsíce)</th><td></td><td></td><td class="n total">9&#8239;299,25</td></tr></tfoot>
-  </table>
+  </table><!--/FIXED_ITEMS-->
   </div>
   <div class="scroll">
   <table class="summary">
@@ -137,14 +169,9 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);paddin
 </section>
 
 <section>
-  <h2>Přímá spotřeba po členech</h2>
-  <p>Energie naměřená při pobytech, přiřazená tomu, kdo byl v domě. Když byly v domě dvě nebo tři větve, dělí se úsek nejdřív rovným dílem mezi větve a podíl větve pak rovným dílem mezi její přítomné členy. Nabíjení auta jde tomu, kdo nabíjel (Tereza). Garáž jde tomu, kdo bydlel v Jiřího části. Pevné poplatky a prázdný dům tu nejsou: platí je větev jako celek (viz tabulka nahoře).</p>
-  <div class="scroll">
-  <table class="members">
-    <thead><tr><th>Člen</th><th class="n">VT kWh</th><th class="n">NT kWh</th><th class="n">Celkem kWh</th><th class="n">Kč</th></tr></thead>
-    {{CONSUMPTION}}
-  </table>
-  </div>
+  <h2>Vyúčtování po rodinách</h2>
+  <p>Každá rodina má vlastní stránku: její zálohy a výsledek, složení podílu a přímou spotřebu po členech. Tam si lze přepnout, jestli se pevné poplatky a prázdný dům ukazují zvlášť, nebo rozpočítané do ceny kWh.</p>
+  <div class="branches">{{BRANCH_LINKS}}</div>
 </section>
 
 <section>
@@ -152,9 +179,9 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);paddin
   <ol class="method">
     <li><b>Pevné poplatky</b> (9&#8239;299,25 Kč vč. DPH) se dělí na třetiny mezi Jiřího, Kristinu a Petra, viz výše.</li>
     <li><b>Spotřeba při pobytu</b> se bere z rozdílu odečtů při příjezdu (P) a odjezdu (O). Když je v domě víc rodin najednou, dělí se ten úsek rovným dílem mezi přítomné rodiny.</li>
-    <li><b>Platí tři větve rodiny</b>: Jiří; Kristina (za sebe, Editu a Marka); Petr (za sebe, Terezu, Báru a Johanu). Pobyt kohokoli z větve se počítá jí. Jak si větev částku rozdělí uvnitř, je na ní.</li>
-    <li><b>Garáž</b> je podružný elektroměr za hlavním, takže její spotřeba už je v hlavním elektroměru. Když je Jiří v domě s jinou větví, jde garáž jemu a zbytek se dělí. Jinak je garáž běžnou součástí spotřeby toho úseku. Například 4.–6.&#8239;4. bydlela Johana v Jiřího části („JOHANA (JIRKA)“ v sešitě), garáž naběhla 55 kWh a platí to Petrova větev.</li>
-    <li><b>Nabíjení auta</b> (Tereza 4.&#8239;4. 47 kWh a 27.&#8239;6. 50 kWh) jde celé Petrově větvi.</li>
+    <li><b>Platí tři rodiny</b>: Jiří; Kristina (za sebe, Editu a Marka); Petr (za sebe, Terezu, Báru a Johanu). Pobyt kohokoli z rodiny se počítá jí. Jak si rodina částku rozdělí uvnitř, je na ní.</li>
+    <li><b>Garáž</b> je podružný elektroměr za hlavním, takže její spotřeba už je v hlavním elektroměru. Když je Jiří v domě s jinou rodinou, jde garáž jemu a zbytek se dělí. Jinak je garáž běžnou součástí spotřeby toho úseku. Například 4.–6.&#8239;4. bydlela Johana v Jiřího části („JOHANA (JIRKA)“ v sešitě), garáž naběhla 55 kWh a platí to Petrova rodina.</li>
+    <li><b>Nabíjení auta</b> (Tereza 4.&#8239;4. 47 kWh a 27.&#8239;6. 50 kWh) jde celé Petrově rodině.</li>
     <li><b>Prázdný dům</b>: mezi pobyty se spotřebovalo jen {{EMPTY_KWH}} kWh ({{EMPTY_KC}} Kč). Dělí se na třetiny.</li>
     <li><b>Cena za kWh</b> podle faktury: silová elektřina 2&#8239;790 Kč/MWh, distribuce, systémové služby, daň z elektřiny a v roce 2025 i POZE. V roce 2026 se POZE za MWh neúčtuje, proto je levnější. Dodavatel si ale konec roku 2025 odhadl vyšší spotřebou, než ukazuje sešit, takže podle skutečných dat vychází proměnná část o {{SCALE}}&nbsp;% levněji, než je na faktuře. Aby součet seděl na korunu, jsou všechny částky za spotřebu tímto poměrem navýšené.</li>
   </ol>

@@ -15,14 +15,14 @@ Billing period 27.08.2025 – 28.08.2026, PPAS invoice 1126407855, 13 904,22 Kč
 | `advances.csv` | Advances each branch paid into the shared account for this invoice (date, branch, Kč). |
 | `invoice.json` | Invoice facts: start/end readings, fixed vs variable charges, per-MWh unit prices for 2025 and 2026. |
 | `calc/settle.py` | Allocation. Reads events.csv + invoice.json, prints JSON (`calc/out.json`). |
-| `calc/build.py` + `calc/template.html` | Renders `vyuctovani-sucha-2026.html` (Czech summary page) from `out.json`. |
+| `calc/build.py` + `calc/template.html` + `calc/template-branch.html` | Renders `vyuctovani-sucha-2026.html` (common page, served at `/vyuctovani/sucha/2026`) and `vyuctovani-sucha-2026-{jiri,kristina,petr}.html` (branch pages at `/vyuctovani/sucha/2026/<branch>`: advances balance, share breakdown, members with a toggle that folds fixed + empty-house share into the kWh price) from `out.json`. |
 | `sources/` | Original invoice PDF and the three notebook photos (rotated upright). |
 | `ocr/` | Four independent transcriptions (Claude, GPT-6 Sol Pro, Gemini 3.1 Pro, Qwen 3.8 Max) and the reconciled verdict with disputed cells. |
 
 Re-run after editing the CSV:
 
 ```sh
-cd calc && python3 settle.py > out.json && python3 build.py && mv vyuctovani-sucha-2026.html ..
+cd calc && python3 settle.py > out.json && python3 build.py && python3 check.py   # pages land in this folder; check.py reconciles every number shown
 ```
 
 `settle.py` asserts that the first/last readings in the period equal the invoice readings.

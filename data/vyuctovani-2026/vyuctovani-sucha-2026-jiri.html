@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Elektřina Suchá 2025/26 · Jiří</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#F6F7F5; --sheet:#FFFFFF; --ink:#18212B; --muted:#5E6873; --rule:#D6DBDF;
+  --accent:#1D5E8C; --accent-soft:#E4EEF6; --warn:#8A5A0B; --warn-soft:#FBF1DE;
+  --body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --head:"Archivo","Source Sans 3",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#12171D; --sheet:#1A2129; --ink:#E6EAEE; --muted:#9AA5B0; --rule:#2E3843;
+    --accent:#7FB6E0; --accent-soft:#1D2E3D; --warn:#E7B868; --warn-soft:#2E2616;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#12171D; --sheet:#1A2129; --ink:#E6EAEE; --muted:#9AA5B0; --rule:#2E3843;
+  --accent:#7FB6E0; --accent-soft:#1D2E3D; --warn:#E7B868; --warn-soft:#2E2616;
+}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 var(--body);padding:0 16px}
+.wrap{max-width:920px;margin:0 auto;padding-block:40px 64px;display:grid;gap:40px}
+h1,h2{font-family:var(--head);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:clamp(28px,5vw,40px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:21px;font-weight:700}
+p{margin:0;max-width:65ch}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+section{display:grid;gap:14px}
+header{display:grid;gap:14px}
+.facts{display:flex;flex-wrap:wrap;gap:8px 28px;margin:4px 0 0;padding:0;list-style:none;font-size:15px}
+.facts b{font-family:var(--mono);font-weight:500}
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--sheet)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--rule);vertical-align:top;text-align:left}
+thead th{font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper)}
+thead th.n{text-align:right}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+tfoot td,tfoot th{border-top:2px solid var(--ink);border-bottom:0;font-weight:600}
+.total{font-weight:600;color:var(--accent)}
+.sym{display:inline-block;width:1.3em;font-family:var(--mono);color:var(--accent)}
+.summary th[scope=row]{font-weight:600;white-space:nowrap}
+.note{font-size:14px;color:var(--muted)}
+.method{display:grid;gap:10px;padding-left:1.2em;margin:0;max-width:70ch}
+.prices{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.price{border:1px solid var(--rule);border-radius:6px;background:var(--sheet);padding:12px 14px;display:grid;gap:4px}
+.price .n{text-align:left;font-size:15px}
+.price span:first-child{font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.settle td.result{white-space:nowrap}
+.settle .pay{color:var(--warn);font-weight:600}
+.members .branch-head th{background:var(--paper);font-family:var(--head);font-size:15px;padding-top:14px}
+.members th.member{font-weight:400;padding-left:2.2em}
+.members tfoot th{white-space:nowrap}
+.members tr.subtotal th,.members tr.subtotal td{font-weight:600;border-bottom:2px solid var(--rule)}
+.ledger td.when{white-space:nowrap;font-family:var(--mono);font-size:14px}
+.ledger tr.empty td{background:var(--paper)}
+.split{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.split li{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline}
+.split li .n{margin-left:auto;font-size:14px}
+.split li .muted{font-size:14px}
+.flags{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.flags li{background:var(--warn-soft);border-left:3px solid var(--warn);padding:10px 14px;border-radius:0 6px 6px 0;max-width:75ch}
+.flags b{color:var(--warn)}
+details{border:1px solid var(--rule);border-radius:6px;background:var(--sheet)}
+summary{cursor:pointer;padding:12px 14px;font-weight:600}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+details .scroll{border:0;border-top:1px solid var(--rule);border-radius:0}
+.log td{font-size:14px}
+a{color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.back{font-size:14px;width:fit-content}
+.branches{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.branch-card{display:grid;gap:4px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet);padding:14px 16px;color:inherit;text-decoration:none}
+.branch-card:hover{border-color:var(--accent)}
+.branch-card b{font-family:var(--head);font-size:17px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:6px;background:var(--accent);color:var(--sheet);font-weight:600;text-decoration:none;width:fit-content}
+.btn:hover{filter:brightness(1.1)}
+.btn .sym{color:inherit;width:auto}
+.branch-nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-top:6px}
+.branch-nav>span{font-weight:600;margin-right:4px}
+.branch-card .btn{margin-top:6px}
+.summary th[scope=row] a{color:inherit;text-decoration-color:var(--rule);text-underline-offset:3px}
+.outcome{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.outcome div{border:1px solid var(--rule);border-radius:6px;background:var(--sheet);padding:12px 14px;display:grid;gap:2px}
+.outcome span:first-child{font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.outcome .n{text-align:left;font-size:20px}
+.outcome .result{border-color:var(--accent);background:var(--accent-soft)}
+.toggle{display:flex;flex-wrap:wrap;border:1px solid var(--accent);border-radius:6px;overflow:hidden;width:fit-content;background:var(--sheet)}
+.toggle input{position:absolute;opacity:0;pointer-events:none}
+.toggle label{padding:9px 16px;cursor:pointer;font-weight:600;color:var(--accent)}
+.toggle input:checked+label{background:var(--accent);color:var(--sheet)}
+.toggle input:focus-visible+label{outline:2px solid var(--ink);outline-offset:-3px}
+.memberbox:not(:has(#mode-sep:checked)) .sep,.memberbox:not(:has(#mode-fold:checked)) .fold,.memberbox:not(:has(#mode-even:checked)) .even{display:none}
+.members label.pick{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.members label.pick input{width:18px;height:18px;accent-color:var(--accent);margin:0}
+.members tr.off td,.members tr.off th{color:var(--muted)}
+.warn{color:var(--warn);font-weight:600}
+.split li.other{opacity:.6}
+footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="back" href="/vyuctovani/sucha/2026">← Společné vyúčtování všech rodin</a>
+  <span class="eyebrow">Suchá 18 · Vyúčtování elektřiny 2025/26</span>
+  <h1><span class="sym" aria-hidden="true">△</span>Rodina Jiří</h1>
+  <p>Podíl rodiny Jiří na faktuře PPAS 1126407855 za období <b>27.&#8239;8.&#8239;2025 – 28.&#8239;8.&#8239;2026</b> a jeho rozpis po členech.</p>
+</header>
+
+<section>
+  <h2>Vyrovnání záloh</h2>
+  <div class="outcome">
+    <div><span>Zaplacené zálohy</span><span class="n">6 985,00 Kč</span></div>
+    <div><span>Podíl na faktuře</span><span class="n">3 897,06 Kč</span></div>
+    <div class="result"><span>Vrací se rodině</span><span class="n total">3 087,94 Kč</span></div>
+  </div>
+  <p class="note">Přeplatek pošle společný rodinný účet zpět rodině. Zálohy podle výpisu ze společného rodinného účtu: 11× 635 Kč (10/2025–8/2026). Zářijová záloha 2025 patří do minulého vyúčtování.</p>
+</section>
+
+<section>
+  <h2>Z čeho se podíl skládá</h2>
+  <div class="scroll">
+  <table class="summary">
+    <thead><tr><th>Položka</th><th class="n">kWh</th><th class="n">Kč</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Přímá spotřeba při pobytech</th><td class="n">177,9</td><td class="n">785,31</td></tr>
+      <tr><th scope="row">Prázdný dům ⅓</th><td class="n">2,7</td><td class="n">12,00</td></tr>
+      <tr><th scope="row">Pevné poplatky ⅓</th><td class="n"></td><td class="n">3 099,75</td></tr>
+    </tbody>
+    <tfoot><tr><th>Celkem</th><td class="n">180,6</td><td class="n total">3 897,06</td></tr></tfoot>
+  </table>
+  </div>
+  <p class="note">Částky vč. DPH. Pevné poplatky a prázdný dům dělí tři rodiny rovným dílem, viz <a href="/vyuctovani/sucha/2026">společné vyúčtování</a>.</p>
+</section>
+
+<section class="memberbox">
+  <h2>Rozpis po členech</h2>
+  <p>Přímá spotřeba je energie naměřená při pobytech. Když byla v domě i jiná rodina, dělí se úsek nejdřív mezi rodiny a podíl rodiny pak rovným dílem mezi její přítomné členy. Pevné poplatky a prázdný dům lze ukázat zvlášť, rozpočítat do ceny kWh podle spotřeby, nebo rozdělit rovným dílem mezi vybrané členy.</p>
+  <div class="toggle" role="radiogroup" aria-label="Pevné poplatky a prázdný dům">
+    <input type="radio" name="mode" id="mode-sep" checked><label for="mode-sep">Pevné poplatky zvlášť</label>
+    <input type="radio" name="mode" id="mode-fold"><label for="mode-fold">Rozpočítat do ceny kWh</label>
+    <input type="radio" name="mode" id="mode-even"><label for="mode-even">Rozdělit mezi členy</label>
+  </div>
+  <div class="scroll">
+  <table class="members">
+    <thead><tr><th>Člen</th><th class="n">VT kWh</th><th class="n">NT kWh</th><th class="n">Celkem kWh</th><th class="n">Kč/kWh</th><th class="n">Kč</th></tr></thead>
+    <tbody class="sep"><tr><th scope="row" class="member">Jirka</th>
+<td class="n">18,5</td><td class="n">159,4</td><td class="n">177,9</td><td class="n">4,41</td><td class="n">785,31</td></tr><tr class="subtotal"><th scope="row">Přímá spotřeba celkem</th><td class="n">18,5</td><td class="n">159,4</td>
+<td class="n">177,9</td><td class="n">4,41</td><td class="n">785,31</td></tr>
+<tr><th scope="row">Prázdný dům ⅓</th><td></td><td></td><td class="n">2,7</td><td></td><td class="n">12,00</td></tr>
+<tr><th scope="row">Pevné poplatky ⅓</th><td></td><td></td><td></td><td></td><td class="n">3 099,75</td></tr></tbody>
+    <tbody class="fold"><tr><th scope="row" class="member">Jirka</th>
+<td class="n">18,5</td><td class="n">159,4</td><td class="n">177,9</td><td class="n">21,91</td><td class="n">3 897,06</td></tr></tbody>
+    <tbody class="even" data-shared="311175"><tr data-direct="78531" data-kwh="177.9">
+<th scope="row" class="member"><label class="pick"><input type="checkbox" checked>Jirka</label></th>
+<td class="n">18,5</td><td class="n">159,4</td><td class="n">177,9</td>
+<td class="n rate">21,91</td>
+<td class="n"><span class="kc">3 897,06</span><br><span class="muted">785,31 + <span class="share">3 111,75</span></span></td></tr></tbody>
+    <tfoot><tr><th>Celkem rodina</th><td></td><td></td><td></td><td></td><td class="n total">3 897,06</td></tr></tfoot>
+  </table>
+  </div>
+  <p class="note sep">Kč/kWh je průměrná cena přímé spotřeby člena. Liší se podle roku (2025 dražší) a poměru VT/NT.</p>
+  <p class="note fold">Cena každé kWh je vynásobená 4,96×, aby přímá spotřeba pokryla i pevné poplatky (3 099,75 Kč) a prázdný dům (12,00 Kč). Průměrně 4,41 Kč/kWh → 21,91 Kč/kWh. Kdo víc spotřeboval, nese větší díl pevných poplatků.</p>
+  <p class="note even" id="even-note">Pevné poplatky a prázdný dům (3 111,75 Kč) se dělí rovným dílem mezi zaškrtnuté členy, k tomu každý platí svou přímou spotřebu. Zaškrtnutím vyberte, kdo se na pevných poplatcích podílí.</p>
+</section>
+
+<section>
+  <h2>Pevné poplatky</h2>
+  <p>Platí se měsíčně bez ohledu na to, jestli je v domě někdo. Rodina Jiří nese třetinu: <b class="n">3 099,75 Kč</b>.</p>
+  <div class="scroll">
+  <!--FIXED_ITEMS--><table>
+    <thead><tr><th>Položka z faktury</th><th class="n">2025 (27.&#8239;8.–31.&#8239;12.)</th><th class="n">2026 (1.&#8239;1.–28.&#8239;8.)</th><th class="n">Bez DPH</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Jistič 3×25&#8239;A (distribuce, sazba D45d)</th><td class="n">469,00 Kč/měs.</td><td class="n">555,00 Kč/měs.</td><td class="n">6&#8239;337,68</td></tr>
+      <tr><th scope="row">Stálý měsíční plat (dodavatel)</th><td class="n">99,00 Kč/měs.</td><td class="n">99,00 Kč/měs.</td><td class="n">1&#8239;194,39</td></tr>
+      <tr><th scope="row">Provoz nesíťové infrastruktury</th><td class="n">12,45 Kč/měs.</td><td class="n">12,87 Kč/měs.</td><td class="n">153,26</td></tr>
+      <tr><th scope="row">DPH 21&#8239;%</th><td></td><td></td><td class="n">1&#8239;613,92</td></tr>
+    </tbody>
+    <tfoot><tr><th>Celkem vč. DPH (12,06 měsíce)</th><td></td><td></td><td class="n total">9&#8239;299,25</td></tr></tfoot>
+  </table><!--/FIXED_ITEMS-->
+  </div>
+</section>
+
+<section>
+  <h2>Úseky s pobytem rodiny</h2>
+  <p>Úseky mezi odečty, kdy byl v domě někdo z rodiny. Ostatní rodiny ve stejném úseku jsou uvedené pro úplnost (šedě).</p>
+  <div class="scroll">
+  <table class="ledger">
+    <thead><tr><th>Úsek</th><th class="n">VT</th><th class="n">NT</th><th colspan="2">Rozdělení (kWh · Kč po dorovnání)</th></tr></thead>
+    <tbody><tr><td class="when">19.9.–19.9.</td>
+<td class="n">0</td><td class="n">2</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sám/sama</span><span class='n'>2 kWh · 9,25 Kč</span></li></ul></td></tr><tr><td class="when">19.9.–21.9.</td>
+<td class="n">4</td><td class="n">37</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>garáž 16.2 kWh</span><span class='n'>16,2 kWh · 76,02 Kč</span></li><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sdíleno Jiří+Kristina</span><span class='n'>12,4 kWh · 58,14 Kč</span></li><li class='other'><span class='sym' aria-hidden='true'>○</span><b>Kristina</b> <span class='muted'>sdíleno Jiří+Kristina</span><span class='n'>12,4 kWh · 58,14 Kč</span></li></ul></td></tr><tr><td class="when">9.10.–12.10.</td>
+<td class="n">10</td><td class="n">69</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sám/sama</span><span class='n'>79 kWh · 372,02 Kč</span></li></ul></td></tr><tr><td class="when">17.7.–17.7.</td>
+<td class="n">0</td><td class="n">3</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sám/sama</span><span class='n'>3 kWh · 11,66 Kč</span></li></ul></td></tr><tr><td class="when">17.7.–18.7.</td>
+<td class="n">2</td><td class="n">15</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>garáž 6.0 kWh</span><span class='n'>6 kWh · 24,05 Kč</span></li><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sdíleno Jiří+Kristina</span><span class='n'>5,5 kWh · 21,80 Kč</span></li><li class='other'><span class='sym' aria-hidden='true'>○</span><b>Kristina</b> <span class='muted'>sdíleno Jiří+Kristina</span><span class='n'>5,5 kWh · 21,80 Kč</span></li></ul></td></tr><tr><td class="when">18.7.–19.7.</td>
+<td class="n">2</td><td class="n">23</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>garáž 8.9 kWh</span><span class='n'>8,9 kWh · 35,11 Kč</span></li><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sdíleno Jiří+Kristina+Petr</span><span class='n'>5,4 kWh · 21,21 Kč</span></li><li class='other'><span class='sym' aria-hidden='true'>○</span><b>Kristina</b> <span class='muted'>sdíleno Jiří+Kristina+Petr</span><span class='n'>5,4 kWh · 21,21 Kč</span></li><li class='other'><span class='sym' aria-hidden='true'>□</span><b>Petr</b> <span class='muted'>sdíleno Jiří+Kristina+Petr</span><span class='n'>5,4 kWh · 21,21 Kč</span></li></ul></td></tr><tr><td class="when">24.7.–26.7.</td>
+<td class="n">5</td><td class="n">57</td>
+<td colspan="2"><ul class="split"><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>garáž 17.0 kWh</span><span class='n'>17 kWh · 67,16 Kč</span></li><li><span class='sym' aria-hidden='true'>△</span><b>Jiří</b> <span class='muted'>sdíleno Jiří+Kristina</span><span class='n'>22,5 kWh · 88,88 Kč</span></li><li class='other'><span class='sym' aria-hidden='true'>○</span><b>Kristina</b> <span class='muted'>sdíleno Jiří+Kristina</span><span class='n'>22,5 kWh · 88,88 Kč</span></li></ul></td></tr></tbody>
+  </table>
+  </div>
+</section>
+
+<script>
+// "Rozdělit mezi členy": fixed + empty-house share split evenly among the ticked members
+(function () {
+  var body = document.querySelector("tbody.even");
+  if (!body) return;
+  var shared = +body.dataset.shared, note = document.getElementById("even-note"), base = note.innerHTML;
+  var fmt = function (c) { return (c / 100).toLocaleString("cs-CZ", {minimumFractionDigits: 2, maximumFractionDigits: 2}); };
+  function update() {
+    var rows = [].slice.call(body.querySelectorAll("tr[data-direct]"));
+    var on = rows.filter(function (r) { return r.querySelector("input").checked; });
+    var each = on.length ? Math.floor(shared / on.length) : 0, rest = on.length ? shared - each * on.length : 0;
+    rows.forEach(function (r) {
+      var i = on.indexOf(r), part = i < 0 ? 0 : each + (i < rest ? 1 : 0);
+      var kc = +r.dataset.direct + part;
+      r.classList.toggle("off", i < 0);
+      r.querySelector(".share").textContent = fmt(part);
+      r.querySelector(".kc").textContent = fmt(kc);
+      r.querySelector(".rate").textContent = fmt(Math.round(kc / +r.dataset.kwh));
+    });
+    note.innerHTML = on.length ? base + " Na osobu " + fmt(each) + " Kč."
+      : '<span class="warn">Vyberte aspoň jednoho člena – pevné poplatky (3 111,75 Kč) teď nikdo neplatí.</span>';
+  }
+  body.addEventListener("change", update);
+  update();
+})();
+</script>
+
+<footer>Postup výpočtu, úpravy dat a přepis sešitu jsou na stránce <a href="/vyuctovani/sucha/2026">společného vyúčtování</a>.</footer>
+</div>
+</body>
+</html>

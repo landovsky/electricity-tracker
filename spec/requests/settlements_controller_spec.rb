@@ -21,6 +21,25 @@ RSpec.describe SettlementsController, type: :request do
     end
   end
 
+  context "a branch opens its own page to split its share among its members" do
+    let(:member) { create(:user).tap { |u| u.properties << sucha } }
+
+    before { sign_in_as(member) }
+
+    it "shows only that branch with its members, so Petr can collect from Tereza, Bára and Johana" do
+      get "#{path}/petr"
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Rodina Petr", "Johana", "Rozpočítat do ceny kWh")
+      expect(response.body).not_to include("Edita")
+      expect(response.headers["Cache-Control"]).to include("no-store")
+    end
+
+    it "is not found for a branch that doesn't exist, rather than guessing a file" do
+      get "#{path}/marek"
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   context "a user of another property (e.g. Tymlova) guesses the URL" do
     let(:outsider) { create(:user).tap { |u| u.properties << create(:property, subdomain: "tymlova") } }
 
@@ -30,6 +49,11 @@ RSpec.describe SettlementsController, type: :request do
       get path
       expect(response).to have_http_status(:not_found)
       expect(response.body).not_to include("Kristina")
+    end
+
+    it "gets a 404 on branch pages too" do
+      get "#{path}/kristina"
+      expect(response).to have_http_status(:not_found)
     end
   end
 

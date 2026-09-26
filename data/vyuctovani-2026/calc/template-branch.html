@@ -1,0 +1,104 @@
+<div class="wrap">
+<header>
+  <a class="back" href="{{COMMON_URL}}">← Společné vyúčtování všech rodin</a>
+  <span class="eyebrow">Suchá 18 · Vyúčtování elektřiny 2025/26</span>
+  <h1><span class="sym" aria-hidden="true">{{SYM}}</span>Rodina {{BRANCH}}</h1>
+  <p>Podíl rodiny {{LABEL}} na faktuře PPAS 1126407855 za období <b>27.&#8239;8.&#8239;2025 – 28.&#8239;8.&#8239;2026</b> a jeho rozpis po členech.</p>
+</header>
+
+<section>
+  <h2>Vyrovnání záloh</h2>
+  <div class="outcome">
+    <div><span>Zaplacené zálohy</span><span class="n">{{ADVANCES}} Kč</span></div>
+    <div><span>Podíl na faktuře</span><span class="n">{{TOTAL}} Kč</span></div>
+    <div class="result"><span>{{RESULT_LABEL}}</span><span class="n {{RESULT_CLASS}}">{{RESULT}} Kč</span></div>
+  </div>
+  <p class="note">{{RESULT_NOTE}} Zálohy podle výpisu ze společného rodinného účtu: {{ADV_NOTE}}. Zářijová záloha 2025 patří do minulého vyúčtování.</p>
+</section>
+
+<section>
+  <h2>Z čeho se podíl skládá</h2>
+  <div class="scroll">
+  <table class="summary">
+    <thead><tr><th>Položka</th><th class="n">kWh</th><th class="n">Kč</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Přímá spotřeba při pobytech</th><td class="n">{{OWN_KWH}}</td><td class="n">{{OWN_KC}}</td></tr>
+      <tr><th scope="row">Prázdný dům ⅓</th><td class="n">{{EMPTY_KWH}}</td><td class="n">{{EMPTY_KC}}</td></tr>
+      <tr><th scope="row">Pevné poplatky ⅓</th><td class="n"></td><td class="n">{{FIXED_KC}}</td></tr>
+    </tbody>
+    <tfoot><tr><th>Celkem</th><td class="n">{{ALL_KWH}}</td><td class="n total">{{TOTAL}}</td></tr></tfoot>
+  </table>
+  </div>
+  <p class="note">Částky vč. DPH. Pevné poplatky a prázdný dům dělí tři rodiny rovným dílem, viz <a href="{{COMMON_URL}}">společné vyúčtování</a>.</p>
+</section>
+
+<section class="memberbox">
+  <h2>Rozpis po členech</h2>
+  <p>Přímá spotřeba je energie naměřená při pobytech. Když byla v domě i jiná rodina, dělí se úsek nejdřív mezi rodiny a podíl rodiny pak rovným dílem mezi její přítomné členy. Pevné poplatky a prázdný dům lze ukázat zvlášť, rozpočítat do ceny kWh podle spotřeby, nebo rozdělit rovným dílem mezi vybrané členy.</p>
+  <div class="toggle" role="radiogroup" aria-label="Pevné poplatky a prázdný dům">
+    <input type="radio" name="mode" id="mode-sep" checked><label for="mode-sep">Pevné poplatky zvlášť</label>
+    <input type="radio" name="mode" id="mode-fold"><label for="mode-fold">Rozpočítat do ceny kWh</label>
+    <input type="radio" name="mode" id="mode-even"><label for="mode-even">Rozdělit mezi členy</label>
+  </div>
+  <div class="scroll">
+  <table class="members">
+    <thead><tr><th>Člen</th><th class="n">VT kWh</th><th class="n">NT kWh</th><th class="n">Celkem kWh</th><th class="n">Kč/kWh</th><th class="n">Kč</th></tr></thead>
+    <tbody class="sep">{{MEMBERS_SEP}}</tbody>
+    <tbody class="fold">{{MEMBERS_FOLD}}</tbody>
+    <tbody class="even" data-shared="{{SHARED_CENTS}}">{{MEMBERS_EVEN}}</tbody>
+    <tfoot><tr><th>Celkem rodina</th><td></td><td></td><td></td><td></td><td class="n total">{{TOTAL}}</td></tr></tfoot>
+  </table>
+  </div>
+  <p class="note sep">Kč/kWh je průměrná cena přímé spotřeby člena. Liší se podle roku (2025 dražší) a poměru VT/NT.</p>
+  <p class="note fold">Cena každé kWh je vynásobená {{FACTOR}}×, aby přímá spotřeba pokryla i pevné poplatky ({{FIXED_KC}} Kč) a prázdný dům ({{EMPTY_KC}} Kč). Průměrně {{AVG_OWN}} Kč/kWh → {{AVG_ALL}} Kč/kWh. Kdo víc spotřeboval, nese větší díl pevných poplatků.</p>
+  <p class="note even" id="even-note">Pevné poplatky a prázdný dům ({{SHARED_KC}} Kč) se dělí rovným dílem mezi zaškrtnuté členy, k tomu každý platí svou přímou spotřebu. Zaškrtnutím vyberte, kdo se na pevných poplatcích podílí.</p>
+</section>
+
+<section>
+  <h2>Pevné poplatky</h2>
+  <p>Platí se měsíčně bez ohledu na to, jestli je v domě někdo. Rodina {{BRANCH}} nese třetinu: <b class="n">{{FIXED_KC}} Kč</b>.</p>
+  <div class="scroll">
+  {{FIXED_ITEMS}}
+  </div>
+</section>
+
+<section>
+  <h2>Úseky s pobytem rodiny</h2>
+  <p>Úseky mezi odečty, kdy byl v domě někdo z rodiny. Ostatní rodiny ve stejném úseku jsou uvedené pro úplnost (šedě).</p>
+  <div class="scroll">
+  <table class="ledger">
+    <thead><tr><th>Úsek</th><th class="n">VT</th><th class="n">NT</th><th colspan="2">Rozdělení (kWh · Kč po dorovnání)</th></tr></thead>
+    <tbody>{{LEDGER}}</tbody>
+  </table>
+  </div>
+</section>
+
+<script>
+// "Rozdělit mezi členy": fixed + empty-house share split evenly among the ticked members
+(function () {
+  var body = document.querySelector("tbody.even");
+  if (!body) return;
+  var shared = +body.dataset.shared, note = document.getElementById("even-note"), base = note.innerHTML;
+  var fmt = function (c) { return (c / 100).toLocaleString("cs-CZ", {minimumFractionDigits: 2, maximumFractionDigits: 2}); };
+  function update() {
+    var rows = [].slice.call(body.querySelectorAll("tr[data-direct]"));
+    var on = rows.filter(function (r) { return r.querySelector("input").checked; });
+    var each = on.length ? Math.floor(shared / on.length) : 0, rest = on.length ? shared - each * on.length : 0;
+    rows.forEach(function (r) {
+      var i = on.indexOf(r), part = i < 0 ? 0 : each + (i < rest ? 1 : 0);
+      var kc = +r.dataset.direct + part;
+      r.classList.toggle("off", i < 0);
+      r.querySelector(".share").textContent = fmt(part);
+      r.querySelector(".kc").textContent = fmt(kc);
+      r.querySelector(".rate").textContent = fmt(Math.round(kc / +r.dataset.kwh));
+    });
+    note.innerHTML = on.length ? base + " Na osobu " + fmt(each) + " Kč."
+      : '<span class="warn">Vyberte aspoň jednoho člena – pevné poplatky ({{SHARED_KC}} Kč) teď nikdo neplatí.</span>';
+  }
+  body.addEventListener("change", update);
+  update();
+})();
+</script>
+
+<footer>Postup výpočtu, úpravy dat a přepis sešitu jsou na stránce <a href="{{COMMON_URL}}">společného vyúčtování</a>.</footer>
+</div>
