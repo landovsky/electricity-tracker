@@ -157,6 +157,16 @@ members_out = [{"member": m, "payer": PAYER[m], "VT": round(v["VT"], 1), "NT": r
 for p in FAMILIES:   # member split must add up to the branch's direct consumption
     assert abs(sum(v["Kc"] for m, v in member_alloc.items() if PAYER[m] == p) - alloc[p]["Kc"]) < 1e-6, p
 
+# advances (zálohy) the branches paid into the shared account for this invoice (bank export,
+# ../sources/zalohy-sucha-2026.xls). September 2025 went to the previous invoice, so it isn't here.
+advances = defaultdict(float)
+for a in csv.DictReader(open(os.path.join(DATA, "advances.csv"), encoding="utf-8")):
+    advances[a["payer"]] += float(a["kc"])
+assert set(advances) == set(FAMILIES), dict(advances)
+for r in out_rows:
+    r["advances_kc"] = round(advances[r["payer"]], 2)
+    r["balance_kc"] = round(r["advances_kc"] - r["total_kc"], 2)   # > 0 refund to the branch, < 0 it pays extra
+
 print(json.dumps({
     "check": {"VT": round(tot_vt, 3), "NT": round(tot_nt, 3), "tariff_kc": round(attributed, 2),
               "invoice_variable_kc": VARIABLE, "scale": round(scale, 5),

@@ -63,6 +63,26 @@ tot_own = tot_cons - tot_empty
 tot_fixed = sum(r["fixed_kc"] for r in rows)
 tot_kwh = sum(r["kwh"] for r in rows) + (d["empty"]["VT"] + d["empty"]["NT"])
 
+# ---- advances: paid - share = refund (+) / to pay (-)
+import csv as _csv, os as _os
+from collections import Counter
+settle = ""
+for r in rows:
+    bal = r["balance_kc"]
+    res = (f'vrací se <b class="total">{kc(bal)} Kč</b>' if bal > 0 else
+           f'doplácí <b class="pay">{kc(-bal)} Kč</b>' if bal < 0 else "vyrovnáno")
+    settle += f"""<tr>{who(r['payer'])}
+<td class="n">{kc(r['advances_kc'])}</td><td class="n">{kc(r['total_kc'])}</td>
+<td class="n">{'+' if bal > 0 else '−' if bal < 0 else ''}{kc(abs(bal))}</td><td class="result">{res}</td></tr>"""
+adv = list(_csv.DictReader(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "advances.csv"), encoding="utf-8")))
+cnt = Counter((a["payer"], a["kc"]) for a in adv)
+span = {p: (min(a["date"] for a in adv if a["payer"] == p), max(a["date"] for a in adv if a["payer"] == p)) for p in FAM}
+mon = lambda s: f"{int(s[5:7])}/{s[:4]}"
+adv_note = ", ".join(f"{p} {n}× {kc(float(k), 0)} Kč ({mon(span[p][0])}–{mon(span[p][1])})"
+                     for (p, k), n in sorted(cnt.items(), key=lambda x: FAM.index(x[0][0])))
+tot_adv = sum(r["advances_kc"] for r in rows)
+tot_bal = sum(r["balance_kc"] for r in rows)
+
 # ---- ledger grouped by interval
 groups = OrderedDict()
 for x in d["detail"]:
@@ -108,7 +128,8 @@ page = open("template.html").read()
 for k, v in {
     "{{SUMMARY}}": summary, "{{CONSUMPTION}}": consumption, "{{FIXED_SPLIT}}": fixed_split,
     "{{TOTAL}}": kc(tot), "{{TOTAL_OWN}}": kc(tot_own), "{{TOTAL_EMPTY}}": kc(tot_empty), "{{TOTAL_CONS}}": kc(tot_cons), "{{TOTAL_FIXED}}": kc(tot_fixed), "{{TOTAL_KWH}}": kwh(tot_kwh),
-    "{{LEDGER}}": ledger, "{{LOG}}": logrows,
+    "{{LEDGER}}": ledger, "{{SETTLE}}": settle, "{{ADV_NOTE}}": adv_note,
+    "{{TOTAL_ADV}}": kc(tot_adv), "{{TOTAL_BAL}}": ("+" if tot_bal > 0 else "−") + kc(abs(tot_bal)), "{{LOG}}": logrows,
     "{{P25VT}}": kc(p["2025"]["VT"], 3), "{{P25NT}}": kc(p["2025"]["NT"], 3),
     "{{P26VT}}": kc(p["2026"]["VT"], 3), "{{P26NT}}": kc(p["2026"]["NT"], 3),
     "{{SCALE}}": kc((scale - 1) * 100, 1), "{{EMPTY_KWH}}": kwh(d["empty"]["VT"] + d["empty"]["NT"]),

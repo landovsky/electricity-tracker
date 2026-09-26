@@ -12,6 +12,7 @@ Billing period 27.08.2025 – 28.08.2026, PPAS invoice 1126407855, 13 904,22 Kč
 | `events.csv` | **Canonical data.** One row per visitor action (check_in / check_out / manual_kwh / reading) with local time, readings, `source` (notebook / app / invoice / estimate / assumed) and `status` (`pending` = not yet confirmed). Merges the notebook with stays only recorded in the app. Drives both the settlement and the app import. |
 | `readings.csv` | Earlier notebook-only transcription (superseded by events.csv, kept for provenance). Every notebook row: date, who, P/O, VT/NT/garage readings as used, the value *as written*, and notes on corrections. `present_after` = who is in the house in the interval that starts at that row. |
 | `charges.csv` | EV charging kWh (superseded by `manual_kwh` rows in events.csv). |
+| `advances.csv` | Advances each branch paid into the shared account for this invoice (date, branch, Kč). |
 | `invoice.json` | Invoice facts: start/end readings, fixed vs variable charges, per-MWh unit prices for 2025 and 2026. |
 | `calc/settle.py` | Allocation. Reads events.csv + invoice.json, prints JSON (`calc/out.json`). |
 | `calc/build.py` + `calc/template.html` | Renders `vyuctovani-sucha-2026.html` (Czech summary page) from `out.json`. |
@@ -35,7 +36,7 @@ cd calc && python3 settle.py > out.json && python3 build.py && mv vyuctovani-suc
 - EV charging goes to the charging person's branch.
 - Per-member breakdown (for each branch's internal split, direct consumption only): a branch's share of an interval is split equally among its members present; EV charging goes to the person charging; garage kWh go to whoever used Jirka's part (Jirka, or Johana 4.–6.4.2026 per "JOHANA (JIRKA)"). Fixed charges and empty-house share stay at branch level.
 - kWh priced with the invoice's 2025 / 2026 unit prices, then scaled (+3.6 %) so the variable part equals the invoice exactly (PPAS estimated a higher 2025 share than the notebook shows).
-- Advances (zálohy) are **not** netted here.
+- Advances (zálohy): `advances.csv` (from the bank export `sources/zalohy-sucha-2026.xls`, 11 × 635 Kč per branch, Oct 2025 – Aug 2026; the September 2025 payment belongs to the previous invoice). Balance per branch = advances − share of the invoice; positive is sent back to the branch from the family's shared account, negative is paid by the branch into it. All three branches pay their monthly advances into that shared account and PPAS is paid from it (the PPAS refund also lands there).
 
 ## Known assumptions
 

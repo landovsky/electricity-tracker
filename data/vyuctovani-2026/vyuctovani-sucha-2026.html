@@ -57,6 +57,8 @@ tfoot td,tfoot th{border-top:2px solid var(--ink);border-bottom:0;font-weight:60
 .price{border:1px solid var(--rule);border-radius:6px;background:var(--sheet);padding:12px 14px;display:grid;gap:4px}
 .price .n{text-align:left;font-size:15px}
 .price span:first-child{font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.settle td.result{white-space:nowrap}
+.settle .pay{color:var(--warn);font-weight:600}
 .members .branch-head th{background:var(--paper);font-family:var(--head);font-size:15px;padding-top:14px}
 .members th.member{font-weight:400;padding-left:2.2em}
 .members tr.subtotal th,.members tr.subtotal td{font-weight:600;border-bottom:2px solid var(--rule)}
@@ -87,9 +89,28 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);paddin
     <li>Faktura <b>1126407855</b></li>
     <li>Cena celkem vč. DPH <b>13&#8239;904,22 Kč</b></li>
     <li>Spotřeba <b>117 kWh VT + 1&#8239;008 kWh NT</b></li>
-    <li>Přeplatek od PPAS <b>4&#8239;575,82 Kč</b> (vrací se na účet Petra)</li>
+    <li>Přeplatek od PPAS <b>4&#8239;575,82 Kč</b> (vrací se na společný rodinný účet)</li>
   </ul>
 </header>
+
+<section>
+  <h2>Vyrovnání záloh</h2>
+  <p>Všechny tři větve posílají měsíční zálohy na společný rodinný účet, ze kterého se platí PPAS. Od zaplacených záloh se odečte podíl větve na faktuře. Přeplatek pošle společný účet větvi zpět, nedoplatek větev na společný účet doplatí.</p>
+  <div class="scroll">
+  <table class="summary settle">
+    <thead><tr><th>Větev</th><th class="n">Zaplacené zálohy</th><th class="n">Podíl na faktuře</th><th class="n">Rozdíl</th><th>Výsledek</th></tr></thead>
+    <tbody><tr><th scope="row"><span class="sym" aria-hidden="true">△</span>Jiří</th>
+<td class="n">6 985,00</td><td class="n">3 897,06</td>
+<td class="n">+3 087,94</td><td class="result">vrací se <b class="total">3 087,94 Kč</b></td></tr><tr><th scope="row"><span class="sym" aria-hidden="true">○</span>Kristina (Kristina, Edita, Marek)</th>
+<td class="n">6 985,00</td><td class="n">4 128,48</td>
+<td class="n">+2 856,52</td><td class="result">vrací se <b class="total">2 856,52 Kč</b></td></tr><tr><th scope="row"><span class="sym" aria-hidden="true">□</span>Petr (Petr, Tereza, Bára, Johana)</th>
+<td class="n">6 985,00</td><td class="n">5 878,68</td>
+<td class="n">+1 106,32</td><td class="result">vrací se <b class="total">1 106,32 Kč</b></td></tr></tbody>
+    <tfoot><tr><th scope="row">Celkem</th><td class="n">20 955,00</td><td class="n">13 904,22</td><td class="n">+7 050,78</td><td></td></tr></tfoot>
+  </table>
+  </div>
+  <p class="note">Zálohy podle výpisu ze společného rodinného účtu: Jiří 11× 635 Kč (10/2025–8/2026), Kristina 11× 635 Kč (10/2025–8/2026), Petr 11× 635 Kč (10/2025–8/2026). Zářijové zálohy 2025 patří do minulého vyúčtování, proto tu nejsou. Podíl na faktuře je rozepsaný v další tabulce.</p>
+</section>
 
 <section>
   <h2>Kolik kdo platí</h2>
@@ -113,7 +134,7 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);paddin
     <tfoot><tr><th>Celkem</th><td class="n">4 568,97</td><td class="n">36,00</td><td class="n">9 299,25</td><td class="n">13 904,22</td></tr></tfoot>
   </table>
   </div>
-  <p class="note">Částky jsou podíly na ceně faktury vč. DPH. Zálohy, které větve během roku zaplatily, tu odečtené nejsou: přeplatek nebo nedoplatek = zaplacené zálohy − částka v posledním sloupci. Symboly △ ○ □ odpovídají legendě v sešitě.</p>
+  <p class="note">Částky jsou podíly na ceně faktury vč. DPH. Odečtení záloh je v tabulce výše. Symboly △ ○ □ odpovídají legendě v sešitě.</p>
 </section>
 
 <section>

@@ -32,7 +32,9 @@
    "empty_kwh": 2.7,
    "empty_kc": 12.0,
    "fixed_kc": 3099.75,
-   "total_kc": 3897.06
+   "total_kc": 3897.06,
+   "advances_kc": 6985.0,
+   "balance_kc": 3087.94
   },
   {
    "payer": "Kristina",
@@ -43,7 +45,9 @@
    "empty_kwh": 2.7,
    "empty_kc": 12.0,
    "fixed_kc": 3099.75,
-   "total_kc": 4128.48
+   "total_kc": 4128.48,
+   "advances_kc": 6985.0,
+   "balance_kc": 2856.52
   },
   {
    "payer": "Petr",
@@ -54,7 +58,9 @@
    "empty_kwh": 2.7,
    "empty_kc": 12.0,
    "fixed_kc": 3099.75,
-   "total_kc": 5878.68
+   "total_kc": 5878.68,
+   "advances_kc": 6985.0,
+   "balance_kc": 1106.32
   }
  ],
  "members": [
